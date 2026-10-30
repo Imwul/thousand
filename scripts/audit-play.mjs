@@ -1,0 +1,49 @@
+import assert from 'node:assert/strict';
+import {runProcedure,runLockAttempt,runHackReroll} from '../src/generators/procedures.js';
+import {PROCEDURES,SLOT_COUNTS,defaultContext} from '../src/domain/model.js';
+
+const seeded=seed=>()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+const traceIds=new Set(),stats=[];
+let runs=0,locks=0,hacks=0;
+for(const p of PROCEDURES){
+  let longest=0;
+  for(let i=0;i<300;i++){
+    const context={...defaultContext(),crew:[1,3,5][i%3],presentCrew:1+i%5,
+      location:i%2?'planet':'space',biome:1+i%10,terrain:i%5,size:1+i%4,
+      hazard:1+i%8,purpose:i%21,resources:!!(i%2),artifacts:!!(i%3),knownThreats:!!(i%4),
+      slots:Array(SLOT_COUNTS[i%4]).fill(i%7===0?'Guardian':'')};
+    const options={week:1+i%8,destination:i%2?'known':'unknown',knownWeeks:1+i%6,
+      known:!!(i%2),connector:!!(i%2),species:['random','Guardian','Aberration','Synthetic','Local Fauna'][i%5],
+      tier:['easy','standard','elite','overwhelming'][i%4],guardianModel:['titan','anansi','arash','brahmari'][i%4],
+      randomIntelligence:!!(i%2),aquatic:!!(i%2),moodDepth:1+i%3,
+      stationActivity:['carousing','night','locals','news'][i%4],
+      behavior:['brute','lurker','ranged','swarm','psychic','spitter','clobber','taker','psybane','bomber','cecaelia'][i%11],
+      retarget:!!(i%2),cautious:!!(i%3),checkEncounterReaction:!!(i%2),generateCover:!!(i%2),
+      hackingDifficulty:1+i%6,diceExpression:['2d10+5','d100×3','3d12-2','100d100'][i%4],sights:!!(i%2)};
+    const r=runProcedure(p.id,{campaignId:'audit',context,options,rng:seeded(9001+i*37)});
+    for(const item of r.items){
+      assert.equal(typeof item.text,'string',`${p.id}/${i}: result must have text`);
+      assert.ok(item.text.trim(),`${p.id}/${i}: empty result`);
+      assert.doesNotMatch(item.text,/undefined|NaN|\+-\d/,`${p.id}/${i}: malformed result`);
+      longest=Math.max(longest,item.text.length);
+    }
+    for(const t of r.trace){
+      traceIds.add(t.id);
+      assert.ok(Number.isFinite(t.value)&&t.values.every(Number.isFinite),`${p.id}/${i}: invalid dice`);
+    }
+    if(r.pending)for(const guess of ['inside','outside']){
+      const snapshot=structuredClone(r);
+      const next=runLockAttempt(r,guess,{rng:seeded(333+i)});
+      assert.equal(next.parentId,r.id);assert.deepEqual(r,snapshot);locks++;
+    }
+    if(r.hacking)for(let j=0;j<r.hacking.values.length;j++){
+      const snapshot=structuredClone(r),next=runHackReroll(r,j,{rng:seeded(i+j+1)});
+      assert.equal(next.parentId,r.id);
+      next.hacking.values.forEach((value,k)=>{if(k!==j)assert.equal(value,r.hacking.values[k]);});
+      assert.deepEqual(r,snapshot);hacks++;
+    }
+    runs++;
+  }
+  stats.push({procedure:p.id,runs:300,longestResult:longest});
+}
+console.log(JSON.stringify({runs,lockContinuations:locks,hackingContinuations:hacks,distinctTraceIds:traceIds.size,stats},null,2));

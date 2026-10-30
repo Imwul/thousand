@@ -125,7 +125,7 @@ function travel(r,run) {
   let arrived;
   if(o.destination==='unknown')arrived=r.check('destination-check','목적지 확인',arrival,126,'도착 여부');
   else {arrived=o.week>=o.knownWeeks;r.item('알려진 항해 일정',arrived?'목적지에 도착':'항해 계속',118,{detail:`예정 ${o.knownWeeks}주 / 현재 ${o.week}주. 귀환은 최초 기간, 다른 팀의 장소는 최초 D6+1주로 정한 값을 사용하세요.`,group:'도착 여부'});}
-  run.headline=arrived?'목적지가 모습을 드러냅니다':'아직 검은 우주 속입니다';
+  run.headline=arrived?'목적지 도착':'항해 계속';
   run.subline=`${o.week}주차 · ${event?'항해 사건 발생':'항해 사건 없음'}${o.destination==='unknown'?` · 도착 확률 ${arrival}%`:''}`;
   run.notes.push('이번 주 대원마다 Oxygen Tank 1개와 Supplies 1개를 종이 시트에서 소비하세요. 사건 확률은 사건 발생으로 초기화되지 않으며 목적지 도착 시 초기화됩니다.');
 }
@@ -207,7 +207,7 @@ export function runProcedure(procedureId,{context={},options={},campaignId,paren
     run.notes.push('장면이 끝날 때 통제하지 못했다면 반전 확률 +1(최대 3/6). 시간트랙이 초기화되면 직접 1/6로 되돌리세요.');
   }
   else if(procedureId==='surprise'){run.headline=surprise(r,o);run.subline='현재 장소·인물·미해결 단서에 연결해 해석하세요.';}
-  else if(procedureId==='inspiration'){run.headline=inspiration(r,'두 단어');run.subline='두 단어를 현재 상황에 맞게 느슨하게 연결하세요.';}
+  else if(procedureId==='inspiration'){run.headline=inspiration(r,'두 단어');run.subline='행동 D100 · 주제 D100';}
   else if(procedureId==='arrival')site(r,run);
   else if(procedureId==='area')area(r,run);
   else if(procedureId==='npc') {
@@ -218,7 +218,7 @@ export function runProcedure(procedureId,{context={},options={},campaignId,paren
     run.notes.push('상황의 사회적 맥락에 맞지 않는 행동은 직접 조정하세요. 이 결과는 NPC의 첫 반응이며 전체 캐릭터 시트 생성은 아닙니다.');
   }
   else if(procedureId==='travel')travel(r,run);
-  else if(procedureId==='door'){run.headline=door(r,run);run.subline='문이 열릴지는 아직 정해지지 않았습니다.';}
+  else if(procedureId==='door'){run.headline=door(r,run);run.subline='안쪽 또는 바깥쪽을 선택해 잠금 해제를 시도하세요.';}
   else if(procedureId==='resolution'){const v=r.table('resolution');run.headline=v.row.text;run.subline='능력치·기술 판정을 대신할 필요가 있을 때만 사용하세요.';}
   else if(procedureId==='table'){const t=r.table(tableId);run.title=tables[tableId].title;run.headline=t.row.text;run.tableId=tableId;}
   else if(runExtended(procedureId,r,run,{encounter,inspiration,site,resources,artifacts,door,security})){}

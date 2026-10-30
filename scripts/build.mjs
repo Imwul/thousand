@@ -8,6 +8,6 @@ await mkdir(resolve(root,'dist'),{recursive:true});
 await cp(resolve(root,'src'),resolve(root,'dist'),{recursive:true});
 await cp(resolve(root,'public'),resolve(root,'dist'),{recursive:true});
 const source=await readFile(resolve(root,'src/index.html'),'utf8');
-if(source.includes('TODO')||!source.includes('탐사 기록실'))throw new Error('앱 메타데이터가 완성되지 않았습니다.');
+if(source.includes('TODO')||!source.includes('<title>Across a Thousand Dead Worlds</title>'))throw new Error('앱 메타데이터가 완성되지 않았습니다.');
 await writeFile(resolve(root,'dist/index.html'),source);
 console.log(`Built dist. Verified all dice values in ${tableList.length} rulebook tables.`);

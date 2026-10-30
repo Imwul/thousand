@@ -37,3 +37,9 @@ test('custom dice expressions calculate terms without evaluating executable inpu
 test('named sites keep leading zeros and the original out-of-order 94 and 95 labels',()=>{
   const r=make('site-name',{}, {},seq([100,94],[100,95],[100,9]));assert.equal(r.headline,'Xat-pha-056900');
 });
+test('a negative creature attack modifier has one sign',()=>{
+  let seed=9001+29*37;
+  const rng=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+  const r=make('creature',{species:'Local Fauna',tier:'standard',randomIntelligence:true,aquatic:true},{crew:5},rng);
+  assert.match(r.items.find(i=>i.title==='공격과 피해').text,/^Attack -3 \/ /);
+});

@@ -7,7 +7,7 @@ import {icon,esc} from './components/icons.js';
 
 const $=s=>document.querySelector(s);
 const state={db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50};
-let toastTimer,memoTimer,optionTimer,pendingMemo=null;
+let toastTimer,optionTimer,pendingMemo=null;
 const campaign=()=>state.campaigns.find(c=>c.id===state.selectedId);
 const current=()=>state.records.find(r=>r.id===state.currentId);
 const ownRecords=()=>state.records.filter(r=>r.campaignId===state.selectedId);
@@ -25,7 +25,7 @@ function enqueue(task,onFailure){
 function saveCampaign(){const snapshot=structuredClone(campaign());return enqueue(async()=>{if(!state.db)throw new Error('브라우저 저장 공간에 연결하지 못했습니다. 현재 기록은 백업으로 보관하세요.');await state.db.saveCampaign(snapshot);});}
 function renderControls(){
   const p=PROCEDURES.find(p=>p.id===state.procedure),c=campaign();
-  $('#procedures').innerHTML=procedureList(state.procedure);
+  $('#procedures').innerHTML=procedureList(state.procedure,{compact:innerWidth<801});
   $('#procedure-title').textContent=p.name;$('#procedure-english').textContent=p.en;$('#procedure-source').textContent=`Core p. ${p.pages}`;
   $('#options').innerHTML=optionFields(state.procedure,c.options,c.context);
   $('#context-label').textContent=c.context.siteName||'탐사 맥락';
@@ -65,7 +65,7 @@ function collectOptions(){
 }
 function flushOptions(){clearTimeout(optionTimer);try{collectOptions();return saveCampaign();}catch(e){message(e.message,true);return Promise.resolve();}}
 function flushMemo(){
-  clearTimeout(memoTimer);if(!pendingMemo)return Promise.resolve();
+  if(!pendingMemo)return state.queue;
   const {id,memo}=pendingMemo;pendingMemo=null;
   return enqueue(async()=>{
     if(!state.db)throw new Error('메모가 저장되지 않았습니다. 백업을 내려받아 보관하세요.');
@@ -84,7 +84,8 @@ function closeDialog(){state.modal=null;state.backup=null;$('#dialog').close();}
 async function retain(run,{keyboard=false}={}){
   await flushMemo();state.records.push(run);state.currentId=run.id;state.saving.add(run.id);renderReport(!keyboard);renderHistory();status();
   const heading=$('#result-headline');if(keyboard)heading?.focus({preventScroll:true});
-  if(innerWidth<801)$('#report-host').scrollIntoView({behavior:keyboard||matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
+  const reportTop=$('#report-host').getBoundingClientRect().top;
+  if(innerWidth<801||reportTop<0||reportTop>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant',block:'start'});
   await enqueue(async()=>{
     if(!state.db)throw new Error('저장 공간에 연결하지 못했습니다. 결과는 화면과 메모리에 유지됩니다. 백업을 내려받으세요.');
     await state.db.saveRecord(run);state.persisted.add(run.id);state.saving.delete(run.id);state.unsaved.delete(run.id);
@@ -120,7 +121,7 @@ function download(name,content,type='application/json'){
   const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 function backupDialog(){
-  showDialog('백업·가져오기',`<section class="backup-section"><h3>탐사를 보관하기</h3><p>전체 ${state.campaigns.length}개 캠페인, ${state.records.length}개 굴림을 백업합니다. 저장 공간이 달라지는 다른 브라우저·기기로 옮길 때도 사용할 수 있습니다.</p><div class="button-row"><button class="primary" data-action="export-json">${icon('download',18)}전체 JSON 백업</button><button class="secondary" data-action="export-md">${icon('book',18)}현재 탐사 Markdown</button></div></section><section class="backup-section"><h3>백업 가져오기</h3><p>내용을 먼저 검사한 뒤 새 캠페인으로 추가합니다. 기존 기록을 덮어쓰지 않습니다.</p><input class="file-input" id="backup-file" type="file" accept="application/json,.json" aria-label="JSON 백업 파일 선택"><div id="import-preview"></div></section><p class="field-help" style="margin-top:25px">저장된 플레이 기록은 이 브라우저에만 있습니다. 사이트 로그인은 기기 사이의 기록을 동기화하지 않습니다.</p>`,{type:'backup'});
+  showDialog('백업·가져오기',`<section class="backup-section"><h3>백업 내보내기</h3><p>전체 ${state.campaigns.length}개 캠페인, ${state.records.length}개 굴림을 백업합니다. 저장 공간이 달라지는 다른 브라우저·기기로 옮길 때도 사용할 수 있습니다.</p><div class="button-row"><button class="primary" data-action="export-json">${icon('download',18)}전체 JSON 백업</button><button class="secondary" data-action="export-md">${icon('book',18)}현재 탐사 Markdown</button></div></section><section class="backup-section"><h3>백업 가져오기</h3><p>내용을 먼저 검사한 뒤 새 캠페인으로 추가합니다. 기존 기록을 덮어쓰지 않습니다.</p><input class="file-input" id="backup-file" type="file" accept="application/json,.json" aria-label="JSON 백업 파일 선택"><div id="import-preview"></div></section><p class="field-help" style="margin-top:25px">저장된 플레이 기록은 이 브라우저에만 있습니다. 사이트 로그인은 기기 사이의 기록을 동기화하지 않습니다.</p>`,{type:'backup'});
 }
 async function previewImport(file){
   state.backup=null;const host=$('#import-preview');if(!file)return;
@@ -147,20 +148,24 @@ document.addEventListener('click',async event=>{
       await flushMemo();await flushOptions();state.procedure=button.dataset.id;
       state.currentId=ownRecords().filter(r=>r.procedureId===state.procedure).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
       renderControls();renderReport();renderHistory();
+      const panel=$('.control-panel'),top=panel.getBoundingClientRect().top;
+      if(innerWidth<801||top<0||top>innerHeight-160)panel.scrollIntoView({behavior:'instant',block:'start'});
     }
     else if(action==='workbench'){await flushMemo();closeDialog();$('#workbench').scrollIntoView({behavior:'instant'});}
     else if(action==='record'){
       await flushMemo();const record=state.records.find(r=>r.id===button.dataset.id);if(!record)return;
       state.currentId=record.id;if(PROCEDURES.some(p=>p.id===record.procedureId))state.procedure=record.procedureId;
       if($('#dialog').open)closeDialog();renderControls();renderReport();renderHistory();$('#result-headline')?.focus({preventScroll:true});
-      if(innerWidth<801)$('#report-host').scrollIntoView({behavior:'instant'});
+      const top=$('#report-host').getBoundingClientRect().top;
+      if(innerWidth<801||top<0||top>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant'});
     }
     else if(action==='reroll'){await roll({parent:current(),keyboard:event.detail===0});}
     else if(action==='lock'){await roll({parent:current(),lockGuess:button.dataset.value,keyboard:event.detail===0});}
     else if(action==='hack'){await roll({parent:current(),hackIndex:Number(button.dataset.value),keyboard:event.detail===0});}
     else if(action==='pin'){
-      const r=current();r.pinned=!r.pinned;renderReport();renderHistory();
-      await enqueue(async()=>{if(!state.db)throw new Error('고정 상태를 저장할 수 없습니다.');if(!state.persisted.has(r.id)){await state.db.saveRecord(r);state.persisted.add(r.id);}else await state.db.annotateRecord(r.id,{pinned:r.pinned});state.unsaved.delete(r.id);},()=>state.unsaved.add(r.id));
+      const r=current();await flushMemo();
+      r.pinned=!r.pinned;renderReport();renderHistory();
+      await enqueue(async()=>{if(!state.db)throw new Error('고정 상태를 저장할 수 없습니다.');if(!state.persisted.has(r.id)){await state.db.saveRecord(r);state.persisted.add(r.id);}else await state.db.annotateRecord(r.id,{pinned:r.pinned,memo:r.memo});state.unsaved.delete(r.id);},()=>state.unsaved.add(r.id));
     }
     else if(action==='copy'){
       const r=current(),text=recordsMarkdown(campaign(),[r]);
@@ -179,7 +184,7 @@ document.addEventListener('click',async event=>{
     else if(action==='filter-all'||action==='filter-pinned'){state.filter=action==='filter-all'?'all':'pinned';renderHistory();}
     else if(action==='backup')backupDialog();
     else if(action==='close-dialog')closeDialog();
-    else if(action==='new-campaign')showDialog('새 탐사 만들기',`<form id="campaign-form" class="dialog-form"><label>캠페인 이름<input name="name" maxlength="200" required placeholder="예: 침묵의 신호"></label><button class="primary" type="submit">새 탐사 시작</button></form>`,{type:'campaign'});
+    else if(action==='new-campaign')showDialog('새 탐사 만들기',`<form id="campaign-form" class="dialog-form"><label>캠페인 이름<input name="name" maxlength="200" required placeholder="캠페인 이름 입력"></label><button class="primary" type="submit">새 탐사 시작</button></form>`,{type:'campaign'});
     else if(action==='export-json'){
       await flushMemo();await flushOptions();download(`thousand-worlds-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(makeBackup(state.campaigns,state.records),null,2));message('전체 기록의 JSON 백업을 내려받았습니다.');
     }
@@ -219,7 +224,7 @@ document.addEventListener('submit',async event=>{
 document.addEventListener('input',event=>{
   const target=event.target;
   if(target.id==='record-memo'){
-    const r=current();if(!r)return;r.memo=target.value;pendingMemo={id:r.id,memo:target.value};$('#memo-status').textContent='저장 대기';clearTimeout(memoTimer);memoTimer=setTimeout(flushMemo,350);
+    const r=current();if(!r)return;r.memo=target.value;pendingMemo={id:r.id,memo:target.value};$('#memo-status').textContent='저장 중';flushMemo();
   }
   else if(target.id==='history-search'){state.historyQuery=target.value;renderHistory();}
   else if(target.id==='library-search')$('#library-results').innerHTML=libraryView(target.value,$('#library-category')?.value??'all');

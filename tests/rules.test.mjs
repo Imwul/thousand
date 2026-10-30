@@ -85,9 +85,9 @@ test('NPC behavior comes from the matching attitude table',()=>{
   const r=make('npc',{details:false},{},seq([6,5],[10,3],[10,9]));assert.equal(r.items[1].tableId,'npc-friendly');assert.match(r.headline,/도움/);
 });
 test('week one is a 20% event and 40% arrival check; solo social events convert',()=>{
-  const r=make('travel',{}, {},seq([100,21],[100,40]));assert.match(r.headline,/모습/);assert.equal(r.trace.length,2);
+  const r=make('travel',{}, {},seq([100,21],[100,40]));assert.equal(r.headline,'목적지 도착');assert.equal(r.trace.length,2);
   const s=make('travel',{week:2},{},seq([100,40],[4,1],[10,1],[100,51]));
-  assert.ok(s.trace.some(t=>t.id==='travel-issue'));assert.ok(!s.trace.some(t=>t.id==='travel-social'));assert.match(s.headline,/아직/);
+  assert.ok(s.trace.some(t=>t.id==='travel-issue'));assert.ok(!s.trace.some(t=>t.id==='travel-social'));assert.equal(s.headline,'항해 계속');
 });
 test('security table numbering follows the table names, not the mismatched prose numbering',()=>{
   assert.equal(tables.security.rows[1].text,'가연성 가스');assert.equal(tables.security.rows[8].text,'순간이동');

@@ -1,4 +1,4 @@
-# Thousand Worlds · 탐사 기록실
+# Across a Thousand Dead Worlds
 
 종이 캐릭터 시트와 함께 사용하는 Across a Thousand Dead Worlds 개인용 오라클·솔로 GM 작업대.
 
@@ -11,6 +11,7 @@ npm run dev -- --port 5180
 
 ```sh
 npm test
+npm run audit:play
 npm run build
 ```
 

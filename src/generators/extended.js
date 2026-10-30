@@ -47,7 +47,7 @@ export function creature(r,run){
   r.item('전투 수치',`Wounds ${stats.Wounds} / Awareness ${stats.Awareness} / Armor ${stats.Armor} / Defense ${stats.Defense}`,statPage,{group:'능력치'});
   const extra=damageBonus?`${damageBonus>0?'+':''}${damageBonus}`:'';
   const penalty=['Swarm','Psychic'].includes(role)?'−1d10':'';
-  r.item('공격과 피해',`Attack +${attack} / 피해 ${damage}${extra}${penalty}`,statPage,{group:'능력치',detail:`근접에는 크기 보정 ${small>=0?'+':''}${small} 추가.${role==='Ranged'?` 근접 Attack ${meleeBonus}, 원거리 Attack +${rangedBonus}.`:''}${o.tier==='overwhelming'?' 매 턴 2회 공격.':''}`});
+  r.item('공격과 피해',`Attack ${attack>=0?'+':''}${attack} / 피해 ${damage}${extra}${penalty}`,statPage,{group:'능력치',detail:`근접에는 크기 보정 ${small>=0?'+':''}${small} 추가.${role==='Ranged'?` 근접 Attack ${meleeBonus}, 원거리 Attack +${rangedBonus}.`:''}${o.tier==='overwhelming'?' 매 턴 2회 공격.':''}`});
   if(!['Brute','Swarm'].includes(role)){const range=r.raw('creature-range','공격 사거리 D10',10,statPage)+(o.tier==='easy'?1:o.tier==='standard'?2:3);r.item('원거리 사거리',String(range),statPage,{group:'능력치'});}
   for(let i=0;i<Math.max(0,stats.abilities);i++)r.table(role==='Psychic'?'psychic-ability':'enemy-ability',`특수 능력 ${i+1}`);
   r.table('appearance','외형');r.table('covering','외형');r.table('unique-feature','외형');

@@ -78,7 +78,7 @@ export function remapBackup(backup){
 }
 export function makeBackup(campaigns,records){return {format:'thousand-worlds-logbook',schemaVersion:1,exportedAt:new Date().toISOString(),campaigns:structuredClone(campaigns),records:structuredClone(records)};}
 export function recordsMarkdown(campaign,records){
-  const lines=[`# ${campaign.name}`,'',`Thousand Worlds · ${new Date().toISOString().slice(0,10)}`,''];
+  const lines=[`# ${campaign.name}`,'',`Across a Thousand Dead Worlds · ${new Date().toISOString().slice(0,10)}`,''];
   for(const r of [...records].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))){
     lines.push(`## ${r.title}: ${r.headline}`,'',r.subline,'',`생성: ${r.createdAt} / 규칙: ${r.rulesVersion}`,'');
     for(const i of r.items)lines.push(`- **${i.title}**: ${i.text}${i.detail?` — ${i.detail}`:''} (p.${[i.page].flat().join(', ')})`);

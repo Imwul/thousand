@@ -10,7 +10,7 @@ test('actual app controller preserves drafts, writes records, annotates, filters
   const w=new Window({url:'http://localhost/'});
   const html=await readFile(new URL('../src/index.html',import.meta.url),'utf8');
   w.document.body.innerHTML=html.match(/<body>([\s\S]*)<\/body>/)[1];
-  globalThis.window=w;globalThis.document=w.document;globalThis.innerWidth=1440;
+  globalThis.window=w;globalThis.document=w.document;globalThis.innerWidth=1440;globalThis.innerHeight=1100;
   globalThis.matchMedia=w.matchMedia.bind(w);globalThis.FormData=w.FormData;
   Object.defineProperty(globalThis,'navigator',{value:w.navigator,configurable:true});
   const q=s=>w.document.querySelector(s),click=s=>{assert.ok(q(s),s);q(s).click();};
@@ -25,6 +25,7 @@ test('actual app controller preserves drafts, writes records, annotates, filters
   await until(async()=>(await db.load()).records.length===1);
   assert.ok(q('#result-headline'));const first=(await db.load()).records[0];
   input('#record-memo','환기구 너머의 신호.');
+  await until(async()=>(await db.load()).records[0].memo==='환기구 너머의 신호.');
   click('[data-action="pin"]');
   await until(async()=>{const r=(await db.load()).records[0];return r.memo==='환기구 너머의 신호.'&&r.pinned;});
   click('[data-action="reroll"]');await until(async()=>(await db.load()).records.length===2);
