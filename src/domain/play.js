@@ -13,6 +13,7 @@ export const PROCEDURE_GROUPS = [
 
 const PROCEDURE_IDS = new Set(PROCEDURES.map(procedure=>procedure.id));
 const named = (run,title)=>run.items?.find(item=>item.title===title);
+const hazardText = run=>run.items?.find(item=>typeof item.tableId==='string'&&item.tableId.startsWith('biome-hazards-'))?.text;
 
 function pick(ids){
   const chosen=[];
@@ -40,9 +41,15 @@ export function guideNext(procedureId,run){
   return fallback;
 }
 
+const COACHING_SUBLINES=new Set([
+  '안쪽 또는 바깥쪽을 선택해 잠금 해제를 시도하세요.',
+  '떠올린 장소와 인물로 장면을 이어가세요.'
+]);
+
 function journalLine(run,extra=[],skipSubline=false){
-  const question=typeof run.options?.question==='string'?run.options.question.trim():'';
-  const parts=[question,run.headline,skipSubline?'':run.subline,...extra].map(part=>typeof part==='string'?part.trim():'').filter(Boolean);
+  const question=run.procedureId==='question'&&typeof run.options?.question==='string'?run.options.question.trim():'';
+  const subline=skipSubline||COACHING_SUBLINES.has(run.subline)?'':run.subline;
+  const parts=[question,run.headline,subline,...extra].map(part=>typeof part==='string'?part.trim():'').filter(Boolean);
   const unique=[];
   for(const part of parts) if(!unique.includes(part)) unique.push(part);
   return unique.join(' · ');
@@ -57,6 +64,7 @@ export function copyLine(run){
   if(run.procedureId==='injury') return journalLine(run,[named(run,'치명적 부상')?.text],true);
   if(run.procedureId==='trauma') return journalLine(run,[named(run,'부정적 특성')?.text],true);
   if(run.procedureId==='activity') return journalLine(run,[named(run,'활동 확인')?.text,named(run,'추적 위협')?.text],true);
+  if(run.procedureId==='hex') return journalLine(run,[hazardText(run)]);
   return journalLine(run);
 }
 
