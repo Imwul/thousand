@@ -18,7 +18,7 @@ export const PROCEDURES = [
   {id:'inspiration',name:'행동과 주제',en:'Action & theme',description:'상황을 풀어 갈 두 단어.',icon:'inspiration',pages:'254–257'},
   {id:'door',name:'잠긴 문',en:'Locked access',description:'문과 방화벽을 보고, 안/밖을 직접 선택.',icon:'door',pages:'156–158'},
   {id:'resolution',name:'임의 행동 결과',en:'Action resolution',description:'능력치 판정 없이 성공의 정도만 확인.',icon:'resolution',pages:'258'},
-  {id:'planet',name:'행성 생성',en:'Planet generation',icon:'arrival',pages:'183–189'},
+  {id:'planet',name:'행성 생성',en:'Planet generation',icon:'arrival',pages:'183–190'},
   {id:'hex',name:'행성 헥스 탐사',en:'Planetside exploration',icon:'area',pages:'189–217'},
   {id:'creature',name:'생물 상세 생성',en:'Creature generation',icon:'npc',pages:'262–299'},
   {id:'npc-profile',name:'NPC 상세 생성',en:'NPC generation',icon:'npc',pages:'234–245, 358–361'},

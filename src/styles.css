@@ -93,3 +93,32 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 @media(max-width:800px){.expedition{grid-template-columns:1fr;padding:12px 0 16px;margin-bottom:16px}.recent-procedures{grid-column:1/-1}.procedure-recent{min-height:44px;flex-direction:row;text-align:left}.field-desk{margin-top:14px}}
 @media(max-width:480px){.expedition-cell strong{font-size:14px}.quick-heading span{font-size:15px}.die-face{min-width:42px;min-height:46px}.die-face b{font-size:22px}}
 @media(min-width:2500px){.expedition{grid-template-columns:minmax(0,1fr) 480px;gap:28px;padding:18px 0 22px}.expedition-cell strong{font-size:22px}.quick-form textarea{min-height:92px;font-size:18px}.quick-heading span{font-size:22px}.workbench-content{grid-template-columns:340px minmax(0,72ch) minmax(280px,360px)}#report-host{max-width:72ch}.field-desk{position:sticky;top:28px;margin-top:0;max-height:calc(100dvh - 36px);overflow:auto}.desk-card h3{font-size:18px}.next-step strong{font-size:17px}.result-text,.report-title>p,.result-detail{max-width:66ch}}
+.procedure-groups{display:flex;flex-direction:column;gap:4px}
+.procedure-group{border-top:1px solid var(--line)}
+.procedure-group>summary{display:flex;align-items:center;gap:8px;min-height:40px;padding:6px 8px;font-family:SUIT,sans-serif;font-size:13px;color:#d5ebe4}
+.procedure-group>summary small{margin-left:auto;font-family:SUIT,sans-serif;color:#7f9c96}
+.procedure-group>summary svg{margin-left:8px}
+.procedure-group-list{display:flex;flex-direction:column;gap:2px;padding-bottom:8px}
+.play-now{margin:0 0 16px;padding:14px 14px 8px;background:#efe7c2;border-top:3px solid var(--coral);color:var(--paper-ink)}
+.play-now>h3{display:flex;align-items:baseline;gap:8px;font-size:16px;font-weight:650}
+.play-now>h3>span{font-family:BarlowCondensed,sans-serif;font-weight:900;letter-spacing:.12em;font-size:13px;color:var(--coral-paper);text-transform:uppercase}
+.play-acts{margin:8px 0 10px;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.play-acts li{font-family:SUIT,sans-serif;font-size:12px;line-height:1.45;padding:5px 8px;background:#fffdf4;border:1px solid #d7c98a;max-width:70ch}
+.play-now .lock-choice,.play-now .hack-choice,.play-now .approach-choice{margin:8px 0 12px}
+.play-now .lock-choice button,.play-now .hack-choice button,.approach-choice button{min-height:44px}
+.play-now .adopt-button{margin:8px 0}
+.approach-choice h3{font-size:16px;font-weight:650}
+.approach-choice p{font-family:SUIT,sans-serif;font-size:12px;line-height:1.6;margin:6px 0 10px;max-width:62ch}
+.approach-choice button{padding:10px 14px;background:#1a3330;color:#efe7c2;font-family:SUIT,sans-serif;font-size:13px}
+.copy-line{display:flex;flex-direction:column;gap:4px;margin:0 0 16px;padding:10px 12px;background:#fff;border-left:3px solid var(--cyan-paper);color:var(--paper-ink);font-size:15px;line-height:1.65;overflow-wrap:anywhere;max-width:70ch}
+.copy-line>span{font-family:SUIT,sans-serif;font-size:11px;letter-spacing:.04em;color:var(--cyan-paper)}
+.landing-map{margin:0 0 16px}
+.landing-map figcaption{font-family:SUIT,sans-serif;font-size:12px;line-height:1.55;color:#5e6c60;margin-bottom:8px;max-width:70ch}
+.hex-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:2px;max-width:420px}
+.hex-cell{aspect-ratio:1;display:grid;place-items:center;min-width:0;overflow:hidden;background:#d5dcc8;color:#4d5e4c;font-family:SUIT,sans-serif;font-size:clamp(8px,1.5vw,11px);font-variant-numeric:tabular-nums}
+.hex-cell.is-land{background:var(--coral);color:#1a0d0a;font-weight:700}
+@media(max-width:800px){.procedure-list{display:flex;flex-direction:column;gap:8px}.procedure-group .procedure{flex-direction:row;justify-content:flex-start;text-align:left;align-items:center;min-height:44px;padding:8px 10px;gap:10px}.procedure-group .procedure strong{font-size:13px;letter-spacing:0;line-height:1.35}.procedure-group .procedure small{display:block;font-size:10px}.procedure-group .procedure-code{display:grid}.procedure-group .procedure-mark{display:inline}}
+@media(max-width:480px){.procedure-group .procedure{min-height:44px;padding:8px 10px}.procedure-group .procedure strong{font-size:13px}.play-now .lock-choice>div,.play-now .hack-choice>div{flex-direction:column}}
+@media(min-width:2500px){.copy-line,.play-acts{max-width:66ch}}
+@media print{.play-now,.copy-line,.landing-map{color:black;background:white}.play-now{border-color:black}.hex-cell{border:1px solid #bbb;background:white;color:black}.hex-cell.is-land{background:#222;color:#fff;print-color-adjust:exact}}
+

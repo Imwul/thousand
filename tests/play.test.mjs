@@ -1,0 +1,98 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {PROCEDURES,defaultContext} from '../src/domain/model.js';
+import {nextStepIds} from '../src/domain/desk.js';
+import {PROCEDURE_GROUPS,guideNext,copyLine,playGuide} from '../src/domain/play.js';
+import {runProcedure} from '../src/generators/procedures.js';
+import {reportView,procedureList,nextStepView} from '../src/components/render.js';
+import {recordsMarkdown} from '../src/storage/store.js';
+import {localizeRecord} from '../src/data/localization.js';
+import {tables} from '../src/data/tables.js';
+
+const make=(id,options,rng)=>runProcedure(id,{campaignId:'test',options,context:defaultContext(),rng});
+
+test('procedure groups list each existing situation once',()=>{
+  const ids=PROCEDURE_GROUPS.flatMap(group=>group.ids);
+  assert.equal(ids.length,PROCEDURES.length);
+  assert.deepEqual(new Set(ids),new Set(PROCEDURES.map(procedure=>procedure.id)));
+  const html=procedureList('creature',{openGroups:['ask'],recent:['scene']});
+  assert.match(html,/data-group="fight"[^>]*open/);
+  assert.match(html,/data-group="ask"[^>]*open/);
+  assert.doesNotMatch(html,/data-group="station"[^>]*open/);
+  assert.match(html,/data-action="procedure" data-id="creature"/);
+  assert.match(html,/procedure-recent/);
+  assert.doesNotMatch(html,/more-procedures/);
+  assert.doesNotMatch(html,/<svg[^>]*>[\s\S]*?<\/svg><span><strong>/);
+});
+
+test('next steps follow the open result and otherwise stay on the static list',()=>{
+  const ended=make('arrival',{},()=>0);
+  assert.equal(ended.adopt,undefined);
+  assert.deepEqual(guideNext('arrival',ended),['travel','question','inspiration']);
+  const week=make('travel',{week:1,destination:'unknown'},()=>0.99);
+  assert.equal(week.headline,'항해 계속');
+  assert.deepEqual(guideNext('travel',week),['travel','question','surprise']);
+  assert.deepEqual(guideNext('question',week),nextStepIds('question'));
+  assert.deepEqual(guideNext('travel',{procedureId:'travel',headline:'목적지 도착'} ),['arrival','planet','site-name']);
+  const door=make('door',{},()=>0.2);
+  assert.deepEqual(guideNext('door',door),['hacking','alternate','question']);
+  assert.deepEqual(guideNext('door',{procedureId:'door',headline:'접근점이 열립니다',pending:{type:'lock'}}),['hacking','alternate','question']);
+  assert.deepEqual(guideNext('door',{procedureId:'door',headline:'접근점이 열립니다'}),['area','question','npc']);
+  assert.deepEqual(guideNext('area',{procedureId:'area',headline:'새 구역에 닿기 전, 매복'}),['combat-start','creature','injury']);
+  assert.deepEqual(guideNext('scene',{procedureId:'scene',headline:'예상 밖의 사건으로 시작합니다'}),['question','area','npc']);
+  assert.deepEqual(guideNext('combat-start',{procedureId:'combat-start',headline:'상대가 떠납니다'}),['question','scene','npc']);
+  const site={procedureId:'hex',notes:['Àrsaidh 탐사지를 발견했습니다. 도착표는 다시 굴리지 않습니다.'],items:[]};
+  assert.deepEqual(guideNext('hex',site),['site-name','question','inspiration']);
+  assert.equal(guideNext('hex',{procedureId:'hex',notes:[],items:[{title:'조우 구성'}]})[0],'creature');
+  const hacking=make('hacking',{hackingDifficulty:2},()=>0.4);
+  assert.equal(nextStepView('hacking',hacking).match(/data-id="([^"]+)"/)[1],'door');
+});
+
+test('the report leads with paper acts, the landing grid, and one copy line',()=>{
+  const door=make('door',{},()=>0.2);
+  const guide=playGuide(door);
+  assert.ok(guide.acts.some(act=>act.id==='time'&&act.text.includes('+1')));
+  const doorHtml=reportView(door,[door]);
+  assert.ok(doorHtml.indexOf('play-now')<doorHtml.indexOf('lock-choice'));
+  assert.ok(doorHtml.indexOf('lock-choice')<doorHtml.indexOf('result-section'));
+  assert.equal(doorHtml.split('lock-choice').length-1,1);
+  const low=make('planet',{},()=>0);
+  assert.equal(playGuide(low).landing,1);
+  assert.match(copyLine(low),/착륙 칸 1/);
+  assert.ok(copyLine(low).includes(low.items.find(item=>item.title==='장소 활동도').text));
+  const lowHtml=reportView(low,[low]);
+  assert.equal(lowHtml.match(/class="hex-cell/g).length,100);
+  assert.match(lowHtml,/hex-cell is-land" aria-hidden="true">1</);
+  assert.match(lowHtml,/책의 지도가 아니라/);
+  const high=make('planet',{},()=>0.999);
+  assert.equal(playGuide(high).landing,100);
+  assert.match(reportView(high,[high]),/hex-cell is-land" aria-hidden="true">100</);
+  const week=make('travel',{week:1,destination:'unknown'},()=>0.99);
+  assert.ok(playGuide(week).acts.some(act=>act.id==='rations'));
+  assert.ok(playGuide(localizeRecord(week,tables)).acts.some(act=>act.id==='rations'));
+  const reset=make('activity',{},()=>0.9);
+  assert.ok(playGuide(localizeRecord(reset,tables)).acts.some(act=>act.id==='reset'));
+  assert.match(copyLine(week),/^항해 계속 · /);
+  assert.ok(recordsMarkdown({name:'일지'},[week]).includes(copyLine(week)));
+  assert.equal(copyLine({procedureId:'creature',headline:'Name',items:[{title:'기본 능력치',text:'STR 1'},{title:'전투 수치',text:'상처 1'},{title:'공격과 피해',text:'공격 +1'}]}),'Name · STR 1 · 상처 1 · 공격 +1');
+  assert.equal(copyLine({procedureId:'question',headline:'예',subline:'질문'}), '');
+  const asked=make('question',{question:'살아 있나?'},()=>0.5);
+  assert.doesNotMatch(reportView(asked,[asked]),/play-now|copy-line|hex-grid/);
+});
+
+test('the metal globe rolls only as a child after the player approaches',()=>{
+  const parent={id:'hex-1',campaignId:'c',procedureId:'hex',createdAt:'2026-10-30T00:00:00.000Z',title:'행성 헥스 탐사',headline:'구체',subline:'독성',tone:'neutral',memo:'',pinned:false,trace:[],items:[{title:'위험',tableId:'biome-hazards-7',roll:7,text:'금속 구체'}],notes:['금속 구체는 다가간다고 선택한 뒤에만 굴립니다.']};
+  const before=structuredClone(parent);
+  assert.equal(playGuide(parent,[]).approach.tableId,'toxic-globe');
+  assert.equal(playGuide(parent,[]).approach.recordId,null);
+  assert.equal(playGuide({...parent,items:[{tableId:'biome-hazards-7',roll:6}]}).approach,null);
+  const child=runProcedure('table',{campaignId:'c',parentId:parent.id,tableId:'toxic-globe',rng:()=>0});
+  assert.equal(child.parentId,parent.id);
+  assert.equal(child.tableId,'toxic-globe');
+  assert.deepEqual(parent,before);
+  assert.equal(playGuide(parent,[child]).approach.recordId,child.id);
+  assert.match(reportView(parent,[parent]),/data-action="approach" data-table="toxic-globe"/);
+  const opened=reportView(parent,[parent,child]);
+  assert.match(opened,/다가간 결과 열기/);
+  assert.doesNotMatch(opened,/data-action="approach"/);
+});

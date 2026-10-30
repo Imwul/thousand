@@ -1,5 +1,6 @@
 import {newCampaign,normalizeContext,normalizeOptions} from '../domain/model.js';
 import {PAPER_CHECKS,sanitizePaper,sanitizeRecent} from '../domain/desk.js';
+import {copyLine} from '../domain/play.js';
 export const DATABASE_NAME='thousand-worlds-logbook';
 const req = request => new Promise((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error??new Error('저장 요청에 실패했습니다.'));});
 function done(tx) {return new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error??new Error('저장 작업이 중단되었습니다.'));tx.onerror=()=>reject(tx.error??new Error('저장 공간에 기록할 수 없습니다.'));});}
@@ -85,7 +86,10 @@ export function makeBackup(campaigns,records){return {format:'thousand-worlds-lo
 export function recordsMarkdown(campaign,records){
   const lines=[`# ${campaign.name}`,'',`Across a Thousand Dead Worlds · ${new Date().toISOString().slice(0,10)}`,''];
   for(const r of [...records].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))){
-    lines.push(`## ${r.title}: ${r.headline}`,'',r.subline,'',`생성: ${r.createdAt} / 규칙: ${r.rulesVersion}`,'');
+    lines.push(`## ${r.title}: ${r.headline}`,'',r.subline,'');
+    const paperLine=copyLine(r);
+    if(paperLine)lines.push(paperLine,'');
+    lines.push(`생성: ${r.createdAt} / 규칙: ${r.rulesVersion}`,'');
     for(const i of r.items)lines.push(`- **${i.title}**: ${i.text}${i.detail?` — ${i.detail}`:''} (p.${[i.page].flat().join(', ')})`);
     lines.push('','주사위: '+r.trace.map(t=>`${t.title} ${t.notation} [${t.values.join(',')}]=${t.value}${t.discarded?' (재굴림 제외)':''}`).join(' / '),'');
     if(r.aside&&r.options?.question)lines.push(`곁질문: ${r.options.question}`,'');

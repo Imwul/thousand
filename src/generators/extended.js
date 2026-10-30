@@ -66,7 +66,9 @@ function planet(r,run){
   r.table('planet-diameter','행성');r.table('atmosphere','행성');r.table('climate','행성');
   const single=r.table('single-biome','생물군계'),biome=r.table('landing-biome','생물군계');
   r.table('sky','첫인상');r.table('daylight','낮·밤 길이');r.table('activity','생물군계 활동도');
-  run.headline=name;run.subline=biome.row.text;run.adopt={location:'planet',biome:biome.value,singleBiome:single.value>=9};run.generatedName=name;
+  const hex=r.raw('landing-hex','착륙 칸',100,190);
+  r.item('착륙 칸',String(hex),190,{roll:hex,dice:'d100',group:'생물군계',detail:'이 생물군계 100칸 중 착륙한 칸.'});
+  run.headline=name;run.subline=`${biome.row.text} · 착륙 칸 ${hex}`;run.adopt={location:'planet',biome:biome.value,singleBiome:single.value>=9};run.generatedName=name;
   run.notes.push('최초 착륙 생물군계는 D10, 인접 생물군계는 D12입니다. 단일 생물군계 행성에서는 경계에서 바꾸지 않습니다. 대기 밀도가 적당해도 마스크 없이 호흡할 수 있다는 뜻은 아닙니다.');
 }
 function hex(r,run,hooks){
@@ -91,7 +93,7 @@ function hex(r,run,hooks){
       else if(c.biome===1)hooks.encounter(r,run,{forcedType:'Guardian',ignoreHazard:true,location:'planet'});
       else {const type=r.table('planet-encounter','조우');if(type.value<=6)hooks.encounter(r,run,{ignoreHazard:true,location:'planet'});else r.table('close-encounter','가까운 목격');}
     }
-    if(c.biome===7&&hazard.value===7)run.notes.push('금속 구체는 접근을 선택한 다음 「독성 지대의 금속 구체」 표를 굴립니다. 지금은 열지 않았습니다.');
+    if(c.biome===7&&hazard.value===7)run.notes.push('금속 구체는 다가간다고 선택한 뒤에만 굴립니다. 보고서 위의 버튼이 그 표입니다.');
   }else if(e.value===10)run.notes.push('Àrsaidh 탐사지를 발견했습니다. 「목적지 도착」의 도착표를 다시 굴리는 대신 시설 용도·규모·위험을 직접 생성해 탐사를 시작하세요.');
   if(run.options.sights)r.table(`biome-sights-${c.biome}`,'5헥스마다 보는 풍경');
   run.subline=`${tables['landing-biome'].rows[c.biome-1].text} · ${c.biome===10?'수중 이동':tables[`terrain-${c.terrain}`].title}`;

@@ -1,5 +1,6 @@
 import {PROCEDURES,ODDS,SLOT_COUNTS} from '../domain/model.js';
-import {PAPER_CHECKS,nextStepIds} from '../domain/desk.js';
+import {PAPER_CHECKS} from '../domain/desk.js';
+import {PROCEDURE_GROUPS,guideNext,playGuide} from '../domain/play.js';
 import {tables,tableList,CATEGORIES} from '../data/tables.js';
 import {icon,esc} from './icons.js';
 import {localizeRecord} from '../data/localization.js';
@@ -14,12 +15,17 @@ function assetPath(path){
 }
 function checked(v){return v?'checked':'';}
 function selected(a,b){return a===b?'selected':'';}
-export function procedureList(current,{compact=false,recent=[]}={}){
-  const extra=PROCEDURES.slice(10).find(p=>p.id===current);
-  const button=(p,extraClass='')=>`<button class="procedure${extraClass?` ${extraClass}`:''} ${current===p.id?'is-active':''}" data-action="procedure" data-id="${p.id}" aria-pressed="${current===p.id}"><span class="procedure-code" aria-hidden="true">${String(PROCEDURES.indexOf(p)+1).padStart(2,'0')}</span><span><strong>${p.name}</strong><small>${p.en}</small></span><span class="procedure-mark" aria-hidden="true">${current===p.id?'●':''}</span></button>`;
+export function procedureList(current,{recent=[],openGroups=[]}={}){
+  const button=(p,extraClass='')=>`<button type="button" class="procedure${extraClass?` ${extraClass}`:''} ${current===p.id?'is-active':''}" data-action="procedure" data-id="${p.id}" aria-pressed="${current===p.id}"><span class="procedure-code" aria-hidden="true">${String(PROCEDURES.indexOf(p)+1).padStart(2,'0')}</span><span><strong>${p.name}</strong><small>${p.en}</small></span><span class="procedure-mark" aria-hidden="true">${current===p.id?'●':''}</span></button>`;
   const chips=recent.map(id=>PROCEDURES.find(p=>p.id===id)).filter(Boolean);
   const recentHtml=chips.length?`<div class="recent-procedures"><span class="recent-label">최근</span>${chips.map(p=>button(p,'procedure-recent')).join('')}</div>`:'';
-  return recentHtml+PROCEDURES.slice(0,10).map(p=>button(p)).join('')+`<details class="more-procedures" ${extra&&!compact?'open':''}><summary>${extra&&compact?esc(extra.name)+' · 다른 상황':'더 많은 상황'} ${icon('chevron',16)}</summary><div class="extra-procedures">${PROCEDURES.slice(10).map(p=>button(p)).join('')}</div></details>`;
+  const open=new Set(openGroups);
+  const groups=PROCEDURE_GROUPS.map(group=>{
+    const procedures=group.ids.map(id=>PROCEDURES.find(p=>p.id===id)).filter(Boolean);
+    const expanded=open.has(group.id)||procedures.some(p=>p.id===current);
+    return `<details class="procedure-group" data-group="${group.id}"${expanded?' open':''}><summary><span>${esc(group.label)}</span><small>${procedures.length}</small>${icon('chevron',16)}</summary><div class="procedure-group-list">${procedures.map(p=>button(p)).join('')}</div></details>`;
+  }).join('');
+  return recentHtml+`<div class="procedure-groups">${groups}</div>`;
 }
 export function expeditionReadout(c,count=0){
   const size=tables.size.rows[c.size-1]?.text??String(c.size);
@@ -41,10 +47,12 @@ export function expeditionReadout(c,count=0){
   ];
   return `<button type="button" class="expedition-open" data-action="context" aria-label="탐사 맥락 수정">${cells.map(([en,ko,value])=>`<span class="expedition-cell"><small>${en}</small><b>${esc(ko)}</b><strong>${esc(value)}</strong></span>`).join('')}<span class="expedition-edit">맥락 수정</span></button>`;
 }
-export function nextStepView(procedureId){
-  const steps=nextStepIds(procedureId).map(id=>PROCEDURES.find(p=>p.id===id)).filter(Boolean);
+export function nextStepView(procedureId, run){
+  const matched=!!run&&run.procedureId===procedureId;
+  const steps=guideNext(procedureId, matched?run:null).map(id=>PROCEDURES.find(p=>p.id===id)).filter(Boolean);
   if(!steps.length)return '';
-  return `<section class="desk-card"><h3><span class="desk-kicker">Next</span>이어서 굴릴 상황</h3><div class="next-list">${steps.map(p=>`<button type="button" class="next-step" data-action="procedure" data-id="${p.id}"><span>${String(PROCEDURES.indexOf(p)+1).padStart(2,'0')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.en)}</small></span></button>`).join('')}</div><p class="desk-note">이미 있는 상황만 엽니다.</p></section>`;
+  const note=matched?'이 굴림에서 이어질 상황입니다. 이미 있는 절차만 엽니다.':'이미 있는 상황만 엽니다.';
+  return `<section class="desk-card"><h3><span class="desk-kicker">Next</span>이어서 굴릴 상황</h3><div class="next-list">${steps.map(p=>`<button type="button" class="next-step" data-action="procedure" data-id="${p.id}"><span>${String(PROCEDURES.indexOf(p)+1).padStart(2,'0')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.en)}</small></span></button>`).join('')}</div><p class="desk-note">${note}</p></section>`;
 }
 export function paperDesk(run){
   const on=new Set(run?.paper??[]);
@@ -77,7 +85,7 @@ export function optionFields(procedure,o,c){
   if(procedure==='inspiration')html=`<p class="option-explainer">행동과 주제를 각각 D100으로 굴립니다. 두 단어를 현재 장면에 연결해 보세요.</p><div class="word-pair-preview"><span>행동</span><b>+</b><span>주제</span></div>`;
   if(procedure==='door')html=`<p class="option-explainer">문 유형과 방화벽 수 두 개를 먼저 확인합니다. 안/밖을 선택한 다음 접근 노드를 굴립니다.</p><div class="rule-callout">문이 열리기 전에는<br>문 너머 결과를 공개하지 않습니다.</div>`;
   if(procedure==='resolution')html=`<p class="option-explainer">기술·능력치 판정 없이 행동의 결과를 정해야 할 때 사용합니다. D20 한 번으로 성공의 정도를 확인합니다.</p>`;
-  if(procedure==='planet')html=`<p class="option-explainer">행성 명칭·지름·대기·기후와 최초 착륙 생물군계를 한 번에 생성합니다. 최초 생물군계에는 D10을 씁니다.</p>`;
+  if(procedure==='planet')html=`<p class="option-explainer">행성 명칭·지름·대기·기후와 최초 착륙 생물군계를 한 번에 생성합니다. 최초 생물군계에는 D10을, 착륙 칸에는 D100을 씁니다.</p>`;
   if(procedure==='hex')html=`<p class="option-explainer">지형 변화, 추적 위협, 탐사 결과와 생물군계별 하위 표를 함께 확인합니다.</p><div class="context-summary"><span>${tables['landing-biome'].rows[c.biome-1].text}</span><span>이전 지형: ${['위험 지형','복잡 지형','생물 서식지','생물군계 의존','순탄한 길'][c.terrain]}</span></div><button class="text-button" type="button" data-action="context">생물군계·이전 지형 설정 ${icon('arrow',16)}</button>${toggle('sights','풍경도 생성','이동 5헥스마다 사용')}`;
   if(procedure==='creature')html=select('species','생물 유형',[['random','장소에 맞춰 굴리기'],['Guardian','Guardian'],['Aberration','Aberration'],['Synthetic','Synthetic'],['Local Fauna','Local Fauna']])+select('tier','생물 난도',[['easy','쉬움'],['standard','보통'],['elite','정예'],['overwhelming','압도적']])+select('guardianModel','Guardian일 때 사용할 모델',[['titan','Titan · Brute'],['anansi','Anansi · Lurker'],['arash','Arash · Ranged'],['brahmari','Brahmari · Swarm']])+toggle('randomIntelligence','지능도 무작위로','선택 규칙 · Guardian에는 적용하지 않음')+toggle('aquatic','수생 생물의 사지 사용');
   if(procedure==='npc-profile')html=`<p class="option-explainer">이름·성·연령·외형·성향·버릇·동기를 만들고, 수기 시트에 옮길 간소화한 NPC 대원 능력치와 재능도 생성합니다.</p>`;
@@ -106,12 +114,34 @@ export function emptyReport(procedure){
   const p=PROCEDURES.find(p=>p.id===procedure);
   return `<section class="empty-report"><div class="report-overline"><span>굴림 결과</span><span>대기 중</span></div><h2>${esc(p.name)}</h2><p>옵션을 설정하고 「굴리기」를 누르세요.</p></section>`;
 }
+function landingMap(cell){
+  const cells=Array.from({length:100},(_,index)=>{
+    const value=index+1;
+    return `<span class="hex-cell${value===cell?' is-land':''}" aria-hidden="true">${value}</span>`;
+  }).join('');
+  return `<figure class="landing-map"><figcaption>착륙 칸 ${cell} · 10칸씩 열 줄 · 왼쪽 위가 1. 책의 지도가 아니라 D100을 읽기 쉽게 놓은 칸입니다.</figcaption><div class="hex-grid" role="img" aria-label="100칸 중 ${cell}번 착륙">${cells}</div></figure>`;
+}
+function playBanner(run,records){
+  const guide=playGuide(run,records);
+  const acts=guide.acts.map(act=>`<li>${esc(act.text)}</li>`).join('');
+  const lock=run.pending?`<section class="lock-choice"><h3>접근 노드는 어디에 있을까요?</h3><p>방화벽 ${run.pending.lo}–${run.pending.hi} · ${run.pending.secure?'보안문 / D10 두 개 중 불리한 결과':'D10 한 개'}</p><div><button type="button" data-action="lock" data-value="inside">안쪽 선택 ${icon('dice',18)}</button><button type="button" data-action="lock" data-value="outside">바깥쪽 선택 ${icon('dice',18)}</button></div></section>`:'';
+  const hack=run.hacking?`<section class="hack-choice"><h3>허용된 재굴림 사용</h3><p>판정 성공이나 사이퍼(Cypher)로 얻은 횟수만큼만 사용하세요.</p><div>${run.hacking.values.map((value,index)=>`<button type="button" data-action="hack" data-value="${index}">${index+1}번 D6 <b>${value}</b></button>`).join('')}</div></section>`:'';
+  const approach=guide.approach?`<section class="approach-choice"><h3>금속 구체</h3><p>다가가기 전에는 이 표를 굴리지 않습니다. 원래 헥스 기록은 그대로 둡니다.</p>${guide.approach.recordId?`<button type="button" data-action="record" data-id="${esc(guide.approach.recordId)}">${esc(guide.approach.text)}</button>`:`<button type="button" data-action="approach" data-table="toxic-globe">${esc(guide.approach.text)}</button>`}</section>`:'';
+  const adopt=[
+    Number.isInteger(run.terrain)?`<button type="button" data-action="adopt-terrain" class="adopt-button">이 지형을 이전 헥스로 사용</button>`:'',
+    run.adopt?`<button type="button" data-action="adopt" class="adopt-button">${icon('arrival',18)} 이 장소를 현재 탐사 맥락으로 사용</button>`:'',
+    run.encounter?`<button type="button" data-action="adopt-encounter" class="adopt-button">${icon('npc',18)} ${run.encounter.slot}번 조우 슬롯에 이 유형 기록</button>`:''
+  ].join('');
+  const now=acts||lock||hack||approach||adopt?`<section class="play-now" aria-label="지금 할 일"><h3><span>Now</span>지금 할 일</h3>${acts?`<ul class="play-acts">${acts}</ul>`:''}${lock}${hack}${approach}${adopt}</section>`:'';
+  const copy=guide.copy?`<p class="copy-line"><span>종이에 옮길 줄</span>${esc(guide.copy)}</p>`:'';
+  return now+copy+(guide.landing?landingMap(guide.landing):'');
+}
 export function reportView(run,records,{unsaved=false,saving=false}={}){
   run=localizeRecord(run,tables);
   const groups=[...new Set(run.items.map(i=>i.group||'결과'))],parent=run.parentId?records.find(r=>r.id===run.parentId):null;
   const idx=records.filter(r=>r.campaignId===run.campaignId).sort((a,b)=>a.createdAt.localeCompare(b.createdAt)).findIndex(r=>r.id===run.id)+1;
   const time=new Date(run.createdAt).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-  return `<article class="report tone-${esc(run.tone)}" data-record-id="${esc(run.id)}"><div class="report-overline"><span>${esc(run.title)}<span class="report-number"> / ${String(idx||1).padStart(3,'0')}</span></span><span>${esc(time)}</span></div><header class="report-title ${run.headline.length>60?'long-headline':''}"><h2 tabindex="-1" id="result-headline">${esc(run.headline)}</h2><p>${esc(run.subline)}</p></header>${diceRibbon(run)}<div class="report-tools"><span class="record-state ${unsaved?'unsaved':''}">${icon(unsaved?'close':'check',14)}${unsaved?'저장 실패 · 결과는 화면에 유지 중':saving?'저장 중':'브라우저에 저장됨'}</span><div><button data-action="pin" class="tool-button ${run.pinned?'is-pinned':''}" aria-pressed="${run.pinned}">${icon('pin',16)}<span>${run.pinned?'고정됨':'고정'}</span></button><button data-action="copy" class="tool-button">${icon('copy',16)}<span>복사</span></button><button data-action="reroll" class="tool-button">${icon('dice',16)}<span>다시 굴림</span></button></div></div><div class="report-body">${parent?`<button class="parent-link" data-action="record" data-id="${esc(parent.id)}">${icon('history',15)} 이전 굴림에서 이어진 새 기록</button>`:''}${groups.map(group=>`<section class="result-section"><h3>${esc(group)}</h3><div class="result-grid">${run.items.filter(i=>(i.group||'결과')===group).map(i=>`<div class="result-item ${i.text.length>90?'long-result':''}"><div class="result-label"><span>${esc(i.title)}</span>${i.dice?`<span class="dice-value">${esc(i.dice)} <b>${esc(i.roll)}</b></span>`:''}</div><p class="result-text">${esc(i.text)}</p>${i.image?`<img class="source-diagram" src="${esc(assetPath(i.image))}" alt="${esc(i.title)} 원문 도해" loading="lazy">`:''}${i.en?`<span class="english-result">${esc(i.en)}</span>`:''}${i.detail?`<p class="result-detail">${esc(i.detail)}</p>`:''}<button class="source-link" data-action="${i.tableId?'table':'source-info'}" data-id="${esc(i.tableId??'')}" data-page="${esc([i.page].flat().join(', '))}">${pageLabel(i.page)} ${i.tableId?icon('book',12):''}</button>${sourceOriginal(i)}</div>`).join('')}</div></section>`).join('')}${run.pending?`<section class="lock-choice"><h3>접근 노드는 어디에 있을까요?</h3><p>방화벽 ${run.pending.lo}–${run.pending.hi} · ${run.pending.secure?'보안문 / D10 두 개 중 불리한 결과':'D10 한 개'}</p><div><button data-action="lock" data-value="inside">안쪽 선택 ${icon('dice',18)}</button><button data-action="lock" data-value="outside">바깥쪽 선택 ${icon('dice',18)}</button></div></section>`:''}${run.hacking?`<section class="hack-choice"><h3>허용된 재굴림 사용</h3><p>판정 성공이나 사이퍼(Cypher)로 얻은 횟수만큼만 사용하세요.</p><div>${run.hacking.values.map((value,index)=>`<button data-action="hack" data-value="${index}">${index+1}번 D6 <b>${value}</b></button>`).join('')}</div></section>`:''}${Number.isInteger(run.terrain)?`<button data-action="adopt-terrain" class="adopt-button">이 지형을 이전 헥스로 사용</button>`:''}${run.adopt?`<button data-action="adopt" class="adopt-button">${icon('arrival',18)} 이 장소를 현재 탐사 맥락으로 사용</button>`:''}${run.encounter?`<button data-action="adopt-encounter" class="adopt-button">${icon('npc',18)} ${run.encounter.slot}번 조우 슬롯에 이 유형 기록</button>`:''}${run.notes.length?`<details class="rules-notes"><summary>종이에 기록할 효과·다음 행동 ${icon('chevron',16)}</summary><ul>${run.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></details>`:''}<details class="roll-trace"><summary>굴림 근거 <span>${run.trace.reduce((n,t)=>n+t.values.length,0)}개 주사위</span>${icon('chevron',16)}</summary><div class="trace-list">${run.trace.map(t=>`<div class="${t.discarded?'discarded':''}"><span>${esc(t.title)}${t.discarded?' · 조건에 따라 재굴림':''}</span><b>${esc(t.notation)} [${t.values.join(', ')}] = ${t.value}</b><small>${pageLabel(t.page)}</small></div>`).join('')}</div></details><label class="memo-label" for="record-memo">나의 해석·메모 <span id="memo-status"></span></label><textarea id="record-memo" maxlength="10000" rows="3" placeholder="해석이나 추가 상황 기록">${esc(run.memo)}</textarea></div><footer class="report-footer"><span>Across a Thousand Dead Worlds · Core 2024</span><span>개인 탐사 기록</span></footer></article>`;
+  return `<article class="report tone-${esc(run.tone)}" data-record-id="${esc(run.id)}"><div class="report-overline"><span>${esc(run.title)}<span class="report-number"> / ${String(idx||1).padStart(3,'0')}</span></span><span>${esc(time)}</span></div><header class="report-title ${run.headline.length>60?'long-headline':''}"><h2 tabindex="-1" id="result-headline">${esc(run.headline)}</h2><p>${esc(run.subline)}</p></header>${playBanner(run,records)}${diceRibbon(run)}<div class="report-tools"><span class="record-state ${unsaved?'unsaved':''}">${icon(unsaved?'close':'check',14)}${unsaved?'저장 실패 · 결과는 화면에 유지 중':saving?'저장 중':'브라우저에 저장됨'}</span><div><button data-action="pin" class="tool-button ${run.pinned?'is-pinned':''}" aria-pressed="${run.pinned}">${icon('pin',16)}<span>${run.pinned?'고정됨':'고정'}</span></button><button data-action="copy" class="tool-button">${icon('copy',16)}<span>복사</span></button><button data-action="reroll" class="tool-button">${icon('dice',16)}<span>다시 굴림</span></button></div></div><div class="report-body">${parent?`<button class="parent-link" data-action="record" data-id="${esc(parent.id)}">${icon('history',15)} 이전 굴림에서 이어진 새 기록</button>`:''}${groups.map(group=>`<section class="result-section"><h3>${esc(group)}</h3><div class="result-grid">${run.items.filter(i=>(i.group||'결과')===group).map(i=>`<div class="result-item ${i.text.length>90?'long-result':''}"><div class="result-label"><span>${esc(i.title)}</span>${i.dice?`<span class="dice-value">${esc(i.dice)} <b>${esc(i.roll)}</b></span>`:''}</div><p class="result-text">${esc(i.text)}</p>${i.image?`<img class="source-diagram" src="${esc(assetPath(i.image))}" alt="${esc(i.title)} 원문 도해" loading="lazy">`:''}${i.en?`<span class="english-result">${esc(i.en)}</span>`:''}${i.detail?`<p class="result-detail">${esc(i.detail)}</p>`:''}<button class="source-link" data-action="${i.tableId?'table':'source-info'}" data-id="${esc(i.tableId??'')}" data-page="${esc([i.page].flat().join(', '))}">${pageLabel(i.page)} ${i.tableId?icon('book',12):''}</button>${sourceOriginal(i)}</div>`).join('')}</div></section>`).join('')}${run.notes.length?`<details class="rules-notes"><summary>종이에 기록할 효과·다음 행동 ${icon('chevron',16)}</summary><ul>${run.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></details>`:''}<details class="roll-trace"><summary>굴림 근거 <span>${run.trace.reduce((n,t)=>n+t.values.length,0)}개 주사위</span>${icon('chevron',16)}</summary><div class="trace-list">${run.trace.map(t=>`<div class="${t.discarded?'discarded':''}"><span>${esc(t.title)}${t.discarded?' · 조건에 따라 재굴림':''}</span><b>${esc(t.notation)} [${t.values.join(', ')}] = ${t.value}</b><small>${pageLabel(t.page)}</small></div>`).join('')}</div></details><label class="memo-label" for="record-memo">나의 해석·메모 <span id="memo-status"></span></label><textarea id="record-memo" maxlength="10000" rows="3" placeholder="해석이나 추가 상황 기록">${esc(run.memo)}</textarea></div><footer class="report-footer"><span>Across a Thousand Dead Worlds · Core 2024</span><span>개인 탐사 기록</span></footer></article>`;
 }
 export function historyCards(records,currentId,limit=12){
   if(!records.length)return `<div class="history-empty"><p>저장된 굴림이 없습니다.</p></div>`;

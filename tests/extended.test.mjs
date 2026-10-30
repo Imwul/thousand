@@ -37,6 +37,19 @@ test('custom dice expressions calculate terms without evaluating executable inpu
 test('named sites keep leading zeros and the original out-of-order 94 and 95 labels',()=>{
   const r=make('site-name',{}, {},seq([100,94],[100,95],[100,9]));assert.equal(r.headline,'Xat-pha-056900');
 });
+test('planet generation records the landing hex on its own d100',()=>{
+  const low=make('planet',{},{},()=>0);
+  const hex=low.trace.find(t=>t.id==='landing-hex');
+  assert.equal(hex.notation,'d100');
+  assert.equal(hex.value,1);
+  assert.equal(hex.page,190);
+  assert.ok(low.items.some(i=>i.title==='착륙 칸'&&i.text==='1'&&i.roll===1&&i.dice==='d100'&&i.page===190));
+  assert.match(low.subline,/착륙 칸 1$/);
+  assert.equal(low.trace.find(t=>t.id==='landing-biome').notation,'d10');
+  const high=make('planet',{},{},()=>0.999);
+  assert.equal(high.trace.find(t=>t.id==='landing-hex').value,100);
+  assert.match(high.subline,/착륙 칸 100$/);
+});
 test('a negative creature attack modifier has one sign',()=>{
   let seed=9001+29*37;
   const rng=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
