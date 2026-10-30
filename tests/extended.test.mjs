@@ -13,7 +13,7 @@ test('easy terrain suppresses combat without revealing a hidden creature',()=>{
 });
 test('inhabited terrain forces local fauna and does not reuse an incompatible indoor slot',()=>{
   const r=make('hex',{}, {biome:2,terrain:2,knownThreats:false,hazard:4,slots:['Guardian','','','']},seq([20,1],[4,1],[20,1],[20,10],[10,3]));
-  assert.ok(r.items.some(i=>i.title==='생물 유형'&&i.text==='Local Fauna'));assert.ok(!r.items.some(i=>i.title==='생물 유형'&&i.text==='Aberration'));
+  assert.ok(r.items.some(i=>i.title==='생물 유형'&&i.key==='Local Fauna'&&i.text==='토착 생물(Local Fauna)'));assert.ok(!r.items.some(i=>i.title==='생물 유형'&&i.key==='Aberration'));
 });
 test('the ambiguous printed emotion branch stops for a human choice',()=>{
   const r=make('emotion',{moodDepth:3},{},seq([8,8],[8,2]));assert.equal(r.trace.length,2);assert.ok(r.notes.some(n=>n.includes('모두 1–2')));
@@ -41,5 +41,5 @@ test('a negative creature attack modifier has one sign',()=>{
   let seed=9001+29*37;
   const rng=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
   const r=make('creature',{species:'Local Fauna',tier:'standard',randomIntelligence:true,aquatic:true},{crew:5},rng);
-  assert.match(r.items.find(i=>i.title==='공격과 피해').text,/^Attack -3 \/ /);
+  assert.match(r.items.find(i=>i.title==='공격과 피해').text,/^공격 -3 \/ /);
 });

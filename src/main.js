@@ -4,6 +4,7 @@ import {runProcedure,runLockAttempt,runHackReroll} from './generators/procedures
 import {openStore,makeBackup,validateBackup,recordsMarkdown} from './storage/store.js';
 import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView} from './components/render.js';
 import {icon,esc} from './components/icons.js';
+import {localizeRecord} from './data/localization.js';
 
 const $=s=>document.querySelector(s);
 const state={db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50};
@@ -43,7 +44,7 @@ function updateRecordStatus(){
 }
 function renderHistory(){
   const all=ownRecords(),q=state.historyQuery.toLowerCase();
-  const filtered=all.filter(r=>(state.filter==='all'||r.pinned)&&`${r.title} ${r.headline} ${r.subline} ${r.memo}`.toLowerCase().includes(q));
+  const filtered=all.filter(r=>{const v=localizeRecord(r,tables);return (state.filter==='all'||r.pinned)&&`${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline}`.toLowerCase().includes(q);});
   $('#history-count').textContent=all.length;$('#total-count').textContent=all.length;
   $('#history-list').innerHTML=filtered.length?historyCards(filtered,state.currentId):all.length?'<p class="no-results">일치하는 기록이 없습니다.</p>':historyCards([],null);
   document.querySelector('[data-action="filter-all"]').classList.toggle('selected',state.filter==='all');
@@ -113,7 +114,7 @@ function historyDialog(){
 function renderHistoryDialog(){
   if(state.modal!=='history')return;
   const q=($('#all-history-search')?.value??'').toLowerCase(),pinned=$('#all-history-pinned')?.checked;
-  const records=ownRecords().filter(r=>(!pinned||r.pinned)&&`${r.title} ${r.headline} ${r.subline} ${r.memo}`.toLowerCase().includes(q));
+  const records=ownRecords().filter(r=>{const v=localizeRecord(r,tables);return (!pinned||r.pinned)&&`${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline}`.toLowerCase().includes(q);});
   $('#all-history-list').innerHTML=records.length?historyCards(records,state.currentId,state.historyLimit):'<p class="no-results">찾는 기록이 없습니다.</p>';
   $('#history-more').innerHTML=records.length>state.historyLimit?`<button class="secondary" data-action="more-history">50개 더 보기 (${Math.min(state.historyLimit,records.length)}/${records.length})</button>`:'';
 }
@@ -168,7 +169,7 @@ document.addEventListener('click',async event=>{
       await enqueue(async()=>{if(!state.db)throw new Error('고정 상태를 저장할 수 없습니다.');if(!state.persisted.has(r.id)){await state.db.saveRecord(r);state.persisted.add(r.id);}else await state.db.annotateRecord(r.id,{pinned:r.pinned,memo:r.memo});state.unsaved.delete(r.id);},()=>state.unsaved.add(r.id));
     }
     else if(action==='copy'){
-      const r=current(),text=recordsMarkdown(campaign(),[r]);
+      const r=current(),text=recordsMarkdown(campaign(),[localizeRecord(r,tables)]);
       try{await navigator.clipboard.writeText(text);message('보고서와 주사위 근거를 복사했습니다.');}
       catch{showDialog('보고서 복사',`<p class="field-help">브라우저가 자동 복사를 허용하지 않았습니다. 아래 내용을 선택해 복사하세요.</p><textarea rows="12" readonly id="copy-text">${esc(text)}</textarea>`);$('#copy-text').select();}
     }
@@ -189,7 +190,7 @@ document.addEventListener('click',async event=>{
       await flushMemo();await flushOptions();download(`thousand-worlds-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(makeBackup(state.campaigns,state.records),null,2));message('전체 기록의 JSON 백업을 내려받았습니다.');
     }
     else if(action==='export-md'){
-      await flushMemo();download(`thousand-worlds-log-${new Date().toISOString().slice(0,10)}.md`,recordsMarkdown(campaign(),ownRecords()),'text/markdown;charset=utf-8');
+      await flushMemo();download(`thousand-worlds-log-${new Date().toISOString().slice(0,10)}.md`,recordsMarkdown(campaign(),ownRecords().map(r=>localizeRecord(r,tables))),'text/markdown;charset=utf-8');
     }
     else if(action==='import-json'){
       if(!state.backup||!state.db)return;button.disabled=true;
@@ -203,7 +204,7 @@ document.addEventListener('click',async event=>{
       c.context.slots[r.encounter.slot-1]=r.encounter.label;if(!await saveCampaign())return;renderControls();message(`${r.encounter.slot}번 슬롯에 유형을 기록했습니다.`);
     }
     else if(action==='source-info')showDialog('원문 확인',`<p class="about-copy">이 결과의 규칙은 제공하신 Core Rulebook의 p. ${esc(button.dataset.page)}를 사용합니다. 원본 PDF는 앱에 업로드하거나 포함하지 않았습니다.</p>`);
-    else if(action==='about')showDialog('규칙·사용 안내',`<div class="about-copy"><p>종이 캐릭터 시트 옆에 펼쳐 두는 <strong>Across a Thousand Dead Worlds</strong> 개인용 오라클 작업대입니다.</p><ul><li>상황을 선택하고 「굴리기」를 누르면 필요한 하위 표까지 한 보고서로 펼칩니다.</li><li>모든 새 결과는 이 브라우저에 자동 보관합니다. 「다시 굴림」은 이전 값을 보존한 새 기록입니다.</li><li>현재 맥락은 결과 생성에 필요한 값만 사용합니다. Wounds·Stress·소지품과 시간트랙은 종이에 기록하세요.</li><li>장면 종료 시 통제를 잃었다면 반전 확률을 올리고, 수기 시간트랙 초기화 때 1/6로 되돌리세요.</li></ul><p>2024 Core Rulebook의 기본 플레이용 ${tableList.length}개 표를 제공합니다. 솔로 GM·탐사지·행성·인물·생물·전투·정신 상태·항해·정거장·캐릭터 생성 표를 한글 요약과 원문 영문으로 함께 보관했습니다. 수록 시나리오 전용 표는 제외했습니다. 원문 범위가 겹치는 감정 하위 표 1개는 직접 선택하도록 남겼고, 잘못 인쇄된 낮·밤 길이 값도 추정하지 않았습니다.</p><p>「반반」은 책의 기준인 D20 10 이상(55%)을 그대로 사용합니다. 돌발사건은 D8 두 개의 행·열 선택입니다. 자동 보안은 D10 표의 이름을 기준으로 본문 효과를 연결했습니다.</p><p>PC와 3440px 화면, 모바일을 지원합니다. ⌘/Ctrl+Enter: 굴리기, ⌘/Ctrl+K: 표 검색. 모든 기록은 브라우저에 저장되며 로그인만으로 기기 간 동기화되지 않습니다.</p><p>비공식 개인용 팬 도구. 원작 © Blackoath Entertainment. <a href="https://blackoathgames.com/across-a-thousand-dead-worlds" target="_blank" rel="noopener noreferrer">공식 게임 소개</a></p></div>`,{type:'about'});
+    else if(action==='about')showDialog('규칙·사용 안내',`<div class="about-copy"><p>종이 캐릭터 시트 옆에 펼쳐 두는 <strong>Across a Thousand Dead Worlds</strong> 개인용 오라클 작업대입니다.</p><ul><li>상황을 선택하고 「굴리기」를 누르면 필요한 하위 표까지 한 보고서로 펼칩니다.</li><li>모든 새 결과는 이 브라우저에 자동 보관합니다. 「다시 굴림」은 이전 값을 보존한 새 기록입니다.</li><li>현재 맥락은 결과 생성에 필요한 값만 사용합니다. Wounds·Stress·소지품과 시간트랙은 종이에 기록하세요.</li><li>장면 종료 시 통제를 잃었다면 반전 확률을 올리고, 수기 시간트랙 초기화 때 1/6로 되돌리세요.</li></ul><p>2024 Core Rulebook의 기본 플레이용 ${tableList.length}개 표를 제공합니다. 솔로 GM·탐사지·행성·인물·생물·전투·정신 상태·항해·정거장·캐릭터 생성 표를 한국어로 번역했습니다. 인명·지명·기업명은 원문을 유지하며 생물명은 한글과 원문을 병기합니다. 수록 시나리오 전용 표는 제외했습니다. 원문 범위가 겹치는 감정 하위 표 1개는 직접 선택하도록 남겼고, 잘못 인쇄된 낮·밤 길이 값도 추정하지 않았습니다.</p><p>「반반」은 책의 기준인 D20 10 이상(55%)을 그대로 사용합니다. 돌발사건은 D8 두 개의 행·열 선택입니다. 자동 보안은 D10 표의 이름을 기준으로 본문 효과를 연결했습니다.</p><p>PC와 3440px 화면, 모바일을 지원합니다. ⌘/Ctrl+Enter: 굴리기, ⌘/Ctrl+K: 표 검색. 모든 기록은 브라우저에 저장되며 로그인만으로 기기 간 동기화되지 않습니다.</p><p>비공식 개인용 팬 도구. 원작 © Blackoath Entertainment. <a href="https://blackoathgames.com/across-a-thousand-dead-worlds" target="_blank" rel="noopener noreferrer">공식 게임 소개</a></p></div>`,{type:'about'});
   }catch(e){message(e.message||'작업을 완료하지 못했습니다.',true);}
 });
 document.addEventListener('submit',async event=>{

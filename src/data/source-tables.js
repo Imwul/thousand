@@ -7790,126 +7790,126 @@ export const sourceTables = [
         "max": 11,
         "text": "Immune",
         "id": "enemy-ability.11",
-        "detail": "Active · The creature spits an acidic substance against its opponent. The attack deals 2D12 damage on a hit and has a 50% chance to destroy a piece of the target’s equipped gear."
+        "detail": "Passive · This creature is immune to the effects of heat, cold and even radiation."
       },
       {
         "min": 2,
         "max": 2,
         "text": "Acid Spray",
         "id": "enemy-ability.2",
-        "detail": "Passive · This creature’s hard carapace grants it +3 Armor."
+        "detail": "Active · The creature spits an acidic substance against its opponent. The attack deals 2D12 damage on a hit and has a 50% chance to destroy a piece of the target’s equipped gear."
       },
       {
         "min": 12,
         "max": 12,
         "text": "Infectious",
         "id": "enemy-ability.12",
-        "detail": "Active · If the creature passes a skill check, it makes a wide attack that hits all opponents in range, dealing 2D10 damage."
+        "detail": "Passive · All Wounds caused by this creature become Infected."
       },
       {
         "min": 3,
         "max": 3,
         "text": "Carapace",
         "id": "enemy-ability.3",
-        "detail": "Passive · This creature can crawl on any surface—even walls or ceilings—allowing it to potentially be out of range from most Melee weapons."
+        "detail": "Passive · This creature’s hard carapace grants it +3 Armor."
       },
       {
         "min": 13,
         "max": 13,
         "text": "Metallic Claws",
         "id": "enemy-ability.13",
-        "detail": "Active · The creature emits a sudden, bright flash, blinding any opponent situated in front of it for D4 rounds."
+        "detail": "Passive · This creature deals an extra +1D4 damage per melee attack."
       },
       {
         "min": 4,
         "max": 4,
         "text": "Cleave/Spread Shot",
         "id": "enemy-ability.4",
-        "detail": "Active · The creature aims an attack at the target’s neck. This might be a bite in melee or a called shot at range. If successful, the target immediately receives 1 Wound, and the creature heals 1 Wound. / / E n e m y A b i l i t i e s"
+        "detail": "Active · If the creature passes a skill check, it makes a wide attack that hits all opponents in range, dealing 2D10 damage."
       },
       {
         "min": 14,
         "max": 14,
         "text": "Paralyzing Bite/Shot",
         "id": "enemy-ability.14",
-        "detail": "Active · This creature entangles its target (with tentacles, a web-like substance or plant-like tendrils). To escape, the entangled target must perform a DEX check every round until freed or cut out by someone else."
+        "detail": "Active · The creature has an attack that forces the target to make a CON (-5) check or be paralyzed for D4 rounds."
       },
       {
         "min": 5,
         "max": 5,
         "text": "Crawler",
         "id": "enemy-ability.5",
-        "detail": "Passive · After being dealt a fatal wound, this creature explodes dealing D20 damage for 30’ in all directions."
+        "detail": "Passive · This creature can crawl on any surface—even walls or ceilings—allowing it to potentially be out of range from most Melee weapons."
       },
       {
         "min": 15,
         "max": 15,
         "text": "Putrid",
         "id": "enemy-ability.15",
-        "detail": "Active · The creature sprays its opponent with a flammable chemical substance that ignites when it comes into contact with oxygen (only works in oxygenated environments). It attacks as normal, but instead of dealing damage, its opponent receives the Burning condition."
+        "detail": "Passive · Each time this creature deals damage, its target loses 1 CON. This loss persists until healed with a Medical Aid check."
       },
       {
         "min": 6,
         "max": 6,
         "text": "Dazzle",
         "id": "enemy-ability.6",
-        "detail": "Passive · This creature is immune to the effects of heat, cold and even radiation."
+        "detail": "Active · The creature emits a sudden, bright flash, blinding any opponent situated in front of it for D4 rounds."
       },
       {
         "min": 16,
         "max": 16,
         "text": "Rebirth",
         "id": "enemy-ability.16",
-        "detail": "Passive · All Wounds caused by this creature become Infected."
+        "detail": "Passive · After being killed, the creature partially regenerates and now has one Wound left. Only works once."
       },
       {
         "min": 7,
         "max": 7,
         "text": "Drain",
         "id": "enemy-ability.7",
-        "detail": "Passive · This creature deals an extra +1D4 damage per melee attack."
+        "detail": "Active · The creature aims an attack at the target’s neck. This might be a bite in melee or a called shot at range. If successful, the target immediately receives 1 Wound, and the creature heals 1 Wound."
       },
       {
         "min": 17,
         "max": 17,
         "text": "Regenerate",
         "id": "enemy-ability.17",
-        "detail": "Active · The creature has an attack that forces the target to make a CON (-5) check or be paralyzed for D4 rounds."
+        "detail": "Active · If the creature has received a Wound, it spends this turn healing it."
       },
       {
         "min": 8,
         "max": 8,
         "text": "Entangle",
         "id": "enemy-ability.8",
-        "detail": "Passive · Each time this creature deals damage, its target loses 1 CON. This loss persists until healed with a Medical Aid check."
+        "detail": "Active · This creature entangles its target (with tentacles, a web-like substance or plant-like tendrils). To escape, the entangled target must perform a DEX check every round until freed or cut out by someone else."
       },
       {
         "min": 18,
         "max": 18,
         "text": "Tough",
         "id": "enemy-ability.18",
-        "detail": "Passive · After being killed, the creature partially regenerates and now has one Wound left. Only works once."
+        "detail": "Passive · This creature is immune to Critical Hits."
       },
       {
         "min": 9,
         "max": 9,
         "text": "Explosive",
         "id": "enemy-ability.9",
-        "detail": "Active · If the creature has received a Wound, it spends this turn healing it."
+        "detail": "Passive · After being dealt a fatal wound, this creature explodes dealing D20 damage for 30’ in all directions."
       },
       {
         "min": 19,
         "max": 19,
         "text": "Uncanny Speed",
         "id": "enemy-ability.19",
-        "detail": "Passive · This creature is immune to Critical Hits."
+        "detail": "Active · For 1 Turn after activating this ability, the creature is completely immune to ranged attacks."
       },
       {
         "min": 10,
         "max": 10,
         "text": "Flame Attack",
         "id": "enemy-ability.10",
-        "detail": "Active · For 1 Turn after activating this ability, the creature is completely immune to ranged attacks."
+        "detail": "Active · The creature sprays its opponent with a flammable chemical substance that ignites when it comes into contact with oxygen (only works in oxygenated environments). It attacks as normal, but instead of dealing damage, its opponent receives the Burning condition."
       },
       {
         "min": 20,
@@ -7943,56 +7943,56 @@ export const sourceTables = [
         "max": 6,
         "text": "Mind Lash",
         "id": "psychic-ability.6",
-        "detail": "Active · The creature attempts to control the actions of its target. The target must pass a WIL check to avoid being controlled. A controlled creature may only attempt to free themselves every 2 rounds."
+        "detail": "Active · The creature assaults its target’s mind—pass a WIL check or be Knocked Down."
       },
       {
         "min": 2,
         "max": 2,
         "text": "Control",
         "id": "psychic-ability.2",
-        "detail": "Passive · Any character in combat against this creature gains 1 Stress/round."
+        "detail": "Active · The creature attempts to control the actions of its target. The target must pass a WIL check to avoid being controlled. A controlled creature may only attempt to free themselves every 2 rounds."
       },
       {
         "min": 7,
         "max": 7,
         "text": "Organize",
         "id": "psychic-ability.7",
-        "detail": "Active · The creature triggers a roll on the Dread table."
+        "detail": "Passive · This creature grants +2 Attack skill and +1 WIL to all surrounding creatures (except the PCs)."
       },
       {
         "min": 3,
         "max": 3,
         "text": "Distressing",
         "id": "psychic-ability.3",
-        "detail": "Active · The creature causes all characters within 30’ to gain 5 Stress."
+        "detail": "Passive · Any character in combat against this creature gains 1 Stress/round."
       },
       {
         "min": 8,
         "max": 8,
         "text": "Stun",
         "id": "psychic-ability.8",
-        "detail": "Active · The creature assaults its target’s mind—pass a WIL check or be Knocked Down."
+        "detail": "Active · This attack stuns the target for D4 rounds (has 50% Stamina, can only take actions to move)."
       },
       {
         "min": 4,
         "max": 4,
         "text": "Dread",
         "id": "psychic-ability.4",
-        "detail": "Passive · This creature grants +2 Attack skill and +1 WIL to all surrounding creatures (except the PCs)."
+        "detail": "Active · The creature triggers a roll on the Dread table."
       },
       {
         "min": 9,
         "max": 9,
         "text": "Suffocate",
         "id": "psychic-ability.9",
-        "detail": "Active · This attack stuns the target for D4 rounds (has 50% Stamina, can only take actions to move)."
+        "detail": "Active · The target suffers the effects of Suffocation (page 90)."
       },
       {
         "min": 5,
         "max": 5,
         "text": "Inspire Terror",
         "id": "psychic-ability.5",
-        "detail": "Active · The target suffers the effects of Suffocation (page 90)."
+        "detail": "Active · The creature causes all characters within 30’ to gain 5 Stress."
       },
       {
         "min": 10,

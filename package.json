@@ -8,6 +8,7 @@
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs",
     "audit:play": "node scripts/audit-play.mjs",
+    "audit:ko": "node scripts/audit-localization.mjs",
     "preview": "node scripts/serve.mjs --production"
   },
   "engines": {

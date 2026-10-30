@@ -2,6 +2,7 @@ import {tables,RULES_VERSION} from '../data/tables.js';
 import {ODDS,PROCEDURES,SLOT_COUNTS,normalizeContext,normalizeOptions} from '../domain/model.js';
 import {die,rollDice,lookup,random} from './dice.js';
 import {runExtended} from './extended.js';
+import {creatureLabel} from '../data/glossary.js';
 
 function createRun(procedureId,context,options,campaignId,parentId) {
   return {id:crypto.randomUUID(),campaignId,procedureId,createdAt:new Date().toISOString(),parentId:parentId??null,
@@ -21,7 +22,7 @@ function runner(run,rng) {
       const t=tables[id];if(!t)throw new Error('해당 표를 찾을 수 없습니다.');if(t.rollable===false)throw new Error(t.sourceNote||'원문의 범위를 먼저 확인하세요.');
       const rolled=rollDice(t.dice,rng),row=lookup(t,rolled.value);
       run.trace.push({id,title:t.title,page:t.page,...rolled});
-      run.items.push({title:t.title,text:row.text,detail:row.detail??'',en:row.en??'',page:row.page??t.page,tableId:id,roll:rolled.value,dice:t.dice,values:rolled.values,group,...(row.image?{image:row.image}:{})});
+      run.items.push({title:t.title,text:row.text,key:row.key,detail:row.detail??'',en:row.en??'',...(row.sourceText?{sourceText:row.sourceText}:{}),page:row.page??t.page,tableId:id,roll:rolled.value,dice:t.dice,values:rolled.values,group,...(row.image?{image:row.image}:{})});
       return {value:rolled.value,row};
     },
     check(id,title,percent,page,group='결과') {
@@ -44,14 +45,14 @@ function encounter(r,run,{forcedTier,forcedType,ignoreHazard=false,location}={})
   r.item(`조우 슬롯 ${slot}`,forcedType?'지형이 지정한 유형 사용':c.slots[slot-1]||'처음 만나는 유형',143,{group:'조우',detail:`이번 탐사 출발 정원 ${c.crew}명 기준. 동일 조우의 모든 개체는 같은 유형이다.`});
   if(c.slots[slot-1]&&!forcedType) return `${c.slots[slot-1]} · ${composition}`;
   let type;
-  if(forcedType){type=forcedType;r.item('생물 유형',type,193,{group:'조우',detail:'현재 지형·생물군계가 지정한 유형.'});}
-  else if(c.hazard===4&&!ignoreHazard) {type='Aberration';r.item('생물 유형',type,140,{group:'조우',detail:'주된 위험이 「괴물에게 점령됨」이므로 모든 조우는 Aberration.'});}
-  else type=r.table((location??c.location)==='planet'?'creature-planet':'creature-space','조우').row.text;
+  if(forcedType){type=forcedType;r.item('생물 유형',creatureLabel(type),193,{key:type,group:'조우',detail:'현재 지형·생물군계가 지정한 유형.'});}
+  else if(c.hazard===4&&!ignoreHazard) {type='Aberration';r.item('생물 유형',creatureLabel(type),140,{key:type,group:'조우',detail:'주된 위험이 「괴물에게 점령됨」이므로 모든 조우는 변이체(Aberration).'});}
+  else type=r.table((location??c.location)==='planet'?'creature-planet':'creature-space','조우').row.key;
   const size=r.table('creature-size','조우').row.text;
   if(type==='Aberration')run.notes.push('Aberration과 조우하면 Stress +5. 상세 능력치·특성은 룰북 p.270–289를 참조하세요.');
   else run.notes.push('생물의 상세 능력치·특성·역할은 룰북 p.270–299에서 정하세요.');
-  run.encounter={slot,label:`${type} · ${size}`};
-  return `${type} · ${composition}`;
+  run.encounter={slot,label:`${creatureLabel(type)} · ${size}`};
+  return `${creatureLabel(type)} · ${composition}`;
 }
 function dread(r,run) {const d=r.table('dread','공포');if(d.value===1)r.table('taint','공포');run.notes.push('지속 효과, 피해와 Stress는 종이 시트에 기록하세요. 조건이 충족된 경우에만 효과 주사위를 굴립니다.');return d.row.text;}
 function security(r,run) {

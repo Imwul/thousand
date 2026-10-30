@@ -1,4 +1,6 @@
 import {tables} from '../data/tables.js';
+import {creatureLabel,creatureName} from '../data/glossary.js';
+import {GUARDIANS,guardianItems} from '../data/guardians.js';
 
 const roles=['Brute','Lurker','Ranged','Swarm','Psychic'];
 const tierNames={easy:'쉬움',standard:'보통',elite:'정예',overwhelming:'압도적'};
@@ -10,17 +12,16 @@ const base={
 };
 export function creature(r,run){
   const o=run.options,c=run.context;
-  const type=o.species==='random'?r.table(c.location==='planet'?'creature-planet':'creature-space','생물 유형').row.text:o.species;
-  if(o.species!=='random')r.item('생물 유형',type,268,{group:'생물 유형',detail:'굴림 전 직접 선택한 유형.'});
+  const type=o.species==='random'?r.table(c.location==='planet'?'creature-planet':'creature-space','생물 유형').row.key:o.species;
+  if(o.species!=='random')r.item('생물 유형',creatureLabel(type),268,{key:type,group:'생물 유형',detail:'굴림 전 직접 선택한 유형.'});
   if(type==='Guardian'){
-    const models={titan:[293,'Titan','Brute'],anansi:[295,'Anansi','Lurker'],arash:[297,'Arash','Ranged'],brahmari:[299,'Brahmari','Swarm']};
-    const [page,name,role]=models[o.guardianModel];run.headline=`${name} · ${tierNames[o.tier]}`;run.subline=`Guardian / ${role} / 영역 지배`;
-    r.item('선택한 Guardian 모델',`${name} · ${tierNames[o.tier]}`,page,{image:`/maps/guardian-${page}.png`,group:'고정 능력치',detail:'아래 원문 블록에서 선택한 난도 행을 사용합니다. Guardian에는 일반 역할 보정·무작위 지능을 덧붙이지 않습니다.'});
-    run.notes.push('Guardian은 사기·정신 효과에 면역. 해킹해도 멈출 수 있을 뿐 조종할 수 없습니다(p.290).');return;
+    const g=GUARDIANS[o.guardianModel];run.headline=`${creatureLabel(g.name)} · ${tierNames[o.tier]}`;run.subline=`수호자(Guardian) / ${creatureLabel(g.role)} / 영역 지배`;
+    for(const {title,text,page,...extra} of guardianItems(o.guardianModel,o.tier))r.item(title,text,page,extra);
+    run.notes.push(`수호자는 사기·정신 효과에 면역입니다(p.268). 해킹하면 정지시킬 수 있지만 조종할 수는 없습니다. 해킹 판정 보정: ${{easy:'보통(+0)',standard:'까다로움(-5)',elite:'어려움(-10)',overwhelming:'거의 불가능(-15)'}[o.tier]}(p.290). 일반 생물의 역할 보정·무작위 지능을 추가하지 않습니다.`);return;
   }
   const size=r.table('creature-size','몸과 행동'),drive=r.table('creature-drive','몸과 행동');
-  const role=o.tier==='easy'&&c.crew===1?'Brute':r.table('creature-role','몸과 행동').row.text;
-  if(o.tier==='easy'&&c.crew===1)r.item('생물 역할','Brute',274,{group:'몸과 행동',detail:'1인 출발 탐사의 Easy 적은 항상 Brute.'});
+  const role=o.tier==='easy'&&c.crew===1?'Brute':r.table('creature-role','몸과 행동').row.key;
+  if(o.tier==='easy'&&c.crew===1)r.item('생물 역할',creatureLabel('Brute'),274,{key:'Brute',group:'몸과 행동',detail:'1인 출발 탐사의 쉬움 난도 적은 항상 돌격형(Brute).'});
   const stats={...base[o.tier]};let damageBonus=0,meleeBonus=0,rangedBonus=0,attack,damage;
   if(o.tier==='easy'){attack=2;damage='1d10+5';}
   else {
@@ -44,20 +45,20 @@ export function creature(r,run){
   const small=size.value<=3?-2:size.value<=8?-1:size.value<=16?0:size.value<=18?1:2;
   const statPage=o.tier==='easy'||o.tier==='standard'?272:273;
   r.item('기본 능력치',`STR ${stats.STR} / DEX ${stats.DEX} / CON ${stats.CON} / WIL ${stats.WIL} / INT ${stats.INT} / CHA ${stats.CHA}`,statPage,{group:'능력치',detail:'원문 난도 블록에 역할·고유 특성·선택한 지능 보정을 적용한 값.'});
-  r.item('전투 수치',`Wounds ${stats.Wounds} / Awareness ${stats.Awareness} / Armor ${stats.Armor} / Defense ${stats.Defense}`,statPage,{group:'능력치'});
+  r.item('전투 수치',`상처 ${stats.Wounds} / 경계 ${stats.Awareness} / 장갑 ${stats.Armor} / 방어 ${stats.Defense}`,statPage,{group:'능력치'});
   const extra=damageBonus?`${damageBonus>0?'+':''}${damageBonus}`:'';
   const penalty=['Swarm','Psychic'].includes(role)?'−1d10':'';
-  r.item('공격과 피해',`Attack ${attack>=0?'+':''}${attack} / 피해 ${damage}${extra}${penalty}`,statPage,{group:'능력치',detail:`근접에는 크기 보정 ${small>=0?'+':''}${small} 추가.${role==='Ranged'?` 근접 Attack ${meleeBonus}, 원거리 Attack +${rangedBonus}.`:''}${o.tier==='overwhelming'?' 매 턴 2회 공격.':''}`});
+  r.item('공격과 피해',`공격 ${attack>=0?'+':''}${attack} / 피해 ${damage}${extra}${penalty}`,statPage,{group:'능력치',detail:`근접에는 크기 보정 ${small>=0?'+':''}${small} 추가.${role==='Ranged'?` 근접 공격 ${meleeBonus}, 원거리 공격 +${rangedBonus}.`:''}${o.tier==='overwhelming'?' 매 턴 2회 공격.':''}`});
   if(!['Brute','Swarm'].includes(role)){const range=r.raw('creature-range','공격 사거리 D10',10,statPage)+(o.tier==='easy'?1:o.tier==='standard'?2:3);r.item('원거리 사거리',String(range),statPage,{group:'능력치'});}
   for(let i=0;i<Math.max(0,stats.abilities);i++)r.table(role==='Psychic'?'psychic-ability':'enemy-ability',`특수 능력 ${i+1}`);
   r.table('appearance','외형');r.table('covering','외형');r.table('unique-feature','외형');
   const limbs=r.table('limb-count','외형');
   if(limbs.value>1){if(o.aquatic)r.table('aquatic-limbs','외형');else{r.table('hindlimbs','외형');r.table('forelimbs','외형');}}
   r.table('mouth','외형');const eyes=r.table('eye-type','외형');if(eyes.value>2)r.table('eye-count','외형');
-  const n=r.table('name-syllables','이름').value,count=n<=2?1:n<=6?2:3;let name='';
-  for(let i=0;i<count;i++)name+=r.table(`creature-name-${i+1}`,'이름').row.text;
-  run.headline=name;run.subline=`${type} / ${role} / ${tierNames[o.tier]} / ${drive.row.text}`;
-  run.notes.push(`다음 행동은 「적의 이번 행동」에서 ${role}를 고르면 됩니다. 역할별 이동·공격 조건은 p.275–279를 적용하세요. Lurker의 비표적 상대 공격 +5 등 조건부 보정은 위 수치에 미리 더하지 않았습니다.`);
+  const n=r.table('name-syllables','이름').value,count=n<=2?1:n<=6?2:3,parts=[];
+  for(let i=0;i<count;i++)parts.push(r.table(`creature-name-${i+1}`,'이름').row.key);
+  run.headline=creatureName(parts);run.subline=`${creatureLabel(type)} / ${creatureLabel(role)} / ${tierNames[o.tier]} / ${drive.row.text}`;
+  run.notes.push(`다음 행동은 「적의 이번 행동」에서 ${creatureLabel(role)}를 고르면 됩니다. 역할별 이동·공격 조건은 p.275–279를 적용하세요. 잠복형(Lurker)의 비표적 상대 공격 +5 등 조건부 보정은 위 수치에 미리 더하지 않았습니다.`);
 }
 
 function planet(r,run){
@@ -70,7 +71,7 @@ function planet(r,run){
 }
 function hex(r,run,hooks){
   const c=run.context;let terrain=c.terrain;
-  if(c.biome!==10){const t=r.table(`terrain-${c.terrain}`,'지형');terrain=['위험 지형','복잡 지형','생물 서식지','생물군계 의존','순탄한 길'].indexOf(t.row.text);}
+  if(c.biome!==10){const t=r.table(`terrain-${c.terrain}`,'지형');terrain=['위험 지형','복잡 지형','생물 서식지','생물군계 의존','순탄한 길'].indexOf(t.row.key);}
   else r.item('수역 생물군계','지형 난도 굴림 생략',194,{group:'지형',detail:'수중 탐사에는 full vacc suit 이상의 장비가 필요합니다.'});
   run.terrain=terrain;
   if(terrain===3){const effects=['분화구로 통과 시간트랙 +1.','용융 금속·메탄 등의 강을 우회하면 +3.','10% 확률로 임의 인물이 틈에 추락해 Wound 1과 장비 1개 손실. 시간트랙 +1.','피난처를 찾지 못하면 모두 200 rads.','각자 Oxygen Pellet 1개 추가 소모, 시간트랙 +1.','활화산 우회에 +3.','달려서 통과하며 각자 Oxygen Pellet 1개 추가 소모.','추가 효과 없음.','용암호 우회에 +3.','지형 난도 사용 안 함.'];r.item('생물군계별 지형 효과',effects[c.biome-1],193,{group:'지형'});}
@@ -85,7 +86,7 @@ function hex(r,run,hooks){
   if(e.value<=2){const find=r.table('planet-findings','발견');if(find.value===10)r.table('artifact','발견한 유물');}
   else if(e.value>=6&&e.value<=9){
     const hazard=r.table(`biome-hazards-${c.biome}`,'위험·장애물');
-    if(/^Encounter\./.test(hazard.row.text)){
+    if(/^Encounter\./.test(hazard.row.key)){
       if(terrain===4&&c.biome!==10)r.item('전투 제한','순탄한 길이므로 전투 조우를 적용하지 않음',193,{group:'조우'});
       else if(c.biome===1)hooks.encounter(r,run,{forcedType:'Guardian',ignoreHazard:true,location:'planet'});
       else {const type=r.table('planet-encounter','조우');if(type.value<=6)hooks.encounter(r,run,{ignoreHazard:true,location:'planet'});else r.table('close-encounter','가까운 목격');}

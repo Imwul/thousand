@@ -1,8 +1,9 @@
 import {sourceTables} from './source-tables.js';
 import {compoundTables} from './compound-tables.js';
 import {completeTables} from './completions.js';
+import {applyKorean} from './localization.js';
 // Korean summaries and original-language tables from the user's 2024 rulebook.
-export const RULES_VERSION = 'atdw-core-2024-logbook-1';
+export const RULES_VERSION = 'atdw-core-2024-logbook-ko-2';
 export const tables = {};
 function define(id, title, english, dice, page, rows) {
   tables[id] = { id, title, english, dice, page, rows: rows.map((r, i) => ({ id: `${id}.${i + 1}`, ...r })) };
@@ -21,7 +22,7 @@ list('action', '행동', 'Action', 100, 256,
   '적대하다|침해하다|습격하다|붙이다|돕다|돌보다|거짓말하다|발전시키다|돌아오다|문의하다|찬탈하다|부여하다|반대하다|싸우다|늘리다|낭비하다|알리다|줄이다|미루다|제안하다|억압하다|탐험하다|확보하다|버리다|묻다|드러내다|방어하다|집중하다|붙잡다|돌파하다|복구하다|변형하다|거역하다|막다|방치하다|학대하다|열다|운반하다|끌어들이다|처벌하다|안내하다|강화하다|모으다|내주지 않다|부수다|지배하다|회피하다|조사하다|감명을 주다|주의를 돌리다|사냥하다|지지하다|움직이다|전달하다|거부하다|피하다|시작하다|발견하다|배신하다|항복하다|나누다|위험을 감수하다|포획하다|도전하다|풀어주다|호위하다|유혹하다|지키다|살피다|깨뜨리다|위치를 찾다|섬기다|통제하다|끝내다|견디다|경고하다|취하다|철수하다|논쟁하다|야기하다|여행하다|맹세하다|건설하다|빗나가게 하다|수색하다|배우다|보존하다|빠져나가다|파괴하다|창조하다|달성하다|소통하다|해치다|만족시키다|경계하다|흉내 내다|용인하다|신뢰하다|속이다|도와주다',
   'Antagonize|Violate|Assault|Attach|Assist|Care|Lie|Develop|Return|Inquire|Usurp|Bestow|Oppose|Fight|Increase|Waste|Inform|Decrease|Postpone|Propose|Suppress|Explore|Secure|Abandon|Ask|Reveal|Defend|Focus|Hold|Breach|Restore|Transform|Defy|Block|Neglect|Abuse|Open|Carry|Attract|Punish|Guide|Fortify|Gather|Withhold|Break|Dominate|Evade|Investigate|Impress|Distract|Hunt|Uphold|Move|Deliver|Reject|Avoid|Begin|Uncover|Betray|Surrender|Share|Risk|Capture|Challenge|Release|Escort|Seduce|Guard|Inspect|Break|Locate|Serve|Control|Finish|Endure|Alert|Take|Withdraw|Debate|Cause|Travel|Swear|Build|Deflect|Search|Learn|Preserve|Evade|Destroy|Create|Attain|Communicate|Harm|Gratify|Guard|Imitate|Tolerate|Trust|Deceive|Help');
 list('theme', '주제', 'Theme', 100, 257,
-  '분쟁|죽음|에너지|외부|친구|적|감정|계획|소유물|조언|소문|지식|권력|싸움|메시지|환경|반대|신뢰|동물|재물|승리|우정|바람|자유|상처|시련|위험|무기|분노|평화|정보|장소|역사|땅|대가|비밀|순수함|공동체|세력|피|거래|이점|건강|생각|의무|시간|희망|유대|두려움|자원|장비|행동|믿음|동맹|의견|빚|안전|경외|불운|행운|능력|전투|도구|자연|문제|상실|피난처|인도|기회|방향|기만|기억|부담|재난|꿈|생명|길|질병|생물|보상|탐사|고통|명성|마법|여행|관심|이익|감옥|음모|생존|역경|수수께끼|부|지도자|요원|장애물|정신|기대|욕망|사업',
+  '분쟁|죽음|에너지|외부|친구|적|감정|계획|소유물|조언|소문|지식|권력|싸움|메시지|환경|반대|신뢰|동물|재물|승리|우정|바람|자유|상처|시련|위험|무기|분노|평화|정보|장소|역사|땅|대가|비밀|순수함|공동체|세력|피|거래|이점|건강|생각|의무|시간|희망|유대|두려움|자원|장비|행동|믿음|동맹|의견|빚|안전|경외|불운|행운|능력|전투|도구|자연|문제|상실|피난처|인도|기회|방향|기만|기억|부담|재난|꿈|생명|길|질병|생물|보상|탐사|고통|명성|마법|여행|관심|이익|감옥|음모|생존|역경|수수께끼|부|지도자|요원|장애물|정신 건강|기대|욕망|사업',
   'Dispute|Death|Energy|Outside|Friend|Enemy|Emotions|Plans|Possessions|Advice|Rumor|Knowledge|Power|Fight|Message|Environment|Opposition|Trust|Animal|Riches|Victory|Friendship|Wishes|Liberty|Wound|Trial|Danger|Weapon|Anger|Peace|Information|Location|History|Land|Price|Secret|Innocence|Community|Faction|Blood|Trade|Advantage|Health|Idea|Duty|Time|Hope|Bond|Fear|Resource|Gear|Action|Belief|Ally|Opinion|Debt|Safety|Reverence|Misfortune|Fortune|Ability|Battle|Tool|Nature|Problem|Loss|Shelter|Guidance|Opportunity|Direction|Deception|Memory|Burden|Disaster|Dream|Life|Path|Disease|Creature|Prize|Expedition|Pain|Fame|Magic|Travel|Attention|Benefit|Prison|Conspiracy|Survival|Adversity|Mystery|Wealth|Leader|Agent|Obstacle|Sanity|Expectations|Desire|Enterprise');
 ranges('qualifier', '보충어', 'Qualifier', 'd6', 229, [[1,1,'하지만…'],[2,5,'보충어 없음'],[6,6,'그리고…']]);
 list('complication','복잡성','Complication',6,229,[
@@ -49,7 +50,7 @@ ranges('arrival','목적지 도착','Arrival','d100',125,[
   [3,15,'남겨진 잔해와 먼지','현재 좌표에는 탐사할 장소가 남아 있지 않다.'],
   [16,35,'거대한 표류선','탐사선이 자동으로 도킹한다.'],[36,60,'행성 표면','탐사선이 행성에 착륙한다.'],[61,80,'궤도 정거장 또는 전초기지','행성이나 위성 주위를 도는 시설에 도착한다.'],[81,100,'소행성 내부 기지','소행성 또는 작은 천체 내부의 Àrsaidh 시설에 도킹한다.']
 ]);
-list('purpose','시설의 원래 용도','Site Original Purpose',20,133,'감옥|정제소|생물 연구·격리|사원|데이터 보관|군사 시설|미적 감상 공간|통신 시설|거주 시설|교육 시설|우주항|감시 초소|금고|의료 연구·치료|피난처|동력 시설|행정 시설|유흥 시설|무덤|산업 생산');
+list('purpose','시설의 원래 용도','Site Original Purpose',20,133,'감옥|정제소|생물 연구·격리|사원|데이터 보관|군사 시설|예술·감상 공간|통신 시설|거주 시설|교육 시설|우주항|감시 초소|금고|의료 연구·치료|피난처|동력 시설|행정 시설|유흥 시설|무덤|산업 생산');
 list('site-story','장소의 과거','Site Story',10,136,'생물에게 점령됨|불안정해짐|오염의 근원|경이로운 기술과 연관됨|합성체에게 점령됨|강력한 물건을 보관했거나 보관 중|큰 수수께끼의 답이 있거나 있었음|끔찍한 비극이 일어난 곳|무시무시한 힘과 연관됨|우주적 사건으로 크게 손상됨');
 list('site-descriptor','장소의 첫인상','Overall Site Descriptor',12,137,'습하고 차갑다|건조하고 따뜻하다|낯선 이끼 같은 물질이 덮였다|크고 널찍하다|비좁고 답답하다|식물이 무성하다|기묘한 소음이 끊이지 않는다|인공 중력이 없다|일부가 아직 가동된다|연기나 안개가 자욱하다|약탈되거나 부분 파괴된 흔적|Àrsaidh 양식과 뚜렷이 다른 건축');
 list('planet-descriptor','지상 시설의 주변','Planetary Site Descriptor',10,137,'거의 알아볼 수 없는 고대 유적 근처|붕괴하기 쉬운 지반|흐르는 용암 근처|수역 근처|밀림 같은 환경|황량한 곳|산 내부|활동 중인 동물의 서식지|일부가 땅에 묻힘|침수됨');
@@ -58,9 +59,9 @@ list('hazard','주된 위험','Site Hazard',8,139,[
   {text:'독성 대기',detail:'B등급 이상의 방호복이 없으면 매 라운드 D20 피해.'},
   {text:'붕괴',detail:'시간트랙 초기화마다 임의 인물이 DEX 판정. 실패하면 낙하 잔해로 3D10 피해.'},
   {text:'괴물에게 점령됨',detail:'모든 조우가 Aberration이며 즉시 전투가 시작된다.'},
-  {text:'봉쇄',detail:'모든 구역의 접근점이 잠겨 있다.'},
+  {text:'봉쇄',detail:'모든 구역의 접근점이 잠겨 있다. 열려면 기계공학(Technology) 판정이 필요하다.'},
   {text:'극한 온도',detail:'진공복 없이는 이 장소를 탐사할 수 없다.'},
-  {text:'공간·시간 왜곡',detail:'시간트랙이 전진할 때마다 50% 확률로 한 칸 후퇴한다.'},
+  {text:'공간·시간 왜곡',detail:'시간트랙을 진행시킬 때마다 50% 확률로 전진하는 대신 한 칸 후퇴한다.'},
   {text:'수직 구조',detail:'구역 사이 이동에 D20피트 등반이 필요하다.'}
 ]);
 list('size','장소의 규모','Site Size',4,142,'소형|중형|대형|초대형');
@@ -68,18 +69,18 @@ list('activity','장소 활동도','Site Activity',6,138,'죽은 듯 고요함 �
 list('known-threat','추적 위협','Known Threat',6,138,'Spitter|Clobber|Taker|Psybane|Bomber|Cecaelia');
 ranges('connector','구역 연결부','Area Connector','d20',144,[[1,10,'일반 복도','20% 확률의 매복 확인.'],[11,11,'아래로 가는 계단'],[12,12,'위로 가는 계단'],[13,16,'넓고 웅장한 복도','20% 확률의 매복 확인.'],[17,17,'다리'],[18,20,'구역끼리 직접 연결']]);
 ranges('exploration','구역 탐사','Site Exploration','d10',144,[[1,2,'조우'],[3,3,'자원'],[4,4,'외계 문화 유물'],[5,5,'위험의 발현'],[6,6,'잠긴 접근점'],[7,7,'공포 사건'],[8,8,'자동 보안 장치'],[9,9,'고정 사건'],[10,10,'무작위 상황']]);
-list('manifestation','위험의 발현','Hazard Manifestation',20,155,'자원을 소모시킨다|감각을 공격한다|장비 하나를 파괴한다|생물학적 위험을 만든다|환영으로 인물을 괴롭힌다|큰 소음을 낸다|인물을 기절시킨다|대원들 뒤의 길을 막는다|정신을 심하게 공격한다|가치 있는 무언가를 감춘다|새 구역으로 통하는 길을 연다|이점이나 강점을 빼앗는다|육체적·정신적 회복에 영향을 준다|시간트랙에 영향을 준다|생물의 원치 않는 관심을 끈다|며칠 뒤 드러날 영향을 남긴다|관계에 영향을 준다|다른 구역으로 강제 이동시킨다|함정을 만든다|이익을 제공한다');
+list('manifestation','위험의 발현','Hazard Manifestation',20,155,'인물 한 명의 자원을 소모시킨다|감각을 공격한다|장비 하나를 파괴한다|생물학적 위험을 만든다|환영으로 인물을 괴롭힌다|큰 소음을 낸다|인물을 기절시킨다|대원들 뒤의 길을 막는다|정신을 심하게 공격한다|가치 있는 무언가를 감춘다|새 구역으로 통하는 길을 연다|이점이나 강점을 빼앗는다|육체적·정신적 회복에 영향을 준다|시간트랙에 영향을 준다|생물의 원치 않는 관심을 끈다|며칠 뒤 드러날 영향을 남긴다|관계에 영향을 준다|대원 전체를 다른 구역으로 강제 이동시킨다|함정을 만든다|이익을 제공한다');
 list('artifact','유물 외형','Xenoanthropological Artifact',20,[150,151],[
-  '짧은 Àrsaidh 문자가 새겨진 금반지 · Light','거울처럼 매끈한 은빛 구체 · Light','간격을 두고 홈이 파인 금속 막대 · Light','기하학 무늬가 새겨진 나무 같은 상자 · 1 GS','표면 위에 떠 있는 따뜻한 오목 금속 원반 · Light','작은 은색 틀에 든 깨지지 않는 유리 같은 판 · 1 GS','별자리로 장식한 빈 꽃병 같은 물체 · 1 GS','한 면에서 유리가 튀어나온 금속 피라미드 · Light','끝에 유연한 부속물이 붙은 단단한 관 · Light','문장이 새겨진 아주 단단한 동전 같은 조각들 · Light','세밀한 행성 모형 같은 질감의 구체 · 1 GS','스캐너가 해석하지 못하는 손바닥 크기 돌 정육면체 · Light','끈적한 유리 같은 육각 막대 · 1 GS','손잡이와 파란 구체가 달린 금속 막대 · 1 GS','찢어지지 않는 천 같은 재료 · Light','튕기면 맑은 푸른빛을 내는 작은 구체 · Light','공기에 닿으면 불붙는 분홍 반죽이 든 금속 상자 · Light','복잡한 문양이 뒤덮인 짧은 금속 칼날 · 1 GS','세 부분이 회전하는 작은 정십이면체 · Light','안쪽에서 빛이 흔들리는 주먹 크기 붉은 보석 · Light'
+  '짧은 Àrsaidh 문자가 새겨진 금반지 · Light','거울처럼 매끈한 은빛 구체 · Light','간격을 두고 홈이 파인 금속 막대 · Light','기하학 무늬가 새겨진 나무 같은 상자 · 1 GS','표면 위에 떠 있는 따뜻한 오목 금속 원반 · Light','작은 은색 틀에 든 깨지지 않는 유리 같은 판 · 1 GS','별자리로 장식한 빈 꽃병 같은 물체 · 1 GS','한 면에서 유리가 튀어나온 금속 피라미드 · Light','끝에 유연한 부속물이 붙은 단단한 관 · Light','문장이 새겨진 아주 단단한 동전 같은 조각들 · Light','세밀한 행성 모형 같은 질감의 구체 · 1 GS','스캐너가 해석하지 못하는 손바닥 크기 돌 정육면체 · Light','끈적한 유리 같은 육각 막대 · 1 GS','손잡이와 파란 구체가 달린 금속 막대 · 1 GS','찢어지지 않는 천 같은 재료 · Light','튕기면 맑은 푸른빛을 내는 작은 구체 · Light','상자에서 꺼내면 불붙는 분홍 반죽이 든 금속 상자 · Light','복잡한 문양이 뒤덮인 짧은 금속 칼날 · 1 GS','세 부분이 회전하는 작은 정십이면체 · Light','안쪽에서 빛이 흔들리는 주먹 크기 붉은 보석 · Light'
 ]);
 list('artifact-value','귀환 후 유물 감정','Artifact Value',6,153,'가치 없음|사소함 · 10 DC|흥미로움 · 25 DC|가치 있음 · 50 DC|귀중함 · 75 DC|매우 귀중함 · 100 DC');
 list('door','접근점 유형','Door Type',10,157,[
   {text:'경보문',detail:'Perception으로 경보 발견, Technology로 해제. 자물쇠나 경보 해제에 실패하면 조우.'},
   {text:'공포의 문',detail:'접촉하려면 Resolve 판정에 성공해야 한다.'},
-  {text:'평정의 문',detail:'문턱을 통과한 모든 인물이 Composed가 된다.'},
+  {text:'평정의 문',detail:'문턱을 넘으면 모든 인물이 침착(Composed) 상태가 된다.'},
   {text:'보안문',detail:'LKPK 사용 시 접근 노드 D10을 두 개 굴려 불리한 결과를 사용한다.'},
   {text:'화염문',detail:'문턱을 넘으면 화염이 분출한다. Perception으로 탐지하고 Technology로 해제.'},
-  {text:'정신의 문',detail:'통과하는 모든 인물이 D20 Stress를 받는다.'},
+  {text:'정신의 문',detail:'문턱을 넘으면 모든 인물이 D20 스트레스를 받고, 문에서 기어 벗어날 때까지 경련한다.'},
   {text:'전기장문',detail:'통과 시 임의 인물의 Battery 하나가 폭발하며 D10 피해.'},
   {text:'살점문',detail:'살점 사이를 비집고 통과하면 모두 D4 Stress.'},
   {text:'일방통행문',detail:'들어간 방향으로는 돌아올 수 없는 역장.'},
@@ -103,7 +104,7 @@ list('dread','공포 사건','Dread',20,[160,161,162],[
   {text:'저주받은 장소',detail:'이 장소에서 Resolve 판정의 자연 6마다 Dread를 굴린다.'},
   {text:'시야를 가리는 그림자',detail:'모두 XP 50과 D20 Stress를 받는다.'},
   {text:'불길한 징조',detail:'모두 Luck +1과 D20 Stress를 받는다.'},
-  {text:'죽어 가는 세계들의 비명',detail:'활성 Dread 효과 1개당 각 인물에게 D10 Stress.'},
+  {text:'죽어 가는 세계들의 비명',detail:'현재 탐사지에서 활성화된 공포 효과 1개당 각 인물에게 D10 스트레스.'},
   {text:'강해지는 적들',detail:'모든 Abomination과 Guardian이 Tough를 얻는다.'},
   {text:'위치가 발각되다',detail:'다음 전투 조우는 자동으로 매복 공격이 된다.'},
   {text:'자신을 갉아먹는 의심',detail:'모든 인물의 모든 Skill 판정에 -1.'}
@@ -112,23 +113,23 @@ list('taint','오염','Taints',10,[162,163],[
   {text:'오염된 활력',detail:'최대 Wounds -1. 장소마다 한 번 모든 Wounds와 Conditions를 회복할 수 있다.'},
   {text:'괴사하는 피부',detail:'피해를 받을 때마다 추가 D4 피해. 영구 Armor(2).'},
   {text:'허기',detail:'CON -2. Armor Penetration(5).'},
-  {text:'신들의 꼭두각시',detail:'WIL -2. 탐사 시작마다 Luck +1.'},
+  {text:'신들의 꼭두각시',detail:'WIL -2. 각 탐사지 탐사 시작마다 행운 +1.'},
   {text:'뒤엉킨 기억',detail:'한 Skill에서 5점을 잃고 다른 Skill들에 재분배한다.'},
   {text:'어둠의 정수',detail:'최대 Wounds -1. 공격마다 추가 D10 피해.'},
   {text:'일그러진 현실',detail:'얻는 XP가 절반이지만 Stress 효과에 면역.'},
   {text:'감염된 팔',detail:'한손 무기만 사용할 수 있다. 최대 Wounds +1.'},
-  {text:'중독',detail:'탐사를 Poisoned(I) 상태로 시작. 전투 외 CON 판정에 advantage.'},
+  {text:'중독',detail:'각 탐사지 탐사를 중독 I(Poisoned I) 상태로 시작. 전투 외 CON 판정에 advantage.'},
   {text:'실명',detail:'Blinded 상태가 되지만 방사선과 독에 면역.'}
 ]);
 list('security','자동 보안 장치','Automatic Security Measure',10,164,[
   {text:'경보',detail:'Technology 판정으로 끄지 못하면 조우.'},
-  {text:'가연성 가스',detail:'작동 중인 Atmospheric Sensor로 탐지 가능. 피하지 못하면 모두 D20 피해.'},
-  {text:'전기장',detail:'구역 안 모든 인물에게 D10+10 피해. 재진입할 때 다시 발동.'},
+  {text:'가연성 가스',detail:'작동 중인 대기 센서(Atmospheric Sensor)로 탐지할 수 있다. 탐지하지 못하면 잠시 뒤 가스가 타오르며 이 구역 안의 모든 인물에게 D20 피해를 준다.'},
+  {text:'전기장',detail:'구역 안의 모든 인물에게 D10+10 피해를 준다. 전기장은 1라운드 동안 지속되며, 누구든 구역에 들어올 때마다 다시 발동한다.'},
   {text:'중력 역전',detail:'DEX 판정 실패 시 천장으로 추락해 Wound 1. 이 구역에서는 영구적이며 20% 확률로 장소 전체에도 적용.'},
   {text:'봉쇄',detail:'현재 구역을 포함해 아직 발견하지 못한 구역의 접근점이 잠긴다.'},
   {text:'나노머신',detail:'임의 인물을 둘러싸 매 라운드 Wound 1. 불 등으로 처리하기 전까지 대상을 바꿔 가며 공격.'},
   {text:'음파 공격',detail:'탐사가 끝날 때까지 모두 Perception -2.'},
-  {text:'정지장',detail:'임의 대원 두 명이 정지장에 갇힌다. Science 판정으로 구조 방법을 알아낼 수 있다.'},
+  {text:'정지장',detail:'무작위 대원 두 명이 구조될 때까지 무기한 정지장에 갇힌다. 과학(Science) 판정으로 구조 방법을 알아낼 수 있다.'},
   {text:'순간이동',detail:'각 인물이 무작위 장소로 이동한다. 순간이동 표 참조.'},
   {text:'자동 포탑',detail:'Ranged Weapon 12, 피해 D20. 매 라운드 임의 인물을 사격한다.'}
 ]);
@@ -151,14 +152,14 @@ list('fixed-event','고정 사건','Fixed Event',20,[166,167,168,169],[
   {text:'거대한 기념 기둥',detail:'접근하면 50% 확률로 Luck 1을 얻거나 잃는다.'},
   {text:'투명한 뚜껑의 금속 상자',detail:'열면 50% 확률로 유물, 또는 D20 피해의 폭발. 열기 전에는 굴리지 않는다.'},
   {text:'천장으로 이어지는 사다리',detail:'천장의 해치는 이 탐사지 바깥으로 직접 통한다.'},
-  {text:'강해지는 낮은 진동음',detail:'1분 이상 머물면 CON 판정. 실패 시 D10+5 피해와 귀 출혈.'},
-  {text:'잃어버린 기억 같은 평온',detail:'시간트랙 +1을 들여 D20 Stress 회복. 떠나려면 WIL 성공, 재시도마다 +1.'},
+  {text:'강해지는 낮은 진동음',detail:'1분보다 오래 머물면 CON 판정. 실패 시 D10+5 피해와 귀 출혈.'},
+  {text:'잃어버린 기억 같은 평온',detail:'시간트랙 +1칸을 들여 D20 스트레스를 회복한다. 떠나려면 WIL 판정에 성공해야 한다. 10분마다 한 번만 시도할 수 있으며 시도마다 시간트랙 +1칸.'},
   {text:'작은 태양처럼 빛나는 동력원',detail:'보호장비가 없으면 D100×3 rads에 노출.'}
 ]);
 list('occurrence','무작위 상황 유형','Type of Occurrence',4,171,'위험|발견|사건|상황');
 list('danger','무작위 위험','Danger',6,171,'보안 장치|전투 조우|폭발|환경적 위험|방사선|정신적 교란');
 list('discovery','발견','Discovery',20,170,'붕괴하거나 노출된 구획|뼈 또는 유해|유물|죽은 생물|잠긴 접근점|합금 큐브|독특한 예술품|이상한 대기 측정값|데이터 크리스털|예상 밖의 식물·균류|잡동사니·잔해|이질적인 건축 양식|청각·시각 환영|전투 흔적|기이한 중력·자기장·양자 현상|발자국·자국|이곳과 어울리지 않는 물건|탐사지 출구|구덩이·수직 통로|Àrsaidh 우주선');
-list('random-event','무작위 사건','Event',10,171,'설명할 수 없는 현상|깨어나는 고대의 위험|기묘한 소리|시설의 원래 용도와 관련된 사건|구역마다 진행되는 감압|인간에게 완벽한 대기·압력·중력|통제되지 않는 화재|눈을 뜨기 힘들 만큼 밝은 빛|장소의 과거를 보여 주는 환영|두 시간트랙 전 상태로 대원들이 돌아가는 시간장');
+list('random-event','무작위 사건','Event',10,171,'설명할 수 없는 현상|깨어나는 고대의 위험|기묘한 소리|시설의 원래 용도와 관련된 사건|구역마다 진행되는 감압|인간에게 완벽한 대기·압력·중력|통제되지 않는 화재|눈을 뜨기 힘들 만큼 밝은 빛|인물 한 명에게 장소의 과거를 보여 주는 환영|대원들을 두 시간트랙 전 상태로 되돌리는 시간장 · 잃었던 자원을 되찾고 상처가 치료되거나 다시 열리는 등 당시 상태를 복원한다');
 list('travel-type','항해 사건 유형','Random Travel Event Type',4,119,'사회적 사건|선체·장비 고장|우주 이상 현상|정신·신체 문제');
 ranges('travel-social','사회적 항해 사건','Social Travel Event','d10',119,[[1,5,'두 대원의 대화','대화 주제와 각자의 반응을 정한다.'],[6,6,'두 대원 사이의 사건','유대가 있었다면 깨진다. 대화 주제나 행동·주제로 구체화.'],[7,7,'마음을 닫는 대원','임의 대원은 다음 주 동안 모든 행동에 -2.'],[8,8,'새로 생긴 유대','두 대원이 서로와 관련된 행동에 +1.'],[9,9,'작은 축하','모든 대원 Stress -5.'],[10,10,'비상 훈련','모든 대원의 다음 Skill 판정에 +1.']]);
 list('travel-malfunction','항해 중 고장','Ship Malfunction',10,120,[
@@ -258,6 +259,7 @@ for(const table of [...sourceTables,...compoundTables]){
   tables[table.id]=table;
 }
 completeTables({list,ranges,define,tables});
+applyKorean(tables);
 for(const t of Object.values(tables)){
   const p=[t.page].flat()[0];
   t.category=p<32?'character':p<92?'combat':p<107?'condition':p<124?'travel':p<182?'site':p<218?'planet':p<234?'gm':p<252?'npc':p<260?'gm':p<318?'creature': 'station';
