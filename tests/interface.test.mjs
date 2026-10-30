@@ -1,0 +1,44 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {Window} from 'happy-dom';
+import 'fake-indexeddb/auto';
+import {openStore} from '../src/storage/store.js';
+
+async function until(check){for(let i=0;i<300;i++){if(await check())return;await new Promise(r=>setTimeout(r,10));}throw new Error('Expected UI state did not appear');}
+test('actual app controller preserves drafts, writes records, annotates, filters and changes context', {timeout:15000},async()=>{
+  const w=new Window({url:'http://localhost/'});
+  const html=await readFile(new URL('../src/index.html',import.meta.url),'utf8');
+  w.document.body.innerHTML=html.match(/<body>([\s\S]*)<\/body>/)[1];
+  globalThis.window=w;globalThis.document=w.document;globalThis.innerWidth=1440;
+  globalThis.matchMedia=w.matchMedia.bind(w);globalThis.FormData=w.FormData;
+  Object.defineProperty(globalThis,'navigator',{value:w.navigator,configurable:true});
+  const q=s=>w.document.querySelector(s),click=s=>{assert.ok(q(s),s);q(s).click();};
+  const input=(s,value)=>{q(s).value=value;q(s).dispatchEvent(new w.Event('input',{bubbles:true}));};
+  await import('../src/main.js?interface-test=1');
+  await until(()=>q('#campaign option'));
+  const db=await openStore();
+  input('#question','이곳에 생존자가 있을까?');
+  click('[data-action="procedure"][data-id="scene"]');await until(()=>q('#procedure-title').textContent==='새 장면');
+  click('[data-action="procedure"][data-id="question"]');await until(()=>q('#question')?.value==='이곳에 생존자가 있을까?');
+  q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(async()=>(await db.load()).records.length===1);
+  assert.ok(q('#result-headline'));const first=(await db.load()).records[0];
+  input('#record-memo','환기구 너머의 신호.');
+  click('[data-action="pin"]');
+  await until(async()=>{const r=(await db.load()).records[0];return r.memo==='환기구 너머의 신호.'&&r.pinned;});
+  click('[data-action="reroll"]');await until(async()=>(await db.load()).records.length===2);
+  const both=(await db.load()).records;assert.deepEqual(both.find(r=>r.id===first.id).trace,first.trace);assert.equal(both.find(r=>r.id!==first.id).parentId,first.id);
+  click(`[data-action="record"][data-id="${first.id}"]`);await until(()=>q('#report-host [data-record-id]')?.dataset.recordId===first.id);
+  assert.equal(q('#record-memo').value,'환기구 너머의 신호.');
+  click('[data-action="library"]');input('#library-search','trauma');assert.match(q('#library-results').textContent,/트라우마/);
+  click('[data-action="close-dialog"]');click('[data-action="context"]');
+  q('#context-form [name="biome"]').value='10';q('#context-form [name="presentCrew"]').value='3';q('#context-form [name="siteName"]').value='검은 조수';
+  q('#context-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(()=>!q('#dialog').open);
+  const c=(await db.load()).campaigns[0];assert.equal(c.context.biome,10);assert.equal(c.context.presentCrew,3);assert.equal(c.context.siteName,'검은 조수');
+  click('[data-action="procedure"][data-id="hacking"]');await until(()=>q('[name="hackingDifficulty"]'));
+  q('[name="hackingDifficulty"]').value='3';q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(async()=>(await db.load()).records.length===3);assert.equal(q('.hack-choice').querySelectorAll('button').length,3);
+  db.close();await w.happyDOM.abort();
+});

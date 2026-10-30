@@ -1,0 +1,179 @@
+import {tables} from '../data/tables.js';
+
+const roles=['Brute','Lurker','Ranged','Swarm','Psychic'];
+const tierNames={easy:'쉬움',standard:'보통',elite:'정예',overwhelming:'압도적'};
+const base={
+  easy:{STR:8,DEX:4,CON:8,WIL:6,INT:6,CHA:0,Wounds:1,Awareness:5,Armor:0,Defense:0,abilities:1},
+  standard:{STR:12,DEX:12,CON:10,WIL:10,INT:8,CHA:0,Wounds:1,Awareness:10,Armor:2,Defense:2,abilities:1},
+  elite:{STR:14,DEX:14,CON:12,WIL:12,INT:8,CHA:0,Wounds:2,Awareness:15,Armor:4,Defense:4,abilities:2},
+  overwhelming:{STR:16,DEX:14,CON:15,WIL:14,INT:8,CHA:0,Wounds:3,Awareness:20,Armor:5,Defense:5,abilities:3}
+};
+export function creature(r,run){
+  const o=run.options,c=run.context;
+  const type=o.species==='random'?r.table(c.location==='planet'?'creature-planet':'creature-space','생물 유형').row.text:o.species;
+  if(o.species!=='random')r.item('생물 유형',type,268,{group:'생물 유형',detail:'굴림 전 직접 선택한 유형.'});
+  if(type==='Guardian'){
+    const models={titan:[293,'Titan','Brute'],anansi:[295,'Anansi','Lurker'],arash:[297,'Arash','Ranged'],brahmari:[299,'Brahmari','Swarm']};
+    const [page,name,role]=models[o.guardianModel];run.headline=`${name} · ${tierNames[o.tier]}`;run.subline=`Guardian / ${role} / 영역 지배`;
+    r.item('선택한 Guardian 모델',`${name} · ${tierNames[o.tier]}`,page,{image:`/maps/guardian-${page}.png`,group:'고정 능력치',detail:'아래 원문 블록에서 선택한 난도 행을 사용합니다. Guardian에는 일반 역할 보정·무작위 지능을 덧붙이지 않습니다.'});
+    run.notes.push('Guardian은 사기·정신 효과에 면역. 해킹해도 멈출 수 있을 뿐 조종할 수 없습니다(p.290).');return;
+  }
+  const size=r.table('creature-size','몸과 행동'),drive=r.table('creature-drive','몸과 행동');
+  const role=o.tier==='easy'&&c.crew===1?'Brute':r.table('creature-role','몸과 행동').row.text;
+  if(o.tier==='easy'&&c.crew===1)r.item('생물 역할','Brute',274,{group:'몸과 행동',detail:'1인 출발 탐사의 Easy 적은 항상 Brute.'});
+  const stats={...base[o.tier]};let damageBonus=0,meleeBonus=0,rangedBonus=0,attack,damage;
+  if(o.tier==='easy'){attack=2;damage='1d10+5';}
+  else {
+    const branch=r.raw('stat-variant','공격·피해 변형',6,273)<=3;
+    const variants={standard:[[5,'1d10+5'],[2,'2d12']],elite:[[8,'2d12'],[4,'2d10+5']],overwhelming:[[10,'3d12'],[5,'3d10+5']]};
+    [attack,damage]=variants[o.tier][branch?0:1];
+  }
+  if(role==='Brute'){stats.STR++;stats.DEX--;stats.CON++;damageBonus+=2;attack-=2;stats.Awareness-=2;}
+  if(role==='Lurker'){stats.DEX+=2;stats.CON--;stats.Awareness+=2;}
+  if(role==='Ranged'){stats.STR--;stats.DEX++;stats.CON--;stats.WIL++;meleeBonus-=2;rangedBonus+=2;stats.Awareness+=2;}
+  if(role==='Swarm')attack+=5;
+  if(role==='Psychic'){stats.CON--;stats.WIL+=3;}
+  let trait;
+  if(o.tier!=='easy'){
+    trait=r.table('creature-trait','고유 특성').value;
+    const modifications={1:{Armor:1,Defense:-1},2:{Defense:1,Armor:-1},3:{},4:{},5:{Wounds:1,abilities:-1},6:{CON:2,WIL:-2},7:{WIL:2,CON:-2},8:{STR:2,DEX:-2},9:{DEX:2,STR:-2},10:{Wounds:1,CON:-1,WIL:-1}};
+    for(const [k,v] of Object.entries(modifications[trait]))stats[k]+=v;
+    if(trait===3){attack+=5;damageBonus-=5;}if(trait===4){damageBonus+=5;attack-=5;}
+  }
+  if(o.randomIntelligence){const n=r.table('intelligence','지능').value;stats.INT=n<=7?6-r.raw('animal-int','동물 지능 D4',4,271):n<=9?6+r.raw('human-int','인간 지능 D8',8,271):12+r.raw('advanced-int','고등 지능 D8',8,271);}
+  const small=size.value<=3?-2:size.value<=8?-1:size.value<=16?0:size.value<=18?1:2;
+  const statPage=o.tier==='easy'||o.tier==='standard'?272:273;
+  r.item('기본 능력치',`STR ${stats.STR} / DEX ${stats.DEX} / CON ${stats.CON} / WIL ${stats.WIL} / INT ${stats.INT} / CHA ${stats.CHA}`,statPage,{group:'능력치',detail:'원문 난도 블록에 역할·고유 특성·선택한 지능 보정을 적용한 값.'});
+  r.item('전투 수치',`Wounds ${stats.Wounds} / Awareness ${stats.Awareness} / Armor ${stats.Armor} / Defense ${stats.Defense}`,statPage,{group:'능력치'});
+  const extra=damageBonus?`${damageBonus>0?'+':''}${damageBonus}`:'';
+  const penalty=['Swarm','Psychic'].includes(role)?'−1d10':'';
+  r.item('공격과 피해',`Attack +${attack} / 피해 ${damage}${extra}${penalty}`,statPage,{group:'능력치',detail:`근접에는 크기 보정 ${small>=0?'+':''}${small} 추가.${role==='Ranged'?` 근접 Attack ${meleeBonus}, 원거리 Attack +${rangedBonus}.`:''}${o.tier==='overwhelming'?' 매 턴 2회 공격.':''}`});
+  if(!['Brute','Swarm'].includes(role)){const range=r.raw('creature-range','공격 사거리 D10',10,statPage)+(o.tier==='easy'?1:o.tier==='standard'?2:3);r.item('원거리 사거리',String(range),statPage,{group:'능력치'});}
+  for(let i=0;i<Math.max(0,stats.abilities);i++)r.table(role==='Psychic'?'psychic-ability':'enemy-ability',`특수 능력 ${i+1}`);
+  r.table('appearance','외형');r.table('covering','외형');r.table('unique-feature','외형');
+  const limbs=r.table('limb-count','외형');
+  if(limbs.value>1){if(o.aquatic)r.table('aquatic-limbs','외형');else{r.table('hindlimbs','외형');r.table('forelimbs','외형');}}
+  r.table('mouth','외형');const eyes=r.table('eye-type','외형');if(eyes.value>2)r.table('eye-count','외형');
+  const n=r.table('name-syllables','이름').value,count=n<=2?1:n<=6?2:3;let name='';
+  for(let i=0;i<count;i++)name+=r.table(`creature-name-${i+1}`,'이름').row.text;
+  run.headline=name;run.subline=`${type} / ${role} / ${tierNames[o.tier]} / ${drive.row.text}`;
+  run.notes.push(`다음 행동은 「적의 이번 행동」에서 ${role}를 고르면 됩니다. 역할별 이동·공격 조건은 p.275–279를 적용하세요. Lurker의 비표적 상대 공격 +5 등 조건부 보정은 위 수치에 미리 더하지 않았습니다.`);
+}
+
+function planet(r,run){
+  const name=[1,2,3].map(i=>r.table(`planet-name-${i}`,'행성 명칭').row.text).join('-');
+  r.table('planet-diameter','행성');r.table('atmosphere','행성');r.table('climate','행성');
+  const single=r.table('single-biome','생물군계'),biome=r.table('landing-biome','생물군계');
+  r.table('sky','첫인상');r.table('daylight','낮·밤 길이');r.table('activity','생물군계 활동도');
+  run.headline=name;run.subline=biome.row.text;run.adopt={location:'planet',biome:biome.value,singleBiome:single.value>=9};run.generatedName=name;
+  run.notes.push('최초 착륙 생물군계는 D10, 인접 생물군계는 D12입니다. 단일 생물군계 행성에서는 경계에서 바꾸지 않습니다. 대기 밀도가 적당해도 마스크 없이 호흡할 수 있다는 뜻은 아닙니다.');
+}
+function hex(r,run,hooks){
+  const c=run.context;let terrain=c.terrain;
+  if(c.biome!==10){const t=r.table(`terrain-${c.terrain}`,'지형');terrain=['위험 지형','복잡 지형','생물 서식지','생물군계 의존','순탄한 길'].indexOf(t.row.text);}
+  else r.item('수역 생물군계','지형 난도 굴림 생략',194,{group:'지형',detail:'수중 탐사에는 full vacc suit 이상의 장비가 필요합니다.'});
+  run.terrain=terrain;
+  if(terrain===3){const effects=['분화구로 통과 시간트랙 +1.','용융 금속·메탄 등의 강을 우회하면 +3.','10% 확률로 임의 인물이 틈에 추락해 Wound 1과 장비 1개 손실. 시간트랙 +1.','피난처를 찾지 못하면 모두 200 rads.','각자 Oxygen Pellet 1개 추가 소모, 시간트랙 +1.','활화산 우회에 +3.','달려서 통과하며 각자 Oxygen Pellet 1개 추가 소모.','추가 효과 없음.','용암호 우회에 +3.','지형 난도 사용 안 함.'];r.item('생물군계별 지형 효과',effects[c.biome-1],193,{group:'지형'});}
+  if(c.biome===10||terrain!==4){
+    if(c.knownThreats){
+    const active=r.raw('biome-activity-check','새 헥스의 추적 위협 확인',10,189);
+    if(active<=2){r.table('known-threat','매복 위협');run.notes.push('추적 위협은 기본 조우와 독립적입니다. 수기 기록에 남은 위협이 있을 때만 적용하고 적은 Initiative +2를 받습니다.');}
+    }
+    if(terrain===2){r.item('서식지 조우','Local Fauna와 자동 조우',193,{group:'지형 조우'});hooks.encounter(r,run,{forcedType:'Local Fauna',ignoreHazard:true,location:'planet'});}
+  }else r.item('순탄한 지형','이 헥스에서 전투 조우가 일어나지 않음',193,{group:'지형'});
+  const e=r.table('planetside','헥스 내용');run.headline=e.row.text;
+  if(e.value<=2){const find=r.table('planet-findings','발견');if(find.value===10)r.table('artifact','발견한 유물');}
+  else if(e.value>=6&&e.value<=9){
+    const hazard=r.table(`biome-hazards-${c.biome}`,'위험·장애물');
+    if(/^Encounter\./.test(hazard.row.text)){
+      if(terrain===4&&c.biome!==10)r.item('전투 제한','순탄한 길이므로 전투 조우를 적용하지 않음',193,{group:'조우'});
+      else if(c.biome===1)hooks.encounter(r,run,{forcedType:'Guardian',ignoreHazard:true,location:'planet'});
+      else {const type=r.table('planet-encounter','조우');if(type.value<=6)hooks.encounter(r,run,{ignoreHazard:true,location:'planet'});else r.table('close-encounter','가까운 목격');}
+    }
+    if(c.biome===7&&hazard.value===7)run.notes.push('금속 구체는 접근을 선택한 다음 「독성 지대의 금속 구체」 표를 굴립니다. 지금은 열지 않았습니다.');
+  }else if(e.value===10)run.notes.push('Àrsaidh 탐사지를 발견했습니다. 「목적지 도착」의 도착표를 다시 굴리는 대신 시설 용도·규모·위험을 직접 생성해 탐사를 시작하세요.');
+  if(run.options.sights)r.table(`biome-sights-${c.biome}`,'5헥스마다 보는 풍경');
+  run.subline=`${tables['landing-biome'].rows[c.biome-1].text} · ${c.biome===10?'수중 이동':tables[`terrain-${c.terrain}`].title}`;
+  run.notes.push(`기본 이동 비용: 시간트랙 +${[3,8,9,10].includes(c.biome)?2:1}. 추가 지형 비용과 보호장비 효과를 수기 시트에 적용하세요. 지형 결과는 보고서의 「이 지형을 이전 헥스로 사용」으로 채택할 수 있습니다.`);
+}
+export function rollExpression(r,expression){
+  let text=expression.replace(/\s/g,'').toLowerCase(),multiplier=1;
+  const m=text.match(/^(.*?)[x*×](\d+)$/);if(m){text=m[1];multiplier=Number(m[2]);}
+  if(!text||!Number.isInteger(multiplier)||multiplier<1||multiplier>1000)throw new Error('주사위 식을 확인하세요. 예: 2d10+5, d100×3.');
+  const terms=[...text.matchAll(/([+-]?)(\d*d\d+|\d+)/g)];
+  if(terms.map(t=>t[0]).join('')!==text||!terms.some(t=>t[2].includes('d')))throw new Error('지원하지 않는 주사위 식입니다. 예: 2d10+5.');
+  let total=0,count=0;
+  for(const t of terms){
+    const sign=t[1]==='-'?-1:1;
+    if(t[2].includes('d')){
+      const [a,b]=t[2].split('d'),n=Number(a||1),sides=Number(b);count+=n;
+      if(!Number.isInteger(n)||n<1||count>100||!Number.isInteger(sides)||sides<2||sides>100)throw new Error('총 100개 이하, 2–100면 주사위를 사용할 수 있습니다.');
+      for(let i=0;i<n;i++)total+=sign*r.raw('custom-die',`${sign<0?'빼는 ':''}D${sides}`,sides,34);
+    }else{const n=Number(t[2]);if(n>10000)throw new Error('보정값은 10,000 이하여야 합니다.');total+=sign*n;}
+  }
+  return total*multiplier;
+}
+
+export function runExtended(id,r,run,hooks){
+  const o=run.options,c=run.context;
+  if(id==='planet')planet(r,run);
+  else if(id==='hex')hex(r,run,hooks);
+  else if(id==='creature')creature(r,run);
+  else if(id==='npc-profile'){
+    const name=`${r.table('given-name','이름').row.text} ${r.table('surname','이름').row.text}`;
+    for(const t of ['age','gender','npc-nature','npc-descriptor','npc-quirk','character-motivation'])r.table(t,'인물');
+    r.table('npc-attributes','동료 능력치');r.table('npc-talents','동료 재능');
+    run.headline=name;run.subline='이름·성향·동기와 간소화한 NPC 대원 능력치';
+    run.notes.push('NPC 대원은 기본 Wounds 3, Defense 2. Skills 대신 해당 Attribute를 사용하며 Stamina·Luck·Emotional State는 사용하지 않습니다(p.359).');
+  }
+  else if(id==='emotion'){
+    const mood=r.table('mood','감정');run.headline=mood.row.text;run.subline='전반적 감정';
+    if(mood.value>1&&o.moodDepth>=2){const detail=r.table(`mood-${mood.value}`,'세부 감정');run.subline=detail.row.text;
+      if(o.moodDepth>=3){const key=`mood-${mood.value}-${detail.value}`;if(tables[key].rollable===false)run.notes.push(tables[key].sourceNote);else run.headline=r.table(key,'감정의 뿌리').row.text;}
+    }
+  }
+  else if(id==='information'){const type=r.table('information-type','정보'),topic=r.table('information-topic','정보');run.headline=`${topic.row.text} · ${type.row.text}`;run.subline=o.details?hooks.inspiration(r):'현재 사건과 연결해 해석하세요.';}
+  else if(id==='conversation'){
+    const topic=r.table('conversation','대화 주제');r.table('reaction','첫 인물의 반응');r.table('reaction','둘째 인물의 반응');run.headline=topic.row.text;run.subline=o.details?hooks.inspiration(r):'반응을 인물들의 관계에 연결하세요.';
+    run.notes.push('항해 중 대화에서 긍정 반응은 PC Stress -1, 부정 반응은 +1. 필요하면 Relations 표로 관계도 확인하세요.');
+  }
+  else if(id==='combat-start'){
+    if(o.checkEncounterReaction&&c.hazard!==4){const reaction=r.table('encounter-reaction','전투 전 반응');if(reaction.value>=9){run.headline='상대가 대원들을 무시하고 떠납니다';run.subline='전투 배치·기습·엄폐는 굴리지 않았습니다.';return true;}}
+    r.table('placement','PC 배치');r.table('placement','상대 배치');
+    let surprise=1;if(o.cautious)r.item('기습','대원들이 Cautious이므로 기습 굴림 생략',52,{group:'전투 시작'});else surprise=r.table('combat-surprise','전투 시작').value;
+    if(surprise<=2||surprise>=5)r.table('encounter-activity','상대가 하던 행동');
+    if(o.generateCover)r.table('cover','엄폐 배치');run.headline='전투 구역이 준비되었습니다';run.subline=surprise>=3&&surprise<=4?'PC들이 기습당함':surprise>=5?'상대가 기습당함':'기습 없이 조우';run.notes.push('기습한 쪽은 Initiative +2. 같은 방향에 배치되면 가능한 한 멀리 떨어집니다.');
+  }
+  else if(id==='behavior'){
+    if(o.retarget)r.table('target','공격 대상');const b=r.table(`behavior-${o.behavior}`,'이번 행동');run.headline=b.row.text;run.subline=tables[`behavior-${o.behavior}`].title;
+    run.notes.push('공격·능력의 선택과 판정은 현재 전장에 맞춰 적용하세요. 부상과 자원은 종이 시트에 기록합니다.');
+  }
+  else if(id==='injury'){const i=r.table('injury','부상');run.headline=i.row.text;if(i.value===1)r.table('critical-injury','치명적 부상');run.subline='부상과 효과를 종이 시트에 기록하세요.';}
+  else if(id==='stress'){const s=r.table(c.presentCrew>1?'stress-group':'stress-alone','스트레스 반응');run.headline=s.row.text;run.subline=c.presentCrew>1?'다른 대원들과 함께 있음':'혼자 있음';run.notes.push('10 Stress 누적 또는 GM 판단 후 Resolve 실패 시 사용합니다. 별도 기간이 없으면 Stress를 조금이라도 잃을 때 반응이 끝납니다(p.94–95).');}
+  else if(id==='trauma'){const t=r.table('trauma','트라우마');run.headline=t.row.text;if(t.value<=2)r.table('negative-trait','부정적 특성');run.subline='장기 효과를 종이 시트에 기록하세요.';}
+  else if(id==='station'){
+    const ids={carousing:'carousing',night:'last-night',locals:'locals',news:'corporate-news'};
+    if(o.stationActivity==='news'){const corporation=r.table('corporation','기업'),news=r.table('corporate-news','뉴스');run.headline=`${corporation.row.text} · ${news.row.text}`;}
+    else {const v=r.table(ids[o.stationActivity],'정거장');run.headline=v.row.text;if(o.stationActivity==='carousing'&&v.value===45)r.table('carousing-jewelry','발견한 물건');}
+    run.subline='Karum Station에서의 한 장면';
+  }
+  else if(id==='ship-name'){const adjective=r.table('ship-adjective','우주선 명명'),name=r.table('ship-name','우주선 명명');run.headline=`${adjective.row.text} ${name.row.text}`;run.subline='대원들이 배에 붙인 이름';}
+  else if(id==='site-name'){const parts=[1,2,3].map(i=>r.table(`site-name-${i}`,'탐사지 명명').row.text);run.headline=parts[0].replace(/-$/,'')+parts[1]+'-'+parts[2];run.subline='KSA 명명 규칙에 따른 세 음절·코드 굴림';}
+  else if(id==='hacking'){
+    const values=Array.from({length:o.hackingDifficulty},()=>r.raw('hacking-node','해킹 D6',6,102));run.hacking={values};
+    run.headline=values.includes(1)?'시스템이 잠깁니다':'해킹에 성공합니다';run.subline=`난도 ${o.hackingDifficulty} · ${values.join(' / ')}`;
+    run.notes.push('Hacking 재능이 있어야 시도할 수 있습니다. 난도만큼 라운드가 걸립니다. 성공한 Àrsaidh Technology 판정은 1회, Cypher는 1회, Black Cypher는 2회 재굴림을 허용합니다. 사용한 시트 자원에 맞춰 아래 주사위를 선택하세요.');
+  }
+  else if(id==='dice'){const n=rollExpression(r,o.diceExpression);run.headline=String(n);run.subline=o.diceExpression;r.item('직접 입력한 주사위 식',`${o.diceExpression} = ${n}`,34,{detail:'앱의 일반 주사위 편의 기능. 특정 판정의 성공 조건이나 시트 수치를 자동 적용하지 않습니다.'});}
+  else if(id==='alternate'){const a=r.table('alternate-access','우회 경로');run.headline=a.row.text;if(a.value<=5)hooks.encounter(r,run);else hooks.security(r,run);run.subline='우회 경로 탐색 · 시간트랙 +1';}
+  else if(id==='activity'){
+    run.headline='한 시간이 지났습니다';run.subline='소모품과 지속 효과를 종이 시트에서 갱신하세요.';
+    if(c.knownThreats){const v=r.raw('site-activity-check','장소 활동 확인',10,138);r.item('활동 확인',v<=2?'추적 위협의 매복':'매복 없음',138,{roll:v,dice:'d10'});if(v<=2)r.table('known-threat','매복 위협');}
+    else r.item('추적 위협','남은 위협이 없어 활동 굴림 생략',138);
+    run.notes.push('각 인물 Battery 1개와 Oxygen Pellet 1개 소비. 직전 트랙에서 사격했다면 Ammo 1개 소비. 반전 확률은 1/6로 직접 되돌리고, 남은 매복 횟수·지속 효과를 갱신하세요(p.129, 227).');
+  }
+  else if(id==='artifact-activate'){const a=r.table('artifact-activation','활성화');run.headline=a.row.text;run.subline='Technology 판정에 성공한 뒤 사용하는 표';if(a.value===7)r.table('talents','장소를 떠날 때까지 얻는 재능');}
+  else if(id==='scatter'){const d=r.raw('scatter-distance','표적에서 벗어난 거리',4,63),direction=r.table('scatter-direction','산포');run.headline=`${direction.row.text}쪽 ${d}헥스`;run.subline='투척 DEX 판정에 실패한 폭발물';run.notes.push('전투 격자 밖으로 벗어나면 효과 없이 잃어버립니다.');}
+  else return false;
+  return true;
+}

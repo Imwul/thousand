@@ -1,0 +1,9330 @@
+export const sourceTables = [
+  {
+    "id": "talents",
+    "title": "재능",
+    "english": "TALENTS",
+    "dice": "d100",
+    "page": [
+      19,
+      20,
+      21
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Aim: [Cost: 10 Stamina.] Deal double damage on your next attack, if it’s with a ranged weapon.",
+        "id": "talents.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "Backstab: [Cost: 5 Stamina.] Following a successful Stealth check, use a knife to perform a powerful surprise attack, dealing an additional +2D10 damage to one enemy. Can only be used when not engaged in combat.",
+        "id": "talents.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "Bash: [Cost: 10 Stamina.] After a successful attack, your base damage with two-handed weapons is 2D10 instead of D10.",
+        "id": "talents.5"
+      },
+      {
+        "min": 7,
+        "max": 8,
+        "text": "Bounce Throw: You can re-roll one scatter roll when you fail to throw a grenade (or similar item).",
+        "id": "talents.7"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "Breath Control: You can make each Oxygen Pellet last 2 Time Track resets.",
+        "id": "talents.9"
+      },
+      {
+        "min": 11,
+        "max": 12,
+        "text": "Calm: Each time you gain Stress you gain 1 less (minimum 1).",
+        "id": "talents.11"
+      },
+      {
+        "min": 13,
+        "max": 14,
+        "text": "Careless: When activated, you gain +5 to your attacks this round but you cannot spend Stamina on defensive moves.",
+        "id": "talents.13"
+      },
+      {
+        "min": 15,
+        "max": 16,
+        "text": "Charge: You can barge into melee, gaining +5 Skill and +5 damage during your first turn. Cannot be used in conjunction with any form of stealth.",
+        "id": "talents.15"
+      },
+      {
+        "min": 17,
+        "max": 18,
+        "text": "Cleave: [Cost: 8 Stamina.] When wielding a two-handed melee weapon, all enemies adjacent to your target also take half of the rolled damage.",
+        "id": "talents.17"
+      },
+      {
+        "min": 19,
+        "max": 20,
+        "text": "Compartmentalized Mind: When you gain a Negative Trait, roll twice and choose the result you prefer.",
+        "id": "talents.19"
+      },
+      {
+        "min": 21,
+        "max": 22,
+        "text": "Counter-Attack: [Cost: 5 Stamina.] While wielding a melee weapon, if you win the combat roll during an opponent's turn your attack automatically causes 1 Wound.",
+        "id": "talents.21"
+      },
+      {
+        "min": 23,
+        "max": 24,
+        "text": "Coup de Grace: Gain +D8 damage against knocked-down enemies.",
+        "id": "talents.23"
+      },
+      {
+        "min": 25,
+        "max": 26,
+        "text": "Diligent Medic: You may attempt to heal the same Wound twice per Time Track, instead of once.",
+        "id": "talents.25"
+      },
+      {
+        "min": 27,
+        "max": 28,
+        "text": "Discerning: You can perform an INT check to determine if someone’s lying or trying to manipulate you.",
+        "id": "talents.27"
+      },
+      {
+        "min": 29,
+        "max": 30,
+        "text": "Dual Wielding: Each turn you attack, you may use an off-hand weapon to attack again with disadvantage.",
+        "id": "talents.29"
+      },
+      {
+        "min": 31,
+        "max": 32,
+        "text": "Duck!: [Cost: 3 Stamina.] Shout a warning to an ally, granting them +2 Stamina on their next turn which can only be spent on defensive maneuvers.",
+        "id": "talents.31"
+      },
+      {
+        "min": 33,
+        "max": 34,
+        "text": "Everyone, Calm Down!: If you’re the Team Leader, you may roll Manipulation to bring an end to an argument, infighting event or confidence crisis. If you succeed, all crew members reduce their Stress by 2. This may only be done once per Time Track reset.",
+        "id": "talents.33"
+      },
+      {
+        "min": 35,
+        "max": 36,
+        "text": "Fast Feet: Automatically pass all Escape checks.",
+        "id": "talents.35"
+      },
+      {
+        "min": 37,
+        "max": 38,
+        "text": "Fearless: Once per Site you may ignore the effects of Dread.",
+        "id": "talents.37"
+      },
+      {
+        "min": 39,
+        "max": 40,
+        "text": "Field Medic: You have Advantage on all Medical Aid checks.",
+        "id": "talents.39"
+      },
+      {
+        "min": 41,
+        "max": 42,
+        "text": "Frugal: You can make each ration last 2 weeks instead of 1.",
+        "id": "talents.41"
+      },
+      {
+        "min": 43,
+        "max": 44,
+        "text": "Good Negotiator: You take home 60% of your earnings, instead of the standard 50%.",
+        "id": "talents.43"
+      },
+      {
+        "min": 45,
+        "max": 46,
+        "text": "Hacking: With uncanny ease, you can attempt to hack not only human computers but also some Àrsaidh technology.",
+        "id": "talents.45"
+      },
+      {
+        "min": 47,
+        "max": 48,
+        "text": "Hard to Kill: Gain +1 max Wounds.",
+        "id": "talents.47"
+      },
+      {
+        "min": 49,
+        "max": 50,
+        "text": "Ignore Cover: [Cost: 8 Stamina.] Fire at an enemy behind cover as if they had no cover at all.",
+        "id": "talents.49"
+      },
+      {
+        "min": 51,
+        "max": 52,
+        "text": "Lucky: Each time you roll a natural 11 on the D20, you gain 1 Luck. You may not earn Luck any other way.",
+        "id": "talents.51"
+      },
+      {
+        "min": 53,
+        "max": 54,
+        "text": "Marksman: Gain +2 damage on ranged attacks.",
+        "id": "talents.53"
+      },
+      {
+        "min": 55,
+        "max": 56,
+        "text": "Momentum: [Cost: 5 Stamina.] Deal an extra +1D6 damage to a downed opponent, in an attempt to eliminate them. If the opponent is eliminated, gain +2 damage for the rest of the combat. This effect stacks with itself.",
+        "id": "talents.55"
+      },
+      {
+        "min": 57,
+        "max": 58,
+        "text": "Movement Economy: You only spend 3 Stamina per round while in Stealth.",
+        "id": "talents.57"
+      },
+      {
+        "min": 59,
+        "max": 60,
+        "text": "Multi-Target: [Cost: 10 Stamina.] Target 3 adjacent enemies with a single ranged weapon attack.",
+        "id": "talents.59"
+      },
+      {
+        "min": 61,
+        "max": 62,
+        "text": "Neutralize: [Cost: 10 Stamina.] Carefully observe your opponent, then perform an attack to neutralize one of their unique abilities. If you hit and the damage would surpass the target's CON, they can no longer use that ability. No Wounds are caused with this attack.",
+        "id": "talents.61"
+      },
+      {
+        "min": 63,
+        "max": 64,
+        "text": "Overpower: If you roll max damage (e.g. a result of 16 on D10 + 6), you automatically inflict a Wound.",
+        "id": "talents.63"
+      },
+      {
+        "min": 65,
+        "max": 66,
+        "text": "Overwhelm: After a knocked-down opponent recovers, their Recovery Status roll is modified by +3.",
+        "id": "talents.65"
+      },
+      {
+        "min": 67,
+        "max": 68,
+        "text": "Pack Rat: You perfectly arrange the things in your bag, gaining +2 Gear Slots.",
+        "id": "talents.67"
+      },
+      {
+        "min": 69,
+        "max": 70,
+        "text": "Parry: [Cost: 3 Stamina.] When hit by an attack, roll your weapon's damage. If the damage you roll is equal or higher than the attacker's, you parry it and receive no damage.",
+        "id": "talents.69"
+      },
+      {
+        "min": 71,
+        "max": 72,
+        "text": "Point-Blank Expert: You suffer no penalty when using a ranged weapon in melee.",
+        "id": "talents.71"
+      },
+      {
+        "min": 73,
+        "max": 74,
+        "text": "Quiet: All rolls on the Site Activity table are reduced by 1 (minimum 1). This effect does not stack.",
+        "id": "talents.73"
+      },
+      {
+        "min": 75,
+        "max": 76,
+        "text": "Rend Armor: [Cost: 8 Stamina.] Tear through an enemy's defenses, causing them to permanently lose 2 Armor.",
+        "id": "talents.75"
+      },
+      {
+        "min": 77,
+        "max": 78,
+        "text": "Resilient: You no longer suffer -2 to all actions while injured.",
+        "id": "talents.77"
+      },
+      {
+        "min": 79,
+        "max": 80,
+        "text": "Resist the Taint: You may ignore the negative effects of a Taint.",
+        "id": "talents.79"
+      },
+      {
+        "min": 81,
+        "max": 82,
+        "text": "Resuscitate: Within 1 minute after another character dies, you may perform a Medical Aid check. If you roll an Impressive success or more, the character is revived. They will remain unconscious for D10+10 hours with 1 Wound remaining.",
+        "id": "talents.81"
+      },
+      {
+        "min": 83,
+        "max": 84,
+        "text": "Skill Boost: [Cost: 1 Luck.] Gain +5 to your next skill check.",
+        "id": "talents.83"
+      },
+      {
+        "min": 85,
+        "max": 86,
+        "text": "Step Where I Step!: You lead the way while sneaking, granting the rest of your team +2 to their next Stealth check.",
+        "id": "talents.85"
+      },
+      {
+        "min": 87,
+        "max": 88,
+        "text": "Stout: You have Advantage on all Resolve checks.",
+        "id": "talents.87"
+      },
+      {
+        "min": 89,
+        "max": 90,
+        "text": "Strong: Deal +2 extra damage on melee attacks.",
+        "id": "talents.89"
+      },
+      {
+        "min": 91,
+        "max": 92,
+        "text": "Targeted Strikes: Gain +1 to all rolls on the Hit Location table.",
+        "id": "talents.91"
+      },
+      {
+        "min": 93,
+        "max": 94,
+        "text": "Tough: You roll Recovery checks with +2 WIL.",
+        "id": "talents.93"
+      },
+      {
+        "min": 95,
+        "max": 96,
+        "text": "Vigorous: Gain +2 extra Stamina per turn.",
+        "id": "talents.95"
+      },
+      {
+        "min": 97,
+        "max": 98,
+        "text": "Weak Spot: [Cost: 2 Stamina.] Re-roll a damage roll after successfully attacking.",
+        "id": "talents.97"
+      },
+      {
+        "min": 99,
+        "max": 100,
+        "text": "Well Connected: You have friends everywhere in Karum Station, which allows you to find rare gear with a roll of 12+.",
+        "id": "talents.99"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "background",
+    "title": "이전 직업",
+    "english": "BACKGROUND",
+    "dice": "d10",
+    "page": [
+      22,
+      23
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Algae Farmer You spent most of your life working one of the giant algae farms that feeds most of the world, probably after inheriting the job from your parents. Choose: +1 Resolve or +1 Survival",
+        "id": "background.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Blue Collar Worker You’re just another of the million workers that maintain the machinery—always unseen, always abused. When the opportunity arrived to leave it all behind, you just took it. Screw being poor, the world shall be your oyster! Choose: +1 Technology or +1 Perception",
+        "id": "background.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Celebrity Back on Earth (or maybe even Mars), when your millions of followers seemed ready to turn their fleeting attention to the next big thing, it was time for the ultimate publicity stunt: becoming a Deep Diver and blogging about your experiences. Your agent thinks you’ve lost your mind, and you know that this is a potentially deadly decision, but what’s worse: to die and have millions remember you, or to slowly fade into anonymity? Choose: +1 Manipulation or +1 Perception",
+        "id": "background.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Data Miner After years of 16-hour shifts in front of a screen, you had enough. Sure, things could be much worse (you could be picking through the garbage mounds outside of town, like so many others), but you knew you were destined for greater things. So you left it all behind, eyes firmly set on the future, whatever it may hold. Choose: +1 Science or +1 Technology",
+        "id": "background.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Hedge Fund Kid You’re one of the lucky ones—living the high life far from the rest of the world’s hardships. Still, life became stale after a while and you couldn’t just sit on your hands while others made history. You left it all behind, and now you have nothing but your determination. Choose: +1 Manipulation or +1 Resolve",
+        "id": "background.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Ocean Sweeper The oceans may be dead, but they’re full to the brim with plastic and other useful materials. You and your crew spend months in the world’s silent, eerie waters, the smell of rotten matter and toxic algae forever a part of your life. Surely this is not all life has to offer? With that question in mind, you left the oceans behind in search of a better future. Choose: +1 Technology or +1 Pilot",
+        "id": "background.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Petty Criminal Small robberies and hustles got you by, day to day. You made some enemies, the kind that can’t be simply paid off, and you had to get as far from them as possible. Choose: +1 Manipulation or +1 Close Combat",
+        "id": "background.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Plastic Miner Years spent in the old world’s plastic deposits were enough to make you want to leave the planet for good. Nothing out here could be possibly worse. Choose: +1 Medical Aid or +1 Survival",
+        "id": "background.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Scavenger As millions of others, you carve your life from the old world’s remnants and the garbage of those who came before. It’s not a pretty life and most of the time it’s a short one. After a close call with one of the garbage gangs, you had enough. Whether your money was stolen or saved, you took your ticket and never looked back. Choose: +1 Stealth or +1 Survival",
+        "id": "background.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Warlord The 22nd century is as rife with conflict as ever. You managed to take advantage of that situation—a situation you did not create. Someone had to do the killing, it might as well have been you. Choose: +1 Ranged Combat or +1 Manipulation",
+        "id": "background.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "life-changing",
+    "title": "삶을 바꾼 사건",
+    "english": "Life-Changing Event",
+    "dice": "d20",
+    "page": [
+      24
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Abandoned by the love of your life",
+        "id": "life-changing.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Involved in a terrible accident",
+        "id": "life-changing.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Someone died because of you",
+        "id": "life-changing.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Had a religious experience",
+        "id": "life-changing.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Witnessed a random kindness or cruelty that changed your opinion of humanity",
+        "id": "life-changing.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Learned something you shouldn’t have",
+        "id": "life-changing.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Were forced to act against your morals",
+        "id": "life-changing.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Had the chance to stand up against a powerful figure, but didn’t",
+        "id": "life-changing.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Fought off a terrible addiction",
+        "id": "life-changing.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Discovered you have a secret half-sibling",
+        "id": "life-changing.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Became imprisoned",
+        "id": "life-changing.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Risked your life for someone",
+        "id": "life-changing.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Someone died to save your life",
+        "id": "life-changing.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Got caught in a big scandal",
+        "id": "life-changing.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Suffered amnesia, blocking out a terrible event you cannot remember",
+        "id": "life-changing.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Made a terrible enemy",
+        "id": "life-changing.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Fell to ruin at the hands of someone’s pettiness",
+        "id": "life-changing.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Had a sibling who was murdered",
+        "id": "life-changing.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Discovered you have a talent you didn’t know of",
+        "id": "life-changing.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Found fame",
+        "id": "life-changing.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "karum-place",
+    "title": "정거장에 오게 된 경위",
+    "english": "How did you earn your place",
+    "dice": "d4",
+    "page": [
+      25
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "You saved for years to buy a ticket.",
+        "id": "karum-place.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "You won the annual Karum Scholarship Lottery.",
+        "id": "karum-place.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "You had family money.",
+        "id": "karum-place.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "You got the money through illicit ways.",
+        "id": "karum-place.4"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "nervous-tic",
+    "title": "신경성 버릇",
+    "english": "Nervous Tic",
+    "dice": "d20",
+    "page": [
+      29
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Coughing",
+        "id": "nervous-tic.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Blinking",
+        "id": "nervous-tic.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Wrinkling your nose",
+        "id": "nervous-tic.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Clicking your fingers",
+        "id": "nervous-tic.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Bouncing your leg",
+        "id": "nervous-tic.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Touching other people",
+        "id": "nervous-tic.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Touching others’ things",
+        "id": "nervous-tic.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Humming",
+        "id": "nervous-tic.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Grunting",
+        "id": "nervous-tic.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Sniffing",
+        "id": "nervous-tic.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Repeating a phrase",
+        "id": "nervous-tic.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Biting your nails",
+        "id": "nervous-tic.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Flipping a coin or other small item",
+        "id": "nervous-tic.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Fiddling with a pendant or bracelet",
+        "id": "nervous-tic.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Pulling your hair",
+        "id": "nervous-tic.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Cracking bones",
+        "id": "nervous-tic.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Swaying",
+        "id": "nervous-tic.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Pacing",
+        "id": "nervous-tic.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Laughing loudly and nervously",
+        "id": "nervous-tic.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Sighing constantly",
+        "id": "nervous-tic.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "difficulty",
+    "title": "판정 난도",
+    "english": "Diffuculty Modifiers",
+    "dice": "d8",
+    "page": [
+      37
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Child’s Play +15 ] you can also",
+        "id": "difficulty.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Effortless +10 ] determine it",
+        "id": "difficulty.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Easy +5 ] randomly by",
+        "id": "difficulty.3"
+      },
+      {
+        "min": 4,
+        "max": 5,
+        "text": "Normal 0 ] rolling a D8",
+        "id": "difficulty.4"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Demanding -5 ] .",
+        "id": "difficulty.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Hard -10",
+        "id": "difficulty.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Almost Impossible -15",
+        "id": "difficulty.8"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "placement",
+    "title": "전투 배치 방향",
+    "english": "Placement",
+    "dice": "d4",
+    "page": [
+      52
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "North",
+        "id": "placement.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "East",
+        "id": "placement.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "South",
+        "id": "placement.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "West",
+        "id": "placement.4"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "combat-surprise",
+    "title": "전투 기습",
+    "english": "Surprise",
+    "dice": "d6",
+    "page": [
+      52
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "No surprise",
+        "id": "combat-surprise.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "PCs are surprised",
+        "id": "combat-surprise.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "Opponents are surprised >",
+        "id": "combat-surprise.5"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "encounter-activity",
+    "title": "적이 하고 있던 행동",
+    "english": "Encounter Activity",
+    "dice": "d8",
+    "page": [
+      53
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Resting or eating (if appropriate)",
+        "id": "encounter-activity.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Fighting another of its kind",
+        "id": "encounter-activity.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Fighting another creature (determined randomly)",
+        "id": "encounter-activity.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Patrolling or keeping watch",
+        "id": "encounter-activity.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Fleeing",
+        "id": "encounter-activity.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Recovering from a recent battle",
+        "id": "encounter-activity.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Preparing a base or lair",
+        "id": "encounter-activity.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Behaving according to its species (grooming, marking, on stand-by, etc.)",
+        "id": "encounter-activity.8"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "target",
+    "title": "적의 공격 대상",
+    "english": "NPC/Creature Target",
+    "dice": "d10",
+    "page": [
+      59
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Closest threat",
+        "id": "target.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "Most wounded opponent",
+        "id": "target.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "Ranged opponent",
+        "id": "target.5"
+      },
+      {
+        "min": 7,
+        "max": 8,
+        "text": "Most protected opponent",
+        "id": "target.7"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "Most dangerous opponent ] >",
+        "id": "target.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "critical-melee",
+    "title": "근접 치명적 실패",
+    "english": "Critical Miss – Melee",
+    "dice": "d10",
+    "page": [
+      66
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Swung Too Hard: Without the resistance of a successful strike, you lose hold of your weapon. Spend 5 Stamina to either recover it or draw a different weapon.",
+        "id": "critical-melee.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Slipped: You step on something slippery. Test DEX or be Knocked Down.",
+        "id": "critical-melee.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Moved Wrong: You overdo it and pull a muscle. Test CON or reduce your Stamina by 3 for this encounter.",
+        "id": "critical-melee.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Lost Confidence: Now that you think about it, this is not looking good. Reduce your Initiative by 2.",
+        "id": "critical-melee.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Panic Attack: Test WIL or reduce your Combat skills by 2 for this encounter.",
+        "id": "critical-melee.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Twisted Ankle: You step the wrong way and now it hurts each time you move. Add +2 to all incoming damage.",
+        "id": "critical-melee.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Exposed: You swing ungraciously and leave yourself exposed. All enemies targeting you get a free attack.",
+        "id": "critical-melee.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Unguarded: You are fighting recklessly. You cannot spend Stamina on defensive maneuvers for the rest of this encounter.",
+        "id": "critical-melee.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Exhausted: The fight’s weight suddenly overwhelms you. Roll Recovery Checks with disadvantage for this encounter.",
+        "id": "critical-melee.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Terrible Swing: You miscalculate badly, not only missing your target but hitting yourself. Roll for damage as normal.",
+        "id": "critical-melee.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "critical-ranged",
+    "title": "원거리 치명적 실패",
+    "english": "Critical Miss – Ranged",
+    "dice": "d10",
+    "page": [
+      67
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Jammed Weapon: It won’t fix itself! Either spend all your Stamina unjamming it or spend 5 Stamina to drop it and draw a different weapon.",
+        "id": "critical-ranged.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Slipped: You step on something slippery. Test DEX or be Knocked Down.",
+        "id": "critical-ranged.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Dropped Weapon: Your weapon slips from your sweaty hands. Spend 5 Stamina to either recover it or draw a different weapon.",
+        "id": "critical-ranged.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Loss of Confidence: Now that you think about it, this is not looking good. Reduce your Initiative by 2.",
+        "id": "critical-ranged.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Panic Attack: Test WIL or reduce your Combat skills by 2 for this encounter.",
+        "id": "critical-ranged.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Shattered: Instead of firing, your weapon blows up in your hands. You are unscathed but your weapon is scrap.",
+        "id": "critical-ranged.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Exposed: You step to the wrong side, leaving yourself exposed. All enemies targeting you get a free attack.",
+        "id": "critical-ranged.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Unguarded: You are fighting recklessly. You cannot spend Stamina on defensive maneuvers for the rest of this encounter.",
+        "id": "critical-ranged.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Exhausted: The fight’s weight suddenly overwhelms you. Roll Recovery Checks with disadvantage for this encounter.",
+        "id": "critical-ranged.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Bad Luck: In a twist of fate you not only miss your target, but the bullet ricochets and hits you. Roll for damage as normal.",
+        "id": "critical-ranged.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "combat-event",
+    "title": "전투 돌발사건",
+    "english": "Random Combat Events",
+    "dice": "d10",
+    "page": [
+      72
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "A random opponent trips violently and gets Knocked Down.",
+        "id": "combat-event.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A random opponent gets entangled with the scenery (e.g. cables, vine-like flora) and loses their next turn completely.",
+        "id": "combat-event.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A tremor forces all combatants to test DEX or become Knocked Down.",
+        "id": "combat-event.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A random opponent’s weapon becomes jammed— they must spend a round fixing it.",
+        "id": "combat-event.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A new, random opponent joins the fight, attacking both sides.",
+        "id": "combat-event.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A crew member’s bag is struck, destroying (1x)Oxygen Pellet.",
+        "id": "combat-event.7"
+      },
+      {
+        "min": 8,
+        "max": 10,
+        "text": "A random opponent is overcome with pain or malfunction, losing the ability to attack or defend for D4 turns.",
+        "id": "combat-event.8"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "injury",
+    "title": "부상",
+    "english": "Injuries",
+    "dice": "d20",
+    "page": [
+      76,
+      77
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "CRITICAL INJURY: The character suffers an especially severe wound. Roll on the Critical Injuries table.",
+        "id": "injury.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "GASH: A deep wound cuts into the character's chest (-5 CON).",
+        "id": "injury.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "IMPAIRED ARM: The hit wounds the character’s arm, making it difficult to move (-5 to all actions that imply the use of hands).",
+        "id": "injury.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "IMPAIRED LEG: A direct hit to the leg causes the character to lose mobility (-5 DEX).",
+        "id": "injury.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "INFECTED WOUND: The wound has been quickly infected—it requires Antibiotics soon or it may never heal (see Infected, pg 85).",
+        "id": "injury.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "BROKEN RIBS: A violent hit to the rib cage shatters a few ribs (-2 Stamina).",
+        "id": "injury.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "SLASHED LEG: The character's leg suffers a deep cut, making it difficult to maneuver (no defensive maneuvers allowed).",
+        "id": "injury.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "BANGED HEAD: The character suffers a hit to the head. The shock makes them lose their next turn.",
+        "id": "injury.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "DAMAGED VISION: The character suffers a hit to their face, blurring their vision ( -5 to all actions).",
+        "id": "injury.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "BRAIN DAMAGE: The character suffers a severe hit to the head, damaging their brain and causing partial amnesia (-80 Experience Points).",
+        "id": "injury.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "CRUSHED FINGERS: A direct hit to the character’s hand damages their fingers (-5 to Combat skills).",
+        "id": "injury.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "SUPERFICIAL WOUND: The character suffers an ugly- looking but superficial cut. No effect.",
+        "id": "injury.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "BRUISED BRAIN: The character suffers a blow to the back of the head, temporarily confusing them (-5 INT).",
+        "id": "injury.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "SLASHED EAR: The character's ear is damaged, reducing their hearing (-5 Perception).",
+        "id": "injury.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "SLIT BICEP: The character receives an ugly cut to the bicep (-5 STR).",
+        "id": "injury.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "SCRATCHED BROW: Their brow suffers a deep scratch, not dealing much damage but bleeding profusely. They must spend the next round wiping the blood from their eyes, clearing their vision.",
+        "id": "injury.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "DAMAGED NERVES: The character suffers some form of nerve damage that induces seizures. Roll a D6 every turn—on a 1 they cannot act during their turn.",
+        "id": "injury.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "BLOOD LOSS: A deep wound to their stomach begins bleeding profusely (+2 to all damage received).",
+        "id": "injury.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "SAVAGE BLOW: The injury was so violent that the character gains 1 Trauma (pg 98).",
+        "id": "injury.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "TORN TO PIECES: Miraculously, the blow was completely absorbed by the character's clothing. Any gear worn on the wound's location is automatically destroyed.",
+        "id": "injury.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "critical-injury",
+    "title": "치명적 부상",
+    "english": "Critical Injuries",
+    "dice": "d10",
+    "page": [
+      78
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "CRUSHED SKULL: The character suffers a fatal wound to the head. They are dead.",
+        "id": "critical-injury.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "DESTROYED EAR: The hit cuts the character's ear off (-5 Perception).",
+        "id": "critical-injury.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "MISSING FINGERS: The character lost a few fingers from the powerful blow (-5 to Combat skills).",
+        "id": "critical-injury.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "PUNCTURED LUNG: The character's lung is permanently damaged (-5 Stamina).",
+        "id": "critical-injury.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "CUT NOSE: The character lost their nose (-5 CHA).",
+        "id": "critical-injury.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "SWOLLEN BRAIN: The character suffered a severe brain injury (-5 INT).",
+        "id": "critical-injury.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "DAMAGED TENDONS: The character’s arm tendons have suffered irreparable damage (-5 STR).",
+        "id": "critical-injury.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "NERVE DAMAGE: Permanent nerve damage means the character can only spend 3 Stamina points on defensive maneuvers each round.",
+        "id": "critical-injury.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "MINOR ARTERY SEVERED: The maximum number of Wounds the character may receive is reduced by 1.",
+        "id": "critical-injury.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "WEAKENED: The injury has left the character's constitution weakened (+2 to all incoming damage).",
+        "id": "critical-injury.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "parasite-attack",
+    "title": "기생체의 공격",
+    "english": "Parasite Attack",
+    "dice": "d6",
+    "page": [
+      87
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 3,
+        "text": "ESCAPE: With a terrifying shriek, the parasite attempts to flee at a speed of 10 feet/round. It will search for a difficult-to-access place and hide there until it matures into its adult form (D10 Time Tracks). Then it will be ready to start stalking the characters.",
+        "id": "parasite-attack.1"
+      },
+      {
+        "min": 4,
+        "max": 5,
+        "text": "LEG BITE: With a snarl, the parasite attacks the nearest character’s leg (Attack Skill 8, D10+5 damage).",
+        "id": "parasite-attack.4"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "FACE ATTACK: The creature jumps to attach itself to the closest character’s face (Attack Skill 8, D10+5 damage).",
+        "id": "parasite-attack.6"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "stress-group",
+    "title": "대원들과 있을 때 스트레스 반응",
+    "english": "Stress Reaction - Around Others",
+    "dice": "d10",
+    "page": [
+      94
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "STARTING AN ARGUMENT. Use their relations, stories and past events to logically decide which team member makes the most sense.",
+        "id": "stress-group.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "ISOLATING OR SEEKING SOLACE. The character withdraws as much as possible—both physically and psychologically. Whether they lock themself away or grab the nearest bottle of whisky is up to the player or GM.",
+        "id": "stress-group.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "BECOMING ANXIOUS. The character succumbs to anxiety, making things clearly worse for others. Everyone gains 1 Stress and the character is of little help.",
+        "id": "stress-group.5"
+      },
+      {
+        "min": 7,
+        "max": 8,
+        "text": "LASHING OUT. The character not only starts an argument but becomes actively aggressive, potentially causing a fight (see Lashing Out, pg 97).",
+        "id": "stress-group.7"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "BECOMING UNCOOPERATIVE. The character blames others for their current situation, becoming stubborn and unwilling to cooperate.",
+        "id": "stress-group.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "stress-alone",
+    "title": "혼자일 때 스트레스 반응",
+    "english": "Stress Reaction - Alone",
+    "dice": "d10",
+    "page": [
+      95
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "HYPER FOCUSING. The character chooses a hyperfocus activity. They gain +5 to any rolls associated with it, but suffer -5 to any other activity.",
+        "id": "stress-alone.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "TIMING OUT. The character needs to take a break. They spend a whole Time Track reset trying to calm themself.",
+        "id": "stress-alone.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "ANXIETY. The character feels overwhelmed by the current events, suffering -2 to all checks.",
+        "id": "stress-alone.5"
+      },
+      {
+        "min": 7,
+        "max": 8,
+        "text": "BINGING OR HYPERVENTILATING. If aboard a ship, the character attempts to distract themself by eating until they can’t take another bite (-D6 Rations). If exploring, the character starts hyperventilating, rapidly consuming oxygen before they manage to calm themself (-D4 Oxygen Pellets).",
+        "id": "stress-alone.7"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "GETTING OVERWHELMED. The character is starting to reach their limit and is feeling less and less secure. Their Resolve checks are at -2 for the rest of the mission.",
+        "id": "stress-alone.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "obsession",
+    "title": "강박",
+    "english": "Obsessions",
+    "dice": "d12",
+    "page": [
+      96,
+      97
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "FRUGALITY. Frugality and minimalism are the truest virtues, in all aspects of life.",
+        "id": "obsession.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "SUFFERING. All in life is suffering, there is no escaping it.",
+        "id": "obsession.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "EXCELLENCE. I must become the best at everything, the strongest, most beautiful, most intelligent person around, all the time.",
+        "id": "obsession.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "CONNECTION. Only human interactions give meaning to life. Socializing and spending time with others is the most valuable thing a person can do.",
+        "id": "obsession.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "ICONOCLAST. Nothing is sacred, all beliefs are lies. This character will do everything they can to reveal the lies of tradition, rules and religion to the whole world.",
+        "id": "obsession.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "CHOSEN ONE. They have chosen you—their secrets have been revealed to you alone. You must learn more, uncover the Truth, and others must help you no matter what.",
+        "id": "obsession.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "EXCLUSION. Strangers are not to be trusted. Only those who you already know are worth your time and help.",
+        "id": "obsession.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "ANGER. It’s not your fault, it’s the world’s fault. You know how everything should be, but everybody else gets it wrong and you hate them for it.",
+        "id": "obsession.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "PROTECTOR. You must help and protect others (often even from themselves). Only you can save them all.",
+        "id": "obsession.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "HEDONISM. Life’s short, you better enjoy it while you can. Nothing’s gonna stop you from having a good time, all the time.",
+        "id": "obsession.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "SHAME. You try your best, but you’re useless. Everything you do is wrong and you cannot stop apologizing for not measuring up.",
+        "id": "obsession.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "RIGHTFULNESS. There’s only one way of doing things: the Right Way. Follow the rules, obey your superiors and everything will go smoothly. Those who disobey protocol are a danger to us all, and they must be stopped. >",
+        "id": "obsession.12"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "trauma",
+    "title": "트라우마",
+    "english": "Trauma",
+    "dice": "d10",
+    "page": [
+      99
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Roll on the Negative Traits table.",
+        "id": "trauma.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "The extreme nervousness you feel just makes things worse. Gain 5 permanent Stress.",
+        "id": "trauma.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Your shaking hands can barely hold a thing. Take -1 to either Close Combat or Ranged Combat.",
+        "id": "trauma.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Distracted by shadows, you can't focus on anything. Take -1 Perception.",
+        "id": "trauma.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Your heart is fluttering and you have problems breathing. Take -1 Stamina.",
+        "id": "trauma.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "You feel as if something broke inside of you. Take -1 WIL.",
+        "id": "trauma.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "You hyperventilate when you enter combat, immediately expending 1 x Oxygen pellet.",
+        "id": "trauma.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Stressful situations fill you with a deep anxiety that can only be suppressed with physical pain. Each time you gain stress, receive 1 Wound.",
+        "id": "trauma.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "This stress is so intense that you suffer a heart attack. Pass a CON check or die.",
+        "id": "trauma.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "negative-trait",
+    "title": "부정적 특성",
+    "english": "Negative Traits",
+    "dice": "d20",
+    "page": [
+      100,
+      101
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "HYPERVENTILATION: Increase the amount of oxygen you consume per Time Track reset by 1.",
+        "id": "negative-trait.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "MARKED BY FEAR: The horror you felt left a permanent physical mark on you. Whether it's a twitchy eye, a shaky hand or a streak of white hair, the effects are visible (-1 CHA).",
+        "id": "negative-trait.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "WEAKENED CONSTITUTION: The constant stress has left your heart weakened (-1 CON).",
+        "id": "negative-trait.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "PARANOIA: You don't really trust other people, and it shows (-2 Manipulation).",
+        "id": "negative-trait.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "OVERLY CAUTIOUS: You know the horrors that are out there, and you are not going to rush into them. In solo play, +1 each time the Time Track is reset. In group play, always attack last.",
+        "id": "negative-trait.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "DEATH WISH: Sick with stress and desperation, you just want it to be over. Rolling a 1-3 on a Recovery check means you give up and remain Knocked Down.",
+        "id": "negative-trait.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "UNFOCUSED: You have problems focusing your attention on complicated tasks (-1 INT).",
+        "id": "negative-trait.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "PHOBIC: Even the slightest shadow terrorizes you. Each time you gain Trauma, gain 1 extra.",
+        "id": "negative-trait.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "DAMAGED MEMORY: The intense trauma has damaged your brain. Each time you earn XP, you earn ⅓ less (rounding up).",
+        "id": "negative-trait.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "APATHETIC: You no longer feel the urge to fight for anything (-1 WIL).",
+        "id": "negative-trait.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "APPREHENSIVE: You start doubting your combat capabilities (-2 to all Combat skills).",
+        "id": "negative-trait.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "INSECURE: You are afraid to jump into the fray (-1 Initiative).",
+        "id": "negative-trait.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "UNBELIEVER: It is difficult for you to see your destiny (re-rolls now cost 2 Luck points).",
+        "id": "negative-trait.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "LET IT END: You are tired of trying and failing at life (+1 to incoming Injury rolls).",
+        "id": "negative-trait.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "UNRELIABLE: You doubt your own skills and can no longer roll critical successes.",
+        "id": "negative-trait.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "TIRED: Lacking the fighting capability you once had, standard attacks now cost 6 Stamina.",
+        "id": "negative-trait.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "CARELESS: You don't really want to be bothered by dodging attacks. Dodging costs 1 more Stamina.",
+        "id": "negative-trait.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "CLUMSY: Your hands shake and you drop things easily. Perform DEX checks with Disadvantage.",
+        "id": "negative-trait.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "FOGGY MIND: You can't concentrate on tasks for long. Perform INT checks with Disadvantage.",
+        "id": "negative-trait.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "MARKED: The darkness within calls the darkness without. Each Site has 2 additional Known Threats (pg 300). This is stackable, if other characters are also marked.",
+        "id": "negative-trait.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "ship-name",
+    "title": "우주선 이름",
+    "english": "Spaceship Name",
+    "dice": "d100",
+    "page": [
+      112
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Prophet",
+        "id": "ship-name.1"
+      },
+      {
+        "min": 26,
+        "max": 26,
+        "text": "Cosmos",
+        "id": "ship-name.26"
+      },
+      {
+        "min": 51,
+        "max": 51,
+        "text": "Centurion",
+        "id": "ship-name.51"
+      },
+      {
+        "min": 76,
+        "max": 76,
+        "text": "Peregrine",
+        "id": "ship-name.76"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Hannibal",
+        "id": "ship-name.2"
+      },
+      {
+        "min": 27,
+        "max": 27,
+        "text": "Aurora",
+        "id": "ship-name.27"
+      },
+      {
+        "min": 52,
+        "max": 52,
+        "text": "Chronos",
+        "id": "ship-name.52"
+      },
+      {
+        "min": 77,
+        "max": 77,
+        "text": "Sparrow",
+        "id": "ship-name.77"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Magnolia",
+        "id": "ship-name.3"
+      },
+      {
+        "min": 28,
+        "max": 28,
+        "text": "Nemesis",
+        "id": "ship-name.28"
+      },
+      {
+        "min": 53,
+        "max": 53,
+        "text": "Firmament",
+        "id": "ship-name.53"
+      },
+      {
+        "min": 78,
+        "max": 78,
+        "text": "Aurora",
+        "id": "ship-name.78"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Saratoga",
+        "id": "ship-name.4"
+      },
+      {
+        "min": 29,
+        "max": 29,
+        "text": "Freedom",
+        "id": "ship-name.29"
+      },
+      {
+        "min": 54,
+        "max": 54,
+        "text": "Elysium",
+        "id": "ship-name.54"
+      },
+      {
+        "min": 79,
+        "max": 79,
+        "text": "Invincible",
+        "id": "ship-name.79"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Trinity",
+        "id": "ship-name.5"
+      },
+      {
+        "min": 30,
+        "max": 30,
+        "text": "Empress",
+        "id": "ship-name.30"
+      },
+      {
+        "min": 55,
+        "max": 55,
+        "text": "Victory",
+        "id": "ship-name.55"
+      },
+      {
+        "min": 80,
+        "max": 80,
+        "text": "Prometheus",
+        "id": "ship-name.80"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Harmony",
+        "id": "ship-name.6"
+      },
+      {
+        "min": 31,
+        "max": 31,
+        "text": "Babylon",
+        "id": "ship-name.31"
+      },
+      {
+        "min": 56,
+        "max": 56,
+        "text": "Bishop",
+        "id": "ship-name.56"
+      },
+      {
+        "min": 81,
+        "max": 81,
+        "text": "Ballista",
+        "id": "ship-name.81"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Vengeance",
+        "id": "ship-name.7"
+      },
+      {
+        "min": 32,
+        "max": 32,
+        "text": "Pelican",
+        "id": "ship-name.32"
+      },
+      {
+        "min": 57,
+        "max": 57,
+        "text": "Drake",
+        "id": "ship-name.57"
+      },
+      {
+        "min": 82,
+        "max": 82,
+        "text": "Corsair",
+        "id": "ship-name.82"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Scavenger",
+        "id": "ship-name.8"
+      },
+      {
+        "min": 33,
+        "max": 33,
+        "text": "Romulus",
+        "id": "ship-name.33"
+      },
+      {
+        "min": 58,
+        "max": 58,
+        "text": "Beluga",
+        "id": "ship-name.58"
+      },
+      {
+        "min": 83,
+        "max": 83,
+        "text": "Dager",
+        "id": "ship-name.83"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Typhoon",
+        "id": "ship-name.9"
+      },
+      {
+        "min": 34,
+        "max": 34,
+        "text": "Mars",
+        "id": "ship-name.34"
+      },
+      {
+        "min": 59,
+        "max": 59,
+        "text": "Phoenix",
+        "id": "ship-name.59"
+      },
+      {
+        "min": 84,
+        "max": 84,
+        "text": "Typhoon",
+        "id": "ship-name.84"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Zenith",
+        "id": "ship-name.10"
+      },
+      {
+        "min": 35,
+        "max": 35,
+        "text": "Titan",
+        "id": "ship-name.35"
+      },
+      {
+        "min": 60,
+        "max": 60,
+        "text": "Manticore",
+        "id": "ship-name.60"
+      },
+      {
+        "min": 85,
+        "max": 85,
+        "text": "Neutron",
+        "id": "ship-name.85"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Dauntless",
+        "id": "ship-name.11"
+      },
+      {
+        "min": 36,
+        "max": 36,
+        "text": "Luna",
+        "id": "ship-name.36"
+      },
+      {
+        "min": 61,
+        "max": 61,
+        "text": "Anthem",
+        "id": "ship-name.61"
+      },
+      {
+        "min": 86,
+        "max": 86,
+        "text": "Kraken",
+        "id": "ship-name.86"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Falcon",
+        "id": "ship-name.12"
+      },
+      {
+        "min": 37,
+        "max": 37,
+        "text": "Arcadia",
+        "id": "ship-name.37"
+      },
+      {
+        "min": 62,
+        "max": 62,
+        "text": "Ulysses",
+        "id": "ship-name.62"
+      },
+      {
+        "min": 87,
+        "max": 87,
+        "text": "Oni",
+        "id": "ship-name.87"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Genesis",
+        "id": "ship-name.13"
+      },
+      {
+        "min": 38,
+        "max": 38,
+        "text": "Triumph",
+        "id": "ship-name.38"
+      },
+      {
+        "min": 63,
+        "max": 63,
+        "text": "Wanderer",
+        "id": "ship-name.63"
+      },
+      {
+        "min": 88,
+        "max": 88,
+        "text": "Pandora",
+        "id": "ship-name.88"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Providence",
+        "id": "ship-name.14"
+      },
+      {
+        "min": 39,
+        "max": 39,
+        "text": "Royal",
+        "id": "ship-name.39"
+      },
+      {
+        "min": 64,
+        "max": 64,
+        "text": "Legacy",
+        "id": "ship-name.64"
+      },
+      {
+        "min": 89,
+        "max": 89,
+        "text": "Yucatan",
+        "id": "ship-name.89"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Fortune",
+        "id": "ship-name.15"
+      },
+      {
+        "min": 40,
+        "max": 40,
+        "text": "Phobos",
+        "id": "ship-name.40"
+      },
+      {
+        "min": 65,
+        "max": 65,
+        "text": "Neptune",
+        "id": "ship-name.65"
+      },
+      {
+        "min": 90,
+        "max": 90,
+        "text": "Euphoria",
+        "id": "ship-name.90"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Emissary",
+        "id": "ship-name.16"
+      },
+      {
+        "min": 41,
+        "max": 41,
+        "text": "Lighting",
+        "id": "ship-name.41"
+      },
+      {
+        "min": 66,
+        "max": 66,
+        "text": "Rio",
+        "id": "ship-name.66"
+      },
+      {
+        "min": 91,
+        "max": 91,
+        "text": "Storm",
+        "id": "ship-name.91"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Chimera",
+        "id": "ship-name.17"
+      },
+      {
+        "min": 42,
+        "max": 42,
+        "text": "Charm",
+        "id": "ship-name.42"
+      },
+      {
+        "min": 67,
+        "max": 67,
+        "text": "Orion",
+        "id": "ship-name.67"
+      },
+      {
+        "min": 92,
+        "max": 92,
+        "text": "Hammer",
+        "id": "ship-name.92"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Raven",
+        "id": "ship-name.18"
+      },
+      {
+        "min": 43,
+        "max": 43,
+        "text": "Verdant",
+        "id": "ship-name.43"
+      },
+      {
+        "min": 68,
+        "max": 68,
+        "text": "Eagle",
+        "id": "ship-name.68"
+      },
+      {
+        "min": 93,
+        "max": 93,
+        "text": "Unity",
+        "id": "ship-name.93"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Goliath",
+        "id": "ship-name.19"
+      },
+      {
+        "min": 44,
+        "max": 44,
+        "text": "Dream",
+        "id": "ship-name.44"
+      },
+      {
+        "min": 69,
+        "max": 69,
+        "text": "Titan",
+        "id": "ship-name.69"
+      },
+      {
+        "min": 94,
+        "max": 94,
+        "text": "Siren",
+        "id": "ship-name.94"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Scythe",
+        "id": "ship-name.20"
+      },
+      {
+        "min": 45,
+        "max": 45,
+        "text": "Hope",
+        "id": "ship-name.45"
+      },
+      {
+        "min": 70,
+        "max": 70,
+        "text": "Atlas",
+        "id": "ship-name.70"
+      },
+      {
+        "min": 95,
+        "max": 95,
+        "text": "Fate",
+        "id": "ship-name.95"
+      },
+      {
+        "min": 21,
+        "max": 21,
+        "text": "Spectre",
+        "id": "ship-name.21"
+      },
+      {
+        "min": 46,
+        "max": 46,
+        "text": "Albatross",
+        "id": "ship-name.46"
+      },
+      {
+        "min": 71,
+        "max": 71,
+        "text": "Courage",
+        "id": "ship-name.71"
+      },
+      {
+        "min": 96,
+        "max": 96,
+        "text": "Tranquility",
+        "id": "ship-name.96"
+      },
+      {
+        "min": 22,
+        "max": 22,
+        "text": "Razor",
+        "id": "ship-name.22"
+      },
+      {
+        "min": 47,
+        "max": 47,
+        "text": "Pinnacle",
+        "id": "ship-name.47"
+      },
+      {
+        "min": 72,
+        "max": 72,
+        "text": "Desire",
+        "id": "ship-name.72"
+      },
+      {
+        "min": 97,
+        "max": 97,
+        "text": "Discovery",
+        "id": "ship-name.97"
+      },
+      {
+        "min": 23,
+        "max": 23,
+        "text": "Peacock",
+        "id": "ship-name.23"
+      },
+      {
+        "min": 48,
+        "max": 48,
+        "text": "Cyclone",
+        "id": "ship-name.48"
+      },
+      {
+        "min": 73,
+        "max": 73,
+        "text": "Damascus",
+        "id": "ship-name.73"
+      },
+      {
+        "min": 98,
+        "max": 98,
+        "text": "Valhalla",
+        "id": "ship-name.98"
+      },
+      {
+        "min": 24,
+        "max": 24,
+        "text": "Striker",
+        "id": "ship-name.24"
+      },
+      {
+        "min": 49,
+        "max": 49,
+        "text": "Refuge",
+        "id": "ship-name.49"
+      },
+      {
+        "min": 74,
+        "max": 74,
+        "text": "Talon",
+        "id": "ship-name.74"
+      },
+      {
+        "min": 99,
+        "max": 99,
+        "text": "Watcher",
+        "id": "ship-name.99"
+      },
+      {
+        "min": 25,
+        "max": 25,
+        "text": "Javelin",
+        "id": "ship-name.25"
+      },
+      {
+        "min": 50,
+        "max": 50,
+        "text": "Avalon",
+        "id": "ship-name.50"
+      },
+      {
+        "min": 75,
+        "max": 75,
+        "text": "Heart",
+        "id": "ship-name.75"
+      },
+      {
+        "min": 100,
+        "max": 100,
+        "text": "Utopia",
+        "id": "ship-name.100"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "ship-adjective",
+    "title": "우주선 수식어",
+    "english": "Spaceship Adjective",
+    "dice": "d20",
+    "page": [
+      113
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Last",
+        "id": "ship-adjective.1"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Anointed",
+        "id": "ship-adjective.6"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Astral",
+        "id": "ship-adjective.11"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Green",
+        "id": "ship-adjective.16"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Red",
+        "id": "ship-adjective.2"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Black",
+        "id": "ship-adjective.7"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Wicked",
+        "id": "ship-adjective.12"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Molten",
+        "id": "ship-adjective.17"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Ultimate",
+        "id": "ship-adjective.3"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Smooth",
+        "id": "ship-adjective.8"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Empyrean",
+        "id": "ship-adjective.13"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Bright",
+        "id": "ship-adjective.18"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Blue",
+        "id": "ship-adjective.4"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Golden",
+        "id": "ship-adjective.9"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Immortal",
+        "id": "ship-adjective.14"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Twilight",
+        "id": "ship-adjective.19"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Immaculate",
+        "id": "ship-adjective.5"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Atomic",
+        "id": "ship-adjective.10"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Mortal",
+        "id": "ship-adjective.15"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Valiant",
+        "id": "ship-adjective.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "variable-difficulty",
+    "title": "조우의 난도 변화",
+    "english": "Variable Combat Encounter Difficulty",
+    "dice": "d10",
+    "page": [
+      147
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Easy: -5 to Combat Skills",
+        "id": "variable-difficulty.1"
+      },
+      {
+        "min": 3,
+        "max": 8,
+        "text": "Average: No changes",
+        "id": "variable-difficulty.3"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "Hard: +5 to Combat Skills",
+        "id": "variable-difficulty.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "artifact-activation",
+    "title": "유물 활성화 결과",
+    "english": "Activating an Artifact",
+    "dice": "d12",
+    "page": [
+      152
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "It breaks down.",
+        "id": "artifact-activation.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "It explodes, dealing D20 damage within a 6’ radius.",
+        "id": "artifact-activation.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "It opens a nearby door or access point.",
+        "id": "artifact-activation.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "It projects a cosmetic hologram on the user, changing their appearance.",
+        "id": "artifact-activation.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "It activates a piece of technology within the Site.",
+        "id": "artifact-activation.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "It quickly heats up or cools down.",
+        "id": "artifact-activation.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "It grants the user a random Talent as long as they remain within the Site.",
+        "id": "artifact-activation.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "It shocks the user, dealing D20 damage.",
+        "id": "artifact-activation.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "It sprays the user with a toxic liquid which destroys a random item.",
+        "id": "artifact-activation.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "It does nothing.",
+        "id": "artifact-activation.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "It shows the user horrific visions of their close ones being burnt alive. (+1 Trauma)",
+        "id": "artifact-activation.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "It soothes the user, who knows everything’s going to be okay. (-10 Stress)",
+        "id": "artifact-activation.12"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "planet-diameter",
+    "title": "행성 지름",
+    "english": "Planetary Diameter",
+    "dice": "d10",
+    "page": [
+      184
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "1,000 miles",
+        "id": "planet-diameter.1"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "6,000 miles",
+        "id": "planet-diameter.6"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "2,000 miles",
+        "id": "planet-diameter.2"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "7,000 miles",
+        "id": "planet-diameter.7"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "3,000 miles",
+        "id": "planet-diameter.3"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "8,000 miles",
+        "id": "planet-diameter.8"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "4,000 miles",
+        "id": "planet-diameter.4"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "9,000 miles",
+        "id": "planet-diameter.9"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "5,000 miles",
+        "id": "planet-diameter.5"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "10,000 miles",
+        "id": "planet-diameter.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "atmosphere",
+    "title": "행성 대기 밀도",
+    "english": "Atmospheric Density",
+    "dice": "d10",
+    "page": [
+      184
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "VERY THIN. Comparable to Earth’s atmosphere at an altitude of 5 miles.",
+        "id": "atmosphere.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "THIN. Comparable to Earth’s atmosphere at an altitude of 2-3 miles.",
+        "id": "atmosphere.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "OPTIMUM. The atmosphere’s density is perfectly optimal for humans.",
+        "id": "atmosphere.5"
+      },
+      {
+        "min": 7,
+        "max": 8,
+        "text": "DENSE. These heavy atmospheres would be difficult to breathe in, provided they had the right balance of gasses for a human being.",
+        "id": "atmosphere.7"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "THICK. The constant pressure of these dense atmospheres is almost comparable to being underwater.",
+        "id": "atmosphere.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "climate",
+    "title": "행성 평균 기후",
+    "english": "Average Planetary Climate",
+    "dice": "d10",
+    "page": [
+      184
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Extremely Hot (160 ºF)",
+        "id": "climate.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "Hot (140 ºF)",
+        "id": "climate.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "Temperate (85 ºF)",
+        "id": "climate.5"
+      },
+      {
+        "min": 7,
+        "max": 8,
+        "text": "Cold (40 ºF)",
+        "id": "climate.7"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "Extremely Cold (10 ºF)",
+        "id": "climate.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "single-biome",
+    "title": "단일 생물군계 행성 여부",
+    "english": "Is This a Single Biome Planet",
+    "dice": "d10",
+    "page": [
+      185
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 8,
+        "text": "No",
+        "id": "single-biome.1"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "Yes",
+        "id": "single-biome.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome",
+    "title": "인접 생물군계",
+    "english": "Biome Type",
+    "dice": "d12",
+    "page": [
+      185
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Barren lands, roll a D10 on the",
+        "id": "biome.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Exotic B i o m e T y p e t a b l e t o",
+        "id": "biome.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Frozen determine which Biome it",
+        "id": "biome.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Irradiated is. Every other time,",
+        "id": "biome.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Lush such as when the crew",
+        "id": "biome.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Scorched reaches a Biome’s border,",
+        "id": "biome.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Toxic roll a D12 to determine",
+        "id": "biome.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Urban Ruins t h e a d j a c e n t B i o m e",
+        "id": "biome.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Volcanic (unless it’s a single-",
+        "id": "biome.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Water biome planet).",
+        "id": "biome.10"
+      },
+      {
+        "min": 11,
+        "max": 12,
+        "text": "Same as current biome",
+        "id": "biome.11"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "sky",
+    "title": "하늘의 풍경",
+    "english": "What’s in the Sky?",
+    "dice": "d20",
+    "page": [
+      188
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "An ominous black hole looms over the planet, not a star in sight.",
+        "id": "sky.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Three moons orbit the planet, of different sizes and at different speeds.",
+        "id": "sky.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Ancient battle debris litters the sky and occasionally falls to the planet. Most of them burn during re-entry.",
+        "id": "sky.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "An artificial ring surrounds the planet across its equator.",
+        "id": "sky.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Thick yellow clouds cover the sky completely.",
+        "id": "sky.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Enormous creatures float high above, their bloated bodies too delicate to ever touch the surface.",
+        "id": "sky.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Clouds of artificial satellites orbit the planet.",
+        "id": "sky.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A thick column of black smoke, its place of origin past the horizon.",
+        "id": "sky.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A large meteor on a collision course with the planet. You probably have a few weeks, though.",
+        "id": "sky.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "An asteroid belt.",
+        "id": "sky.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "The fragments of what must have been a very large moon.",
+        "id": "sky.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Ominous lightning can be seen in the distance.",
+        "id": "sky.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Flocks of bat-like creatures fill the skies by the thousands, their shrieks sending a chill down your spine.",
+        "id": "sky.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Rock formations, some as large as mountains, defy gravity by floating in the air.",
+        "id": "sky.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "A strange, cobweb-like substance falls from the sky, slowly but surely covering the surrounding landscape.",
+        "id": "sky.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "An inconceivably large spaceship floats in low orbit, getting dangerously close to the planet.",
+        "id": "sky.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Colored air currents criss-cross the sky, creating a layered, painting-like spectacle.",
+        "id": "sky.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "The planet’s magnetic field creates an effect very similar to Earth’s Aurora Borealis, visible even during daytime.",
+        "id": "sky.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "During daytime, a bright red sun shines high above, bathing the planet with its red light.",
+        "id": "sky.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Strange floating sheets of vegetation, impossibly large, carried high by atmospheric currents.",
+        "id": "sky.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "daylight",
+    "title": "낮·밤의 길이",
+    "english": "Does the Planet Have?",
+    "dice": "d20",
+    "page": [
+      189
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "10 hours",
+        "id": "daylight.1"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "35 hours",
+        "id": "daylight.6"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "200 hours",
+        "id": "daylight.11"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "-00 hours",
+        "id": "daylight.16"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "15 hours",
+        "id": "daylight.2"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "40 hours",
+        "id": "daylight.7"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "300 hours",
+        "id": "daylight.12"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "700 hours",
+        "id": "daylight.17"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "20 hours",
+        "id": "daylight.3"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "45 hours",
+        "id": "daylight.8"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "400 hours",
+        "id": "daylight.13"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "800 hours",
+        "id": "daylight.18"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "25 hours",
+        "id": "daylight.4"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "50 hours",
+        "id": "daylight.9"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "500 hours",
+        "id": "daylight.14"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "900 hours",
+        "id": "daylight.19"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "30 hours",
+        "id": "daylight.5"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "100 hours",
+        "id": "daylight.10"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "600 hours",
+        "id": "daylight.15"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "1000 hours",
+        "id": "daylight.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "planetside",
+    "title": "행성 표면 탐사",
+    "english": "Planetside Exploration",
+    "dice": "d10",
+    "page": [
+      195
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "You find something that might be of interest to the KSA. Roll on the Findings table.",
+        "id": "planetside.1"
+      },
+      {
+        "min": 3,
+        "max": 5,
+        "text": "You find nothing of interest.",
+        "id": "planetside.3"
+      },
+      {
+        "min": 6,
+        "max": 9,
+        "text": "You encounter a hazard. Roll on the appropriate Biome’s Hazards & Obstacles table.",
+        "id": "planetside.6"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "You encounter an Àrsaidh Site. Follow the standard Site creation procedure to explore it.",
+        "id": "planetside.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "planet-findings",
+    "title": "행성 표면 발견물",
+    "english": "Findings",
+    "dice": "d10",
+    "page": [
+      195
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "A particularly interesting geological formation. Procedure dictates you must spend a whole Time Track documenting your findings, but you will be compensated with 25 DC once you return.",
+        "id": "planet-findings.1"
+      },
+      {
+        "min": 5,
+        "max": 7,
+        "text": "A fascinating mineral growth. Taking the appropriate samples and videos takes +1 and is worth 20 DC.",
+        "id": "planet-findings.5"
+      },
+      {
+        "min": 8,
+        "max": 9,
+        "text": "An Àrsaidh monument. There are no clues as to its meaning, if it ever meant anything to begin with. Careful documentation takes +3 and is worth a bonus of 25 DC.",
+        "id": "planet-findings.8"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A Xenoanthropological artifact. Roll on page 150 to determine what it is.",
+        "id": "planet-findings.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "planet-encounter",
+    "title": "행성 표면 조우 유형",
+    "english": "Planetside Encounters",
+    "dice": "d10",
+    "page": [
+      196
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 6,
+        "text": "COMBAT ENCOUNTER: Follow the steps described on page 146.",
+        "id": "planet-encounter.1"
+      },
+      {
+        "min": 7,
+        "max": 10,
+        "text": "CLOSE ENCOUNTER: Roll on the",
+        "id": "planet-encounter.7"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "close-encounter",
+    "title": "근접 목격",
+    "english": "Close Encounters",
+    "dice": "d20",
+    "page": [
+      196,
+      197
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Strange, four-winged creatures circle high above.",
+        "id": "close-encounter.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A pack of lupine creatures follow the crew for a while, before losing interest.",
+        "id": "close-encounter.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Two very large creatures battling up in the sky.",
+        "id": "close-encounter.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Snarls and growls can be heard around the crew, before dying off.",
+        "id": "close-encounter.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A herd of very large creatures, seemingly heading your way, which turn away at the last moment.",
+        "id": "close-encounter.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Bones litter the area, most of them ancient but some more than a few days old.",
+        "id": "close-encounter.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A large standing stone covered with deep claw marks.",
+        "id": "close-encounter.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A haunting, ululating howl can be heard not too far away.",
+        "id": "close-encounter.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "An enormous creature, dozens of feet tall, wanders near the crew and either ignores them or simply doesn’t notice them.",
+        "id": "close-encounter.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Thousands of small creatures burrow out from the ground, surrounding the crew before simply moving away from the area as fast as they can.",
+        "id": "close-encounter.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "The remains of a large creature, partially devoured, block the path forward. It’s a fresh kill—whatever took this thing down is likely nearby.",
+        "id": "close-encounter.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Fresh tracks, like those of a large snake, crisscross ahead.",
+        "id": "close-encounter.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Tentacle-like appendages burst up around the crew, missing them by mere inches.",
+        "id": "close-encounter.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "A wailing creature with dozens of small, extremely long legs runs ahead of the crew, chased by a lizard-looking beast.",
+        "id": "close-encounter.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "A crew member unknowingly steps on some sort of fungal growth. Seconds after the crew moves ahead, a cloud of spores explodes behind them with a violent burst.",
+        "id": "close-encounter.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "A swarm of extremely delicate creatures suddenly surrounds the crew, momentarily blinding them. As they collide with the crew, they burst and dye all their gear and suits a bright pink.",
+        "id": "close-encounter.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Whisper-like sounds surround the crew, their source impossible to pinpoint.",
+        "id": "close-encounter.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "A few feet ahead of the crew’s current path, a single burst of laser fire leaves a scorched mark on the soil.",
+        "id": "close-encounter.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "A blood-chilling roar freezes the crew in place, lasting several seconds and echoing across the landscape.",
+        "id": "close-encounter.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "A large creature, 10’ long and with a menacing horned head, lies dead ahead. Upon close inspection, the cause of death is, without a doubt, firearm wounds. It seems recent.",
+        "id": "close-encounter.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-1",
+    "title": "황무지 풍경",
+    "english": "Barren Sights",
+    "dice": "d10",
+    "page": [
+      198
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 5,
+        "text": "Nothing but gray rocks and dust",
+        "id": "biome-sights-1.1"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A large meteorite crater",
+        "id": "biome-sights-1.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Large rock formations",
+        "id": "biome-sights-1.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A steep valley, dead and silent",
+        "id": "biome-sights-1.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A group of metal monoliths, arranged in rows",
+        "id": "biome-sights-1.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A large plain, covered in thousands of small impact craters",
+        "id": "biome-sights-1.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-1",
+    "title": "황무지 위험·장애물",
+    "english": "Barren Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      199
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Only Guardians may be encountered here.",
+        "id": "biome-hazards-1.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A steep cliff forces the crew to go around this hex.",
+        "id": "biome-hazards-1.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "An electro-magnetic disturbance fries your GPS—you’ve lost track of where the ship landed. Each time you enter a Hex (explored or not), there’s a cumulative 10% chance that the ship is there.",
+        "id": "biome-hazards-1.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A storm of micro-meteorites slams all around you, forcing you to spend +D4 taking cover.",
+        "id": "biome-hazards-1.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A thin, bridge-like stone structure seemed the only way to cross a dangerous spot. Unfortunately, it collapses under the weight of a random character, who takes D20 damage and must find a way back up the 20’ fall.",
+        "id": "biome-hazards-1.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A random character steps into some sort of quicksand and must pass a Normal difficulty DEX check or slowly sink. With each failed check, the difficulty increases by one step (from Normal to Almost Impossible). Failing the last check means they’re gone for good. Other characters may assist with ropes or any other available gear.",
+        "id": "biome-hazards-1.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground falls out from under the characters’ feet. Every character takes D20 damage and they must find a way back up the 20+D20’ fall.",
+        "id": "biome-hazards-1.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A dust storm impedes visibility, forcing the crew to wait in place for +D4 .",
+        "id": "biome-hazards-1.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "The earth starts to shake violently as large cracks open all around the crew. All characters must spend 1 Luck or fall inside, never to be seen again.",
+        "id": "biome-hazards-1.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-2",
+    "title": "이계 풍경",
+    "english": "Exotic Sights",
+    "dice": "d10",
+    "page": [
+      200
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A quiet plane, bathed in the pale purple light that filters through the atmosphere.",
+        "id": "biome-sights-2.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A mercury lake, its still surface as reflective as a mirror.",
+        "id": "biome-sights-2.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A field of strange flower-like ice formations.",
+        "id": "biome-sights-2.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A stunning multi-colored arch, clearly the result of erosion but nonetheless breathtaking for its otherworldly beauty.",
+        "id": "biome-sights-2.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Large tentacle-like biological structures rising several dozen feet from the ground, swaying in the wind.",
+        "id": "biome-sights-2.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A waterfall, hundreds of feet tall, more likely liquid hydrogen or methane than water.",
+        "id": "biome-sights-2.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Bulbous egg-like formations grow out from the side of a cliff. It’s unclear if they’re organic or a product of the planet’s chemistry.",
+        "id": "biome-sights-2.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Sharp, dagger-like rock formations rise from the soil, hundreds of feet tall and wide.",
+        "id": "biome-sights-2.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "An enormous cave, its ceiling far above and at least a mile wide.",
+        "id": "biome-sights-2.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "An enormous metal spire, clearly artificial, erected atop a hill that appears to be a giant diamond.",
+        "id": "biome-sights-2.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-2",
+    "title": "이계 위험·장애물",
+    "english": "Exotic Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      201
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-2.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A steep cliff forces the crew to go around this hex.",
+        "id": "biome-hazards-2.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A field of loose gravel makes crossing this hex a difficult task (+1 ).",
+        "id": "biome-hazards-2.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Small frozen balls of an unidentified substance cover the next several miles, making progress difficult and treacherous. Characters must pass a DEX check or fall and twist their leg (-2 DEX until they can rest properly).",
+        "id": "biome-hazards-2.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A thin, bridge-like stone structure seemed the only way to cross a dangerous spot. Unfortunately, it collapses under the weight of a random character, who takes D20 damage and must find a way back up from the 20’ fall.",
+        "id": "biome-hazards-2.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Acid rain begins to pour relentlessly, forcing the crew to find cover fast or suffer real damage. Each crew member can attempt one Survival check to find the crew proper cover. Each failure causes 2D20 damage.",
+        "id": "biome-hazards-2.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground falls out from under the characters’ feet. Every character takes D20 damage and they must find a way back up the 20+D20’ fall.",
+        "id": "biome-hazards-2.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A hailstorm impedes visibility, forcing the crew to wait in place for +D4 .",
+        "id": "biome-hazards-2.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "If every character fails a Perception check, they fail to realize they’re walking on thin ice. With a loud crack, a random character falls into the icy cold water—they must pass a CON check (unless they’re wearing a thermal layer) or pass out and sink to their death, unless somehow rescued by another character.",
+        "id": "biome-hazards-2.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-3",
+    "title": "빙결 풍경",
+    "english": "Frozen Sights",
+    "dice": "d10",
+    "page": [
+      202
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A large, furry creature, scurrying away.",
+        "id": "biome-sights-3.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A huge, violent snowstorm, fortunately very far from your position.",
+        "id": "biome-sights-3.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Incredible ice pillars, eroded by centuries of wind.",
+        "id": "biome-sights-3.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A frozen waterfall, hundreds of feet wide.",
+        "id": "biome-sights-3.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A strange, perfectly circular hole, approximately 50’ in diameter.",
+        "id": "biome-sights-3.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Enormous blocks of ice, 300’ on each side, spread across a wide plain.",
+        "id": "biome-sights-3.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A desolate plain crisscrossed by large crevasses.",
+        "id": "biome-sights-3.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Strange tree-like formations made entirely of ice.",
+        "id": "biome-sights-3.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "An enormous ice cave, its stalactites the size of buildings.",
+        "id": "biome-sights-3.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A column of fire, belched from the depths of an ice crevasse. Reddish snow covers its perimeter. A Science roll reveals the red snow is most likely methane snow, contaminated by traces of hydrocarbons.",
+        "id": "biome-sights-3.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-3",
+    "title": "빙결 위험·장애물",
+    "english": "Frozen Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      203
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-3.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A steep cliff forces the crew to go around this hex.",
+        "id": "biome-hazards-3.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A huge frozen lake, sleek and mirror-like, makes crossing this hex a difficult task (+1 ).",
+        "id": "biome-hazards-3.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Razor-like shards of ice cover this area, making progress difficult and dangerous. There’s a 1 in 6 chance a random character slashes their vacc or hazard suit (unless it’s armored).",
+        "id": "biome-hazards-3.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A thin, bridge-like stone structure seemed the only way to cross a dangerous spot. Unfortunately, it collapses under the weight of a random character, who takes D20 damage and must find a way back up from the 20’ fall.",
+        "id": "biome-hazards-3.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Large sharp ice shards fall from above in a violent hail. Unless a crew member passes a Survival check, every crew member takes 3D10 damage.",
+        "id": "biome-hazards-3.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground falls out from under the characters’ feet. Every character takes D20 damage and they must find a way back up the 20+D20’ fall.",
+        "id": "biome-hazards-3.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A thick, smoke-like fog impedes visibility, forcing the crew to wait in place for +D4 .",
+        "id": "biome-hazards-3.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "If every character fails a Perception check, they fail to realize they’re walking on thin ice. With a loud crack, a random character falls into the icy cold water—they must pass a CON check (unless they’re wearing a thermal layer) or pass out and sink to their death, unless somehow rescued by another character.",
+        "id": "biome-hazards-3.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-4",
+    "title": "방사능 풍경",
+    "english": "Irradiated Sights",
+    "dice": "d10",
+    "page": [
+      204
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Large cracked towers, visually similar to hyperboloid cooling towers.",
+        "id": "biome-sights-4.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A large field littered with pieces of twisted, broken metal, clearly manufactured.",
+        "id": "biome-sights-4.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A plain covered with the bleached bones of large creatures, probably hundreds of years old.",
+        "id": "biome-sights-4.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A lush, vibrantly red forest.",
+        "id": "biome-sights-4.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Some sort of urban ruins.",
+        "id": "biome-sights-4.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Small, almost bucolic rolling hills, as far as the eye can see.",
+        "id": "biome-sights-4.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A deep canyon. The rushing wind flows through it, producing a disquieting whistling.",
+        "id": "biome-sights-4.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A broken mountain, its peak covered in the impact craters visible from miles away.",
+        "id": "biome-sights-4.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A crater-filled plain, each hole filled with water.",
+        "id": "biome-sights-4.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Deep fuming cracks in the earth.",
+        "id": "biome-sights-4.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-4",
+    "title": "방사능 위험·장애물",
+    "english": "Irradiated Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      205
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-4.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A deep lake of highly radioactive water, which forces the crew to go around this hex.",
+        "id": "biome-hazards-4.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A sludge-covered plain, difficult to traverse (+1 ).",
+        "id": "biome-hazards-4.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A thick cloud of radioactive gas floats over this hex. Entering it inflicts 50 rads.",
+        "id": "biome-hazards-4.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A thin, bridge-like stone structure seemed the only way to cross a dangerous spot. Unfortunately, it collapses under the weight of a random character, who takes D20 damage and must find a way back up from the 20’ fall.",
+        "id": "biome-hazards-4.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A sudden flash flood of toxic water emerges from behind the crew. Unless one character passes a Perception check, all characters must pass a DEX check to jump to safety in time or else take D100 rads and be dragged D6 miles away.",
+        "id": "biome-hazards-4.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground falls out from under the characters’ feet. Every character takes D20 damage and they must find a way back up the 20+D20’ fall.",
+        "id": "biome-hazards-4.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A thick, smoke-like fog impedes visibility, forcing the crew to wait in place for +D4 .",
+        "id": "biome-hazards-4.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Strange, mushroom-like lifeforms, like 7’ tall white, sticky balloons, extend for miles around the crew. They are very sensitive to noise—all characters must pass a Stealth check to avoid disturbing them. On failure, the lifeforms shrivel and die, but not before shooting an extremely acidic substance in a 5’ radius. Adjacent characters suffer 3D10 damage (unless they are wearing DrakeSkin with an Armor Module Class C).",
+        "id": "biome-hazards-4.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-5",
+    "title": "무성한 식생 풍경",
+    "english": "Lush Sights",
+    "dice": "d10",
+    "page": [
+      206
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A spectacular field blooming with plant life.",
+        "id": "biome-sights-5.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A flock of larged winged creatures, several miles above.",
+        "id": "biome-sights-5.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Dark blue plant-like lifeforms, covering a nearby hill.",
+        "id": "biome-sights-5.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A drove of hooved creatures running at incredible speed across a field.",
+        "id": "biome-sights-5.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A lake covered in floating, ambulating lifeforms.",
+        "id": "biome-sights-5.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Large tree-like lifeforms forming a field, many miles wide, each one separated from each other by exactly 346 feet.",
+        "id": "biome-sights-5.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "An inconceivably large creature, slowly making its way across a valley.",
+        "id": "biome-sights-5.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A strange gaseous iridescence, a few miles away.",
+        "id": "biome-sights-5.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A series of stone arches covered with hanging vine-like lifeforms.",
+        "id": "biome-sights-5.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A wet swamp-like area, its strange sounds and sights almost overwhelming.",
+        "id": "biome-sights-5.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-5",
+    "title": "무성한 식생 위험·장애물",
+    "english": "Lush Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      207
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-5.1"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "If every character fails a Perception check, they fail to realize they’re about to step onto a thin membrane. With a violent contraction, a random character is slowly but surely enveloped—they suffer D10 damage every round until freed, whether by another character or with their own tools and quick thinking.",
+        "id": "biome-hazards-5.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A shrieking, flying creature suddenly appears and attempts to grab a random character. They must pass a DEX check or be taken away to the creature’s nest on a high mountain peak D20 miles away.",
+        "id": "biome-hazards-5.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A blood-curdling howl freezes the whole crew in place. All characters must pass a Resolve check or gain 10 Stress.",
+        "id": "biome-hazards-5.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground falls out from under the characters’ feet. Every character takes D20 damage and they must find a way back up the 20+D20’ fall.",
+        "id": "biome-hazards-5.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A thick, heavy fog impedes visibility, forcing the crew to wait in place for +D4 .",
+        "id": "biome-hazards-5.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A random character must pass a Perception check or step on a strange translucid sack. If they fail, it explodes and releases a spider-like creature which immediately attempts to bite them. Only a DrakeSkin with an Armor Module Class A or higher can resist the attack. If bitten, the character must pass a CON check or become infected (see page 85).",
+        "id": "biome-hazards-5.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-6",
+    "title": "작열 풍경",
+    "english": "Scorched Sights",
+    "dice": "d10",
+    "page": [
+      208
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A river of molten metal, slowly oozing downhill.",
+        "id": "biome-sights-6.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "An everburning pillar of fire, a dozen feet tall.",
+        "id": "biome-sights-6.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A lake of boiling water.",
+        "id": "biome-sights-6.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A large plain covered in a knee-deep layer of ash.",
+        "id": "biome-sights-6.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A volcanic eruption, far in the distance but still dramatic and awe-inspiring.",
+        "id": "biome-sights-6.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A steaming rock surface, its surface recently congealed into strange, smooth shapes.",
+        "id": "biome-sights-6.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A deep chasm, the glow of molten lava far below.",
+        "id": "biome-sights-6.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "An artificial structure resembling a chimney. Black smoke emerges from the top.",
+        "id": "biome-sights-6.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A valley carved by the passage of molten lava, which left behind gigantic diamond-like pillars.",
+        "id": "biome-sights-6.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A clearly artificial channel dug in the hard stone surface, somehow still flowing with cold running water, which quickly plunges off a mountainside.",
+        "id": "biome-sights-6.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-6",
+    "title": "작열 위험·장애물",
+    "english": "Scorched Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      209
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-6.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A treacherous geyser field. While crossing, steaming water unexpectedly bursts from the ground—characters must pass a DEX check or suffer D20 damage from the boiling water.",
+        "id": "biome-hazards-6.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A sludge-covered plain, difficult to traverse (+1 ).",
+        "id": "biome-hazards-6.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "The ground shakes violently, throwing all crew members to their knees. There’s a 1 in 6 chance boulders fall from a nearby mountain—each crew member must pass a DEX check or suffer D4 wounds.",
+        "id": "biome-hazards-6.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A winged horror the size of a horse suddenly appears, diving toward a random character—they must pass a DEX check or be snatched away by the creature, who drops them from a height of 2D20 feet.",
+        "id": "biome-hazards-6.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A stone structure, clearly artificial, stands amid a lake of lava. When approached it begins to vibrate, causing a deep bone-shattering sound. All characters must pass a CON check or simultaneously vomit and relieve themselves inside their suits (-2 to all actions until they can clean themselves).",
+        "id": "biome-hazards-6.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground collapses out from under the characters’ feet. Every character takes D20 damage and they must find a way back up the 20+D20’ fall.",
+        "id": "biome-hazards-6.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A thick cloud of dense smoke impedes visibility, forcing the crew to wait in place for +D4 .",
+        "id": "biome-hazards-6.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A strong wind which quickly turns into a violent hurricane of ash and dust. The crew must find shelter and remain there for D10 Time Tracks.",
+        "id": "biome-hazards-6.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-7",
+    "title": "독성 풍경",
+    "english": "Toxic Sights",
+    "dice": "d10",
+    "page": [
+      210
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Yellow fumes emerging from the earth’s depths.",
+        "id": "biome-sights-7.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A field of eerie phosphorescent plant-like lifeforms.",
+        "id": "biome-sights-7.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A narrow valley carpeted with thorny vines.",
+        "id": "biome-sights-7.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A waterfall, thick and slimy and green with algae.",
+        "id": "biome-sights-7.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Yellow sulphuric clouds, forming strange patterns.",
+        "id": "biome-sights-7.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A soft, almost ash-like substance floating on the wind, sticking to all surfaces and dyeing them red.",
+        "id": "biome-sights-7.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Dozens of small creatures feeding off a large, days-old carcass.",
+        "id": "biome-sights-7.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Rock formations, corroded by the toxic elements, left with serrated edges and bone-like patterns.",
+        "id": "biome-sights-7.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "The bleached bones of dozens of large creatures, somehow impervious to the elements.",
+        "id": "biome-sights-7.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Large clouds of insect-like creatures, far away but still clearly visible due to their number.",
+        "id": "biome-sights-7.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-7",
+    "title": "독성 위험·장애물",
+    "english": "Toxic Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      211
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-7.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A poisonous marsh, its toxic fumes hell on any suit’s air filters. If crossed, there’s a 1 in 6 chance the air filtration system in a suit fails, requiring a successful Technology check to be repaired.",
+        "id": "biome-hazards-7.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A sludge-covered plain, difficult to traverse (+1 ).",
+        "id": "biome-hazards-7.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A jungle-like area full of prehensile vines which attempt to grab the crew members. All characters must pass a DEX check to avoid being entangled (STR check to escape). Each failed attempt causes +1 .",
+        "id": "biome-hazards-7.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A random character suddenly realizes they have been poisoned somehow (random severity).",
+        "id": "biome-hazards-7.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A perfectly spherical metal globe, the size of a small house, sits in the middle of an empty field. If approached, roll a D20: 1-10) its surface is textured to reveal the contents of all adjacent hexes; 11-19) a blast of energy shocks a random character, dealing 2D20 damage; 20) an orifice opens in its side, revealing a strange metal gauntlet that immediately adjusts itself to the wearer’s anatomy. The wearer can somehow move metal objects no larger than a beach ball at a distance of 20’.",
+        "id": "biome-hazards-7.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground collapses out from under the characters’ feet. They fall inside a spongy but highly corrosive surface. They must climb out the 10’ hole in less than 5 rounds or their boots to dissolve (followed by their feet, legs, etc.).",
+        "id": "biome-hazards-7.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A large lake of acid occupies this area, forcing the crew to go around it +2 .",
+        "id": "biome-hazards-7.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A field of fungal lifeforms—small, white and spherical— covers this whole hex. They explode in a splash of acid when touched, dealing D20 damage in a 3’ radius, so all characters must pass a Stealth check to avoid disturbing the fungi.",
+        "id": "biome-hazards-7.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-8",
+    "title": "도시 폐허 풍경",
+    "english": "Urban Sights",
+    "dice": "d10",
+    "page": [
+      212
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A colossal tower with no visible entrance or windows, topped by a minaret.",
+        "id": "biome-sights-8.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A steep canyon, its walls covered with hanging buildings.",
+        "id": "biome-sights-8.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Rubble-covered terrain, as far as the eye can see. The only remains of what once must have been a large city.",
+        "id": "biome-sights-8.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A large dome, covering the ruins of some sort of square.",
+        "id": "biome-sights-8.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A multi-leveled road system, criss-crossed a hundred different ways.",
+        "id": "biome-sights-8.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A series of arches rising above the rubble.",
+        "id": "biome-sights-8.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A pair of tall skyscrapers creating an artificial valley.",
+        "id": "biome-sights-8.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A wide, circular plaza, stairs spiraling downwards to a collapsed underground facility.",
+        "id": "biome-sights-8.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A wide avenue, surprisingly free of rubble, with low, square buildings at each side.",
+        "id": "biome-sights-8.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A series of pools, in neat rows of three, extending for miles into the distance.",
+        "id": "biome-sights-8.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-8",
+    "title": "도시 폐허 위험·장애물",
+    "english": "Urban Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      213
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-8.1"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "The ground shakes violently, throwing all crew members to their knees. There’s a 1 in 6 chance rubble from the nearby buildings falls down on the characters—each crew member must pass a DEX check or suffer D4 wounds.",
+        "id": "biome-hazards-8.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "An impossibly high barrier blocks the crew’s path, forcing them to walk around it (+1 ).",
+        "id": "biome-hazards-8.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A thick cloud of radioactive gas floats over this hex. Entering it inflicts 50 rads.",
+        "id": "biome-hazards-8.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "An ancient bridge made of some concrete-like material is the only way to get across a canyon. Unfortunately, it collapses under the weight of a random character, who takes D20 damage and must find a way back up from the 20’ fall.",
+        "id": "biome-hazards-8.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A swarm of small bat-like creatures emerges from a nearby building, crowding around the crew. All characters must pass a Resolve check or gain D10 Stress.",
+        "id": "biome-hazards-8.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The ground falls out from under the characters’ feet. Every character takes D20 damage and they must find a way back up the 20+D20’ fall.",
+        "id": "biome-hazards-8.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A thick, smoke-like fog impedes visibility, forcing the crew to wait in place for +D4 .",
+        "id": "biome-hazards-8.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "The crew inadvertently activates an automated defense system. Ancient turrets emerge from the ground and spray a quick-set foam that solidifies on contact, becoming as hard as concrete. Characters must pass a DEX test to avoid being hit, failing means they’re stuck in place and must find a way of freeing themselves.",
+        "id": "biome-hazards-8.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-9",
+    "title": "화산 풍경",
+    "english": "Volcanic Sights",
+    "dice": "d10",
+    "page": [
+      214
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "An erupting volcano, far in the distance.",
+        "id": "biome-sights-9.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Black, menacing clouds gathering above.",
+        "id": "biome-sights-9.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A spectacular lightning storm, illuminating an apocalyptic landscape.",
+        "id": "biome-sights-9.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Two different lava flows, meeting and merging into a wide slow-flowing river of molten rock.",
+        "id": "biome-sights-9.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Large boulders falling from a mountain and splashing into a lake of lava.",
+        "id": "biome-sights-9.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A rare bout of rain, sizzling a recent lava flow, hardening it and creating huge steam clouds.",
+        "id": "biome-sights-9.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A large pool of bubbly molten metal.",
+        "id": "biome-sights-9.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Ancient metal archways, the remains of an old lava tunnel that passed through and melted an iron vein.",
+        "id": "biome-sights-9.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A lava “waterfall,” dripping from a mile-high volcano.",
+        "id": "biome-sights-9.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A field of lava geysers, each creating a column of fire dozens of feet tall.",
+        "id": "biome-sights-9.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-9",
+    "title": "화산 위험·장애물",
+    "english": "Volcanic Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      215
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-9.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "The ground shakes violently, throwing all crew members to their knees. There’s a 1 in 6 chance rubble from nearby buildings falls onto the characters——each crew member must pass a DEX check or suffer D4 wounds.",
+        "id": "biome-hazards-9.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "An impossibly high volcano blocks the crew’s path, forcing them to walk around it (+1 ).",
+        "id": "biome-hazards-9.5"
+      },
+      {
+        "min": 7,
+        "max": 10,
+        "text": "Lava covers this whole area, making it completely inaccessible. The crew must find a different hex to pass through.",
+        "id": "biome-hazards-9.7"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-sights-10",
+    "title": "수역 풍경",
+    "english": "Water Sights",
+    "dice": "d10",
+    "page": [
+      216
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A kelp forest, its long, thick vines extending towards the surface.",
+        "id": "biome-sights-10.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A creature so large it is difficult to comprehend, slowly swimming in the distance.",
+        "id": "biome-sights-10.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A field of bioluminescent life-forms that look like corn ears.",
+        "id": "biome-sights-10.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A dark, narrow canyon with serrated clam-like organisms attached to both sides, making it look like a gaping mouth.",
+        "id": "biome-sights-10.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Incredibly long fragile-looking organisms, gently floating in the current.",
+        "id": "biome-sights-10.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Hundreds of small organisms devouring the carcass of a larger creature.",
+        "id": "biome-sights-10.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Coral-like formations, spanning hundreds of feet, creating incredible spirals and other exotic shapes.",
+        "id": "biome-sights-10.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Large, ancient pipelines, big enough to fit a standing human.",
+        "id": "biome-sights-10.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "The rusty remains of some sort of boat or ship.",
+        "id": "biome-sights-10.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Small jellyfish-like organisms float in all directions, as far as the eye can see.",
+        "id": "biome-sights-10.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "biome-hazards-10",
+    "title": "수역 위험·장애물",
+    "english": "Water Hazards & Obstacles",
+    "dice": "d10",
+    "page": [
+      217
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "Encounter. Roll a Planetside Encounter.",
+        "id": "biome-hazards-10.1"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A swarm of small snake-like creatures emerges from below, crowding around the crew. All characters must pass a Resolve check or gain D10 Stress.",
+        "id": "biome-hazards-10.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A random character is attacked by some sort of tentacled creature emerging from a rock formation. The character (or their companions) must pass a STR check before D4 rounds end, or be pulled into a dark, ominous-looking hole. Failure means the character is stuck inside the hole until the crew can figure out how to pull them out.",
+        "id": "biome-hazards-10.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A steep rock formation, rising from the depths, blocks the crew’s path and forces them to go around it (+2 ).",
+        "id": "biome-hazards-10.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "The water here is highly radioactive. All characters receive 50 rads.",
+        "id": "biome-hazards-10.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A pod of clearly predatory organisms head towards the crew. If any character passes a Perception check, they manage to spot them just in time, earning the crew a chance to hide. Failure means the crew is attacked by an Elite encounter.",
+        "id": "biome-hazards-10.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "The crew enters a strong underwater current—each character must pass a DEX check to swim away from the current or else they are quickly swept away to a random adjacent hex.",
+        "id": "biome-hazards-10.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "character-motivation",
+    "title": "인물의 근본 동기",
+    "english": "Character Motivations",
+    "dice": "d100",
+    "page": [
+      234,
+      235
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Acceptance",
+        "id": "character-motivation.1"
+      },
+      {
+        "min": 26,
+        "max": 26,
+        "text": "Knowledge",
+        "id": "character-motivation.26"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Addiction",
+        "id": "character-motivation.2"
+      },
+      {
+        "min": 27,
+        "max": 27,
+        "text": "Adventure",
+        "id": "character-motivation.27"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Power",
+        "id": "character-motivation.3"
+      },
+      {
+        "min": 28,
+        "max": 28,
+        "text": "Approval",
+        "id": "character-motivation.28"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Conformity",
+        "id": "character-motivation.4"
+      },
+      {
+        "min": 29,
+        "max": 29,
+        "text": "Compassion",
+        "id": "character-motivation.29"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Greed",
+        "id": "character-motivation.5"
+      },
+      {
+        "min": 30,
+        "max": 30,
+        "text": "Debt",
+        "id": "character-motivation.30"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Charity",
+        "id": "character-motivation.6"
+      },
+      {
+        "min": 31,
+        "max": 31,
+        "text": "Boredom",
+        "id": "character-motivation.31"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Follow orders",
+        "id": "character-motivation.7"
+      },
+      {
+        "min": 32,
+        "max": 32,
+        "text": "Faith",
+        "id": "character-motivation.32"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Gain favor",
+        "id": "character-motivation.8"
+      },
+      {
+        "min": 33,
+        "max": 33,
+        "text": "Well-being",
+        "id": "character-motivation.33"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Confusion",
+        "id": "character-motivation.9"
+      },
+      {
+        "min": 34,
+        "max": 34,
+        "text": "Status",
+        "id": "character-motivation.34"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Jealousy",
+        "id": "character-motivation.10"
+      },
+      {
+        "min": 35,
+        "max": 35,
+        "text": "Love",
+        "id": "character-motivation.35"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Mastery",
+        "id": "character-motivation.11"
+      },
+      {
+        "min": 36,
+        "max": 36,
+        "text": "Wealth",
+        "id": "character-motivation.36"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Obligations",
+        "id": "character-motivation.12"
+      },
+      {
+        "min": 37,
+        "max": 37,
+        "text": "Patriotism",
+        "id": "character-motivation.37"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Anger",
+        "id": "character-motivation.13"
+      },
+      {
+        "min": 38,
+        "max": 38,
+        "text": "Peace",
+        "id": "character-motivation.38"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Wantonness",
+        "id": "character-motivation.14"
+      },
+      {
+        "min": 39,
+        "max": 39,
+        "text": "Freedom",
+        "id": "character-motivation.39"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Pleasure",
+        "id": "character-motivation.15"
+      },
+      {
+        "min": 40,
+        "max": 40,
+        "text": "Strength",
+        "id": "character-motivation.40"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Sow discord",
+        "id": "character-motivation.16"
+      },
+      {
+        "min": 41,
+        "max": 41,
+        "text": "Redemption",
+        "id": "character-motivation.41"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Security",
+        "id": "character-motivation.17"
+      },
+      {
+        "min": 42,
+        "max": 42,
+        "text": "Domination",
+        "id": "character-motivation.42"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Protection",
+        "id": "character-motivation.18"
+      },
+      {
+        "min": 43,
+        "max": 43,
+        "text": "Spiritual power",
+        "id": "character-motivation.43"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Stability",
+        "id": "character-motivation.19"
+      },
+      {
+        "min": 44,
+        "max": 44,
+        "text": "Destroy the status quo",
+        "id": "character-motivation.44"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Recognition",
+        "id": "character-motivation.20"
+      },
+      {
+        "min": 45,
+        "max": 45,
+        "text": "Self-esteem",
+        "id": "character-motivation.45"
+      },
+      {
+        "min": 21,
+        "max": 21,
+        "text": "Cause harm",
+        "id": "character-motivation.21"
+      },
+      {
+        "min": 46,
+        "max": 46,
+        "text": "Lust",
+        "id": "character-motivation.46"
+      },
+      {
+        "min": 22,
+        "max": 22,
+        "text": "Blackmail",
+        "id": "character-motivation.22"
+      },
+      {
+        "min": 47,
+        "max": 47,
+        "text": "Desperation",
+        "id": "character-motivation.47"
+      },
+      {
+        "min": 23,
+        "max": 23,
+        "text": "Fulfill plan",
+        "id": "character-motivation.23"
+      },
+      {
+        "min": 48,
+        "max": 48,
+        "text": "Conspiracy",
+        "id": "character-motivation.48"
+      },
+      {
+        "min": 24,
+        "max": 24,
+        "text": "Help Others",
+        "id": "character-motivation.24"
+      },
+      {
+        "min": 49,
+        "max": 49,
+        "text": "Pressured",
+        "id": "character-motivation.49"
+      },
+      {
+        "min": 25,
+        "max": 25,
+        "text": "Harm their enemies",
+        "id": "character-motivation.25"
+      },
+      {
+        "min": 50,
+        "max": 50,
+        "text": "Health",
+        "id": "character-motivation.50"
+      },
+      {
+        "min": 51,
+        "max": 51,
+        "text": "Pride",
+        "id": "character-motivation.51"
+      },
+      {
+        "min": 76,
+        "max": 76,
+        "text": "Hostility",
+        "id": "character-motivation.76"
+      },
+      {
+        "min": 52,
+        "max": 52,
+        "text": "Asceticism",
+        "id": "character-motivation.52"
+      },
+      {
+        "min": 77,
+        "max": 77,
+        "text": "Entertainment",
+        "id": "character-motivation.77"
+      },
+      {
+        "min": 53,
+        "max": 53,
+        "text": "Survival",
+        "id": "character-motivation.53"
+      },
+      {
+        "min": 78,
+        "max": 78,
+        "text": "Altruism",
+        "id": "character-motivation.78"
+      },
+      {
+        "min": 54,
+        "max": 54,
+        "text": "Independence",
+        "id": "character-motivation.54"
+      },
+      {
+        "min": 79,
+        "max": 79,
+        "text": "Hatred",
+        "id": "character-motivation.79"
+      },
+      {
+        "min": 55,
+        "max": 55,
+        "text": "Desperation",
+        "id": "character-motivation.55"
+      },
+      {
+        "min": 80,
+        "max": 80,
+        "text": "Devotion",
+        "id": "character-motivation.80"
+      },
+      {
+        "min": 56,
+        "max": 56,
+        "text": "Nihilism",
+        "id": "character-motivation.56"
+      },
+      {
+        "min": 81,
+        "max": 81,
+        "text": "Envy",
+        "id": "character-motivation.81"
+      },
+      {
+        "min": 57,
+        "max": 57,
+        "text": "Fame",
+        "id": "character-motivation.57"
+      },
+      {
+        "min": 82,
+        "max": 82,
+        "text": "Revenge",
+        "id": "character-motivation.82"
+      },
+      {
+        "min": 58,
+        "max": 58,
+        "text": "Hedonism",
+        "id": "character-motivation.58"
+      },
+      {
+        "min": 83,
+        "max": 83,
+        "text": "Impress someone",
+        "id": "character-motivation.83"
+      },
+      {
+        "min": 59,
+        "max": 59,
+        "text": "Justice",
+        "id": "character-motivation.59"
+      },
+      {
+        "min": 84,
+        "max": 84,
+        "text": "Tradition",
+        "id": "character-motivation.84"
+      },
+      {
+        "min": 60,
+        "max": 60,
+        "text": "Loyalty",
+        "id": "character-motivation.60"
+      },
+      {
+        "min": 85,
+        "max": 85,
+        "text": "Control",
+        "id": "character-motivation.85"
+      },
+      {
+        "min": 61,
+        "max": 61,
+        "text": "Fear",
+        "id": "character-motivation.61"
+      },
+      {
+        "min": 86,
+        "max": 86,
+        "text": "Glory",
+        "id": "character-motivation.86"
+      },
+      {
+        "min": 62,
+        "max": 62,
+        "text": "Honor",
+        "id": "character-motivation.62"
+      },
+      {
+        "min": 87,
+        "max": 87,
+        "text": "Peace",
+        "id": "character-motivation.87"
+      },
+      {
+        "min": 63,
+        "max": 63,
+        "text": "Misguidedness",
+        "id": "character-motivation.63"
+      },
+      {
+        "min": 88,
+        "max": 88,
+        "text": "Personal growth",
+        "id": "character-motivation.88"
+      },
+      {
+        "min": 64,
+        "max": 64,
+        "text": "Enviousness",
+        "id": "character-motivation.64"
+      },
+      {
+        "min": 89,
+        "max": 89,
+        "text": "Philanthropy",
+        "id": "character-motivation.89"
+      },
+      {
+        "min": 65,
+        "max": 65,
+        "text": "Prejudice",
+        "id": "character-motivation.65"
+      },
+      {
+        "min": 90,
+        "max": 90,
+        "text": "Rebellion",
+        "id": "character-motivation.90"
+      },
+      {
+        "min": 66,
+        "max": 66,
+        "text": "Belief",
+        "id": "character-motivation.66"
+      },
+      {
+        "min": 91,
+        "max": 91,
+        "text": "Respect",
+        "id": "character-motivation.91"
+      },
+      {
+        "min": 67,
+        "max": 67,
+        "text": "Take power",
+        "id": "character-motivation.67"
+      },
+      {
+        "min": 92,
+        "max": 92,
+        "text": "Social Cohesion",
+        "id": "character-motivation.92"
+      },
+      {
+        "min": 68,
+        "max": 68,
+        "text": "Immortality",
+        "id": "character-motivation.68"
+      },
+      {
+        "min": 93,
+        "max": 93,
+        "text": "Reputation",
+        "id": "character-motivation.93"
+      },
+      {
+        "min": 69,
+        "max": 69,
+        "text": "Corruption",
+        "id": "character-motivation.69"
+      },
+      {
+        "min": 94,
+        "max": 94,
+        "text": "Teach a lesson",
+        "id": "character-motivation.94"
+      },
+      {
+        "min": 70,
+        "max": 70,
+        "text": "Pride",
+        "id": "character-motivation.70"
+      },
+      {
+        "min": 95,
+        "max": 95,
+        "text": "Safety",
+        "id": "character-motivation.95"
+      },
+      {
+        "min": 71,
+        "max": 71,
+        "text": "Transcendence",
+        "id": "character-motivation.71"
+      },
+      {
+        "min": 96,
+        "max": 96,
+        "text": "Wanderlust",
+        "id": "character-motivation.96"
+      },
+      {
+        "min": 72,
+        "max": 72,
+        "text": "Hate",
+        "id": "character-motivation.72"
+      },
+      {
+        "min": 97,
+        "max": 97,
+        "text": "Self-improvement",
+        "id": "character-motivation.97"
+      },
+      {
+        "min": 73,
+        "max": 73,
+        "text": "Responsibility",
+        "id": "character-motivation.73"
+      },
+      {
+        "min": 98,
+        "max": 98,
+        "text": "Mental illness",
+        "id": "character-motivation.98"
+      },
+      {
+        "min": 74,
+        "max": 74,
+        "text": "Victim of blackmail",
+        "id": "character-motivation.74"
+      },
+      {
+        "min": 99,
+        "max": 99,
+        "text": "Prove oneself",
+        "id": "character-motivation.99"
+      },
+      {
+        "min": 75,
+        "max": 75,
+        "text": "Gain the upper hand",
+        "id": "character-motivation.75"
+      },
+      {
+        "min": 100,
+        "max": 100,
+        "text": "None",
+        "id": "character-motivation.100"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "demoralized",
+    "title": "NPC 사기 저하 반응",
+    "english": "Demoralized Reaction",
+    "dice": "d6",
+    "page": [
+      239
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Panics, immediately attempts to flee",
+        "id": "demoralized.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Cowers in fear and ceases to attack for D4 rounds, if in combat",
+        "id": "demoralized.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Confused by fear, lurches against the nearest character or enemy",
+        "id": "demoralized.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Attempts to pull back to assess the situation",
+        "id": "demoralized.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Freezes in confusion and does not act for D4 rounds, if in combat",
+        "id": "demoralized.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Runs towards the nearest danger, screaming in rage and fear, and attacks at -2 if they reach an opponent",
+        "id": "demoralized.6"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "npc-descriptor",
+    "title": "인물 묘사",
+    "english": "NPC Character Descriptor",
+    "dice": "d100",
+    "page": [
+      241
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Poor",
+        "id": "npc-descriptor.1"
+      },
+      {
+        "min": 26,
+        "max": 26,
+        "text": "Wealthy",
+        "id": "npc-descriptor.26"
+      },
+      {
+        "min": 51,
+        "max": 51,
+        "text": "Clean",
+        "id": "npc-descriptor.51"
+      },
+      {
+        "min": 76,
+        "max": 76,
+        "text": "Dirty",
+        "id": "npc-descriptor.76"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Rough",
+        "id": "npc-descriptor.2"
+      },
+      {
+        "min": 27,
+        "max": 27,
+        "text": "Fancy",
+        "id": "npc-descriptor.27"
+      },
+      {
+        "min": 52,
+        "max": 52,
+        "text": "Polite",
+        "id": "npc-descriptor.52"
+      },
+      {
+        "min": 77,
+        "max": 77,
+        "text": "Rude",
+        "id": "npc-descriptor.77"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Trained",
+        "id": "npc-descriptor.3"
+      },
+      {
+        "min": 28,
+        "max": 28,
+        "text": "Skilled",
+        "id": "npc-descriptor.28"
+      },
+      {
+        "min": 53,
+        "max": 53,
+        "text": "Educated",
+        "id": "npc-descriptor.53"
+      },
+      {
+        "min": 78,
+        "max": 78,
+        "text": "Ignorant",
+        "id": "npc-descriptor.78"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Common",
+        "id": "npc-descriptor.4"
+      },
+      {
+        "min": 29,
+        "max": 29,
+        "text": "Intelligent",
+        "id": "npc-descriptor.29"
+      },
+      {
+        "min": 54,
+        "max": 54,
+        "text": "Unusual",
+        "id": "npc-descriptor.54"
+      },
+      {
+        "min": 79,
+        "max": 79,
+        "text": "Sweet",
+        "id": "npc-descriptor.79"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Foul",
+        "id": "npc-descriptor.5"
+      },
+      {
+        "min": 30,
+        "max": 30,
+        "text": "Beautiful",
+        "id": "npc-descriptor.30"
+      },
+      {
+        "min": 55,
+        "max": 55,
+        "text": "Driven",
+        "id": "npc-descriptor.55"
+      },
+      {
+        "min": 80,
+        "max": 80,
+        "text": "Small",
+        "id": "npc-descriptor.80"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Large",
+        "id": "npc-descriptor.6"
+      },
+      {
+        "min": 31,
+        "max": 31,
+        "text": "Loud",
+        "id": "npc-descriptor.31"
+      },
+      {
+        "min": 56,
+        "max": 56,
+        "text": "Fast",
+        "id": "npc-descriptor.56"
+      },
+      {
+        "min": 81,
+        "max": 81,
+        "text": "Slow",
+        "id": "npc-descriptor.81"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Quiet",
+        "id": "npc-descriptor.7"
+      },
+      {
+        "min": 32,
+        "max": 32,
+        "text": "Exotic",
+        "id": "npc-descriptor.32"
+      },
+      {
+        "min": 57,
+        "max": 57,
+        "text": "Uninformed",
+        "id": "npc-descriptor.57"
+      },
+      {
+        "min": 82,
+        "max": 82,
+        "text": "Interesting",
+        "id": "npc-descriptor.82"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Colorful",
+        "id": "npc-descriptor.8"
+      },
+      {
+        "min": 33,
+        "max": 33,
+        "text": "Informative",
+        "id": "npc-descriptor.33"
+      },
+      {
+        "min": 58,
+        "max": 58,
+        "text": "Ugly",
+        "id": "npc-descriptor.58"
+      },
+      {
+        "min": 83,
+        "max": 83,
+        "text": "Dangerous",
+        "id": "npc-descriptor.83"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Inept",
+        "id": "npc-descriptor.9"
+      },
+      {
+        "min": 34,
+        "max": 34,
+        "text": "Clumsy",
+        "id": "npc-descriptor.34"
+      },
+      {
+        "min": 59,
+        "max": 59,
+        "text": "Capable",
+        "id": "npc-descriptor.59"
+      },
+      {
+        "min": 84,
+        "max": 84,
+        "text": "Intrusive",
+        "id": "npc-descriptor.84"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Respectful",
+        "id": "npc-descriptor.10"
+      },
+      {
+        "min": 35,
+        "max": 35,
+        "text": "Primitive",
+        "id": "npc-descriptor.35"
+      },
+      {
+        "min": 60,
+        "max": 60,
+        "text": "Elegant",
+        "id": "npc-descriptor.60"
+      },
+      {
+        "min": 85,
+        "max": 85,
+        "text": "Armed",
+        "id": "npc-descriptor.85"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Different",
+        "id": "npc-descriptor.11"
+      },
+      {
+        "min": 36,
+        "max": 36,
+        "text": "Young",
+        "id": "npc-descriptor.36"
+      },
+      {
+        "min": 61,
+        "max": 61,
+        "text": "Difficult",
+        "id": "npc-descriptor.61"
+      },
+      {
+        "min": 86,
+        "max": 86,
+        "text": "Helpful",
+        "id": "npc-descriptor.86"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Harmful",
+        "id": "npc-descriptor.12"
+      },
+      {
+        "min": 37,
+        "max": 37,
+        "text": "Disciplined",
+        "id": "npc-descriptor.37"
+      },
+      {
+        "min": 62,
+        "max": 62,
+        "text": "Erratic",
+        "id": "npc-descriptor.62"
+      },
+      {
+        "min": 87,
+        "max": 87,
+        "text": "Wild",
+        "id": "npc-descriptor.87"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Commanding",
+        "id": "npc-descriptor.13"
+      },
+      {
+        "min": 38,
+        "max": 38,
+        "text": "Meek",
+        "id": "npc-descriptor.38"
+      },
+      {
+        "min": 63,
+        "max": 63,
+        "text": "Humorous",
+        "id": "npc-descriptor.63"
+      },
+      {
+        "min": 88,
+        "max": 88,
+        "text": "Frightened",
+        "id": "npc-descriptor.88"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Strong",
+        "id": "npc-descriptor.14"
+      },
+      {
+        "min": 39,
+        "max": 39,
+        "text": "Impulsive",
+        "id": "npc-descriptor.39"
+      },
+      {
+        "min": 64,
+        "max": 64,
+        "text": "Naive",
+        "id": "npc-descriptor.64"
+      },
+      {
+        "min": 89,
+        "max": 89,
+        "text": "Surprising",
+        "id": "npc-descriptor.89"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Calculative",
+        "id": "npc-descriptor.15"
+      },
+      {
+        "min": 40,
+        "max": 40,
+        "text": "Sophisticated",
+        "id": "npc-descriptor.40"
+      },
+      {
+        "min": 65,
+        "max": 65,
+        "text": "Old",
+        "id": "npc-descriptor.65"
+      },
+      {
+        "min": 90,
+        "max": 90,
+        "text": "Crazy",
+        "id": "npc-descriptor.90"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Confident",
+        "id": "npc-descriptor.16"
+      },
+      {
+        "min": 41,
+        "max": 41,
+        "text": "Passive",
+        "id": "npc-descriptor.41"
+      },
+      {
+        "min": 66,
+        "max": 66,
+        "text": "Bold",
+        "id": "npc-descriptor.66"
+      },
+      {
+        "min": 91,
+        "max": 91,
+        "text": "Careless",
+        "id": "npc-descriptor.91"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Cautious",
+        "id": "npc-descriptor.17"
+      },
+      {
+        "min": 42,
+        "max": 42,
+        "text": "Sneaky",
+        "id": "npc-descriptor.42"
+      },
+      {
+        "min": 67,
+        "max": 67,
+        "text": "Intimidating",
+        "id": "npc-descriptor.67"
+      },
+      {
+        "min": 92,
+        "max": 92,
+        "text": "Powerful",
+        "id": "npc-descriptor.92"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Unhinged",
+        "id": "npc-descriptor.18"
+      },
+      {
+        "min": 43,
+        "max": 43,
+        "text": "Powerless",
+        "id": "npc-descriptor.43"
+      },
+      {
+        "min": 68,
+        "max": 68,
+        "text": "Hurt",
+        "id": "npc-descriptor.68"
+      },
+      {
+        "min": 93,
+        "max": 93,
+        "text": "Gracious",
+        "id": "npc-descriptor.93"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Caring",
+        "id": "npc-descriptor.19"
+      },
+      {
+        "min": 44,
+        "max": 44,
+        "text": "Honorable",
+        "id": "npc-descriptor.44"
+      },
+      {
+        "min": 69,
+        "max": 69,
+        "text": "Principled",
+        "id": "npc-descriptor.69"
+      },
+      {
+        "min": 94,
+        "max": 94,
+        "text": "Arrogant",
+        "id": "npc-descriptor.94"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Gentle",
+        "id": "npc-descriptor.20"
+      },
+      {
+        "min": 45,
+        "max": 45,
+        "text": "Brave",
+        "id": "npc-descriptor.45"
+      },
+      {
+        "min": 70,
+        "max": 70,
+        "text": "Weak",
+        "id": "npc-descriptor.70"
+      },
+      {
+        "min": 95,
+        "max": 95,
+        "text": "Curious",
+        "id": "npc-descriptor.95"
+      },
+      {
+        "min": 21,
+        "max": 21,
+        "text": "Supportive",
+        "id": "npc-descriptor.21"
+      },
+      {
+        "min": 46,
+        "max": 46,
+        "text": "Heroic",
+        "id": "npc-descriptor.46"
+      },
+      {
+        "min": 71,
+        "max": 71,
+        "text": "Distrusting",
+        "id": "npc-descriptor.71"
+      },
+      {
+        "min": 96,
+        "max": 96,
+        "text": "Pious",
+        "id": "npc-descriptor.96"
+      },
+      {
+        "min": 22,
+        "max": 22,
+        "text": "Generous",
+        "id": "npc-descriptor.22"
+      },
+      {
+        "min": 47,
+        "max": 47,
+        "text": "Posed",
+        "id": "npc-descriptor.47"
+      },
+      {
+        "min": 72,
+        "max": 72,
+        "text": "Greedy",
+        "id": "npc-descriptor.72"
+      },
+      {
+        "min": 97,
+        "max": 97,
+        "text": "Nervous",
+        "id": "npc-descriptor.97"
+      },
+      {
+        "min": 23,
+        "max": 23,
+        "text": "Hopeless",
+        "id": "npc-descriptor.23"
+      },
+      {
+        "min": 48,
+        "max": 48,
+        "text": "Sociable",
+        "id": "npc-descriptor.48"
+      },
+      {
+        "min": 73,
+        "max": 73,
+        "text": "Sketchy",
+        "id": "npc-descriptor.73"
+      },
+      {
+        "min": 98,
+        "max": 98,
+        "text": "Disdainful",
+        "id": "npc-descriptor.98"
+      },
+      {
+        "min": 24,
+        "max": 24,
+        "text": "Reserved",
+        "id": "npc-descriptor.24"
+      },
+      {
+        "min": 49,
+        "max": 49,
+        "text": "Proud",
+        "id": "npc-descriptor.49"
+      },
+      {
+        "min": 74,
+        "max": 74,
+        "text": "Optimistic",
+        "id": "npc-descriptor.74"
+      },
+      {
+        "min": 99,
+        "max": 99,
+        "text": "Humble",
+        "id": "npc-descriptor.99"
+      },
+      {
+        "min": 25,
+        "max": 25,
+        "text": "Shy",
+        "id": "npc-descriptor.25"
+      },
+      {
+        "min": 50,
+        "max": 50,
+        "text": "Calm",
+        "id": "npc-descriptor.50"
+      },
+      {
+        "min": 75,
+        "max": 75,
+        "text": "Courteous",
+        "id": "npc-descriptor.75"
+      },
+      {
+        "min": 100,
+        "max": 100,
+        "text": "Formal",
+        "id": "npc-descriptor.100"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "given-name",
+    "title": "인물 이름",
+    "english": "Character Names",
+    "dice": "d100",
+    "page": [
+      242
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Lilian",
+        "id": "given-name.1"
+      },
+      {
+        "min": 26,
+        "max": 26,
+        "text": "Clarita",
+        "id": "given-name.26"
+      },
+      {
+        "min": 51,
+        "max": 51,
+        "text": "Dorris",
+        "id": "given-name.51"
+      },
+      {
+        "min": 76,
+        "max": 76,
+        "text": "Jazmine",
+        "id": "given-name.76"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Lecia",
+        "id": "given-name.2"
+      },
+      {
+        "min": 27,
+        "max": 27,
+        "text": "Kyoko",
+        "id": "given-name.27"
+      },
+      {
+        "min": 52,
+        "max": 52,
+        "text": "Clemencia",
+        "id": "given-name.52"
+      },
+      {
+        "min": 77,
+        "max": 77,
+        "text": "Lorri",
+        "id": "given-name.77"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Kasha",
+        "id": "given-name.3"
+      },
+      {
+        "min": 28,
+        "max": 28,
+        "text": "Li",
+        "id": "given-name.28"
+      },
+      {
+        "min": 53,
+        "max": 53,
+        "text": "Rashida",
+        "id": "given-name.53"
+      },
+      {
+        "min": 78,
+        "max": 78,
+        "text": "Delila",
+        "id": "given-name.78"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Susana",
+        "id": "given-name.4"
+      },
+      {
+        "min": 29,
+        "max": 29,
+        "text": "Milja",
+        "id": "given-name.29"
+      },
+      {
+        "min": 54,
+        "max": 54,
+        "text": "Tawanda",
+        "id": "given-name.54"
+      },
+      {
+        "min": 79,
+        "max": 79,
+        "text": "Allene",
+        "id": "given-name.79"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Margaret",
+        "id": "given-name.5"
+      },
+      {
+        "min": 30,
+        "max": 30,
+        "text": "Jean Marie",
+        "id": "given-name.30"
+      },
+      {
+        "min": 55,
+        "max": 55,
+        "text": "Myrtis",
+        "id": "given-name.55"
+      },
+      {
+        "min": 80,
+        "max": 80,
+        "text": "Nerissa",
+        "id": "given-name.80"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Kena",
+        "id": "given-name.6"
+      },
+      {
+        "min": 31,
+        "max": 31,
+        "text": "Inge",
+        "id": "given-name.31"
+      },
+      {
+        "min": 56,
+        "max": 56,
+        "text": "Oretha",
+        "id": "given-name.56"
+      },
+      {
+        "min": 81,
+        "max": 81,
+        "text": "Lisha",
+        "id": "given-name.81"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Huong",
+        "id": "given-name.7"
+      },
+      {
+        "min": 32,
+        "max": 32,
+        "text": "Hwa",
+        "id": "given-name.32"
+      },
+      {
+        "min": 57,
+        "max": 57,
+        "text": "Jesse",
+        "id": "given-name.57"
+      },
+      {
+        "min": 82,
+        "max": 82,
+        "text": "Cristy",
+        "id": "given-name.82"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Miesha",
+        "id": "given-name.8"
+      },
+      {
+        "min": 33,
+        "max": 33,
+        "text": "Kiara",
+        "id": "given-name.33"
+      },
+      {
+        "min": 58,
+        "max": 58,
+        "text": "Nita",
+        "id": "given-name.58"
+      },
+      {
+        "min": 83,
+        "max": 83,
+        "text": "Ayana",
+        "id": "given-name.83"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Nakisha",
+        "id": "given-name.9"
+      },
+      {
+        "min": 34,
+        "max": 34,
+        "text": "Annetta",
+        "id": "given-name.34"
+      },
+      {
+        "min": 59,
+        "max": 59,
+        "text": "Phylis",
+        "id": "given-name.59"
+      },
+      {
+        "min": 84,
+        "max": 84,
+        "text": "Chrystal",
+        "id": "given-name.84"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Ketura",
+        "id": "given-name.10"
+      },
+      {
+        "min": 35,
+        "max": 35,
+        "text": "Nona",
+        "id": "given-name.35"
+      },
+      {
+        "min": 60,
+        "max": 60,
+        "text": "Suanne",
+        "id": "given-name.60"
+      },
+      {
+        "min": 85,
+        "max": 85,
+        "text": "Verla",
+        "id": "given-name.85"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Mimi",
+        "id": "given-name.11"
+      },
+      {
+        "min": 36,
+        "max": 36,
+        "text": "Adriana",
+        "id": "given-name.36"
+      },
+      {
+        "min": 61,
+        "max": 61,
+        "text": "Pamela",
+        "id": "given-name.61"
+      },
+      {
+        "min": 86,
+        "max": 86,
+        "text": "Neoma",
+        "id": "given-name.86"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Tasha",
+        "id": "given-name.12"
+      },
+      {
+        "min": 37,
+        "max": 37,
+        "text": "Cecil",
+        "id": "given-name.37"
+      },
+      {
+        "min": 62,
+        "max": 62,
+        "text": "Mayra",
+        "id": "given-name.62"
+      },
+      {
+        "min": 87,
+        "max": 87,
+        "text": "Felicia",
+        "id": "given-name.87"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Jenice",
+        "id": "given-name.13"
+      },
+      {
+        "min": 38,
+        "max": 38,
+        "text": "Phoebe",
+        "id": "given-name.38"
+      },
+      {
+        "min": 63,
+        "max": 63,
+        "text": "Rohi",
+        "id": "given-name.63"
+      },
+      {
+        "min": 88,
+        "max": 88,
+        "text": "Nasra",
+        "id": "given-name.88"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Wasim",
+        "id": "given-name.14"
+      },
+      {
+        "min": 39,
+        "max": 39,
+        "text": "Lammert",
+        "id": "given-name.39"
+      },
+      {
+        "min": 64,
+        "max": 64,
+        "text": "Vishal",
+        "id": "given-name.64"
+      },
+      {
+        "min": 89,
+        "max": 89,
+        "text": "Paolo",
+        "id": "given-name.89"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Elario",
+        "id": "given-name.15"
+      },
+      {
+        "min": 40,
+        "max": 40,
+        "text": "Maximilian",
+        "id": "given-name.40"
+      },
+      {
+        "min": 65,
+        "max": 65,
+        "text": "Aram",
+        "id": "given-name.65"
+      },
+      {
+        "min": 90,
+        "max": 90,
+        "text": "Poldie",
+        "id": "given-name.90"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Kaneshiro",
+        "id": "given-name.16"
+      },
+      {
+        "min": 41,
+        "max": 41,
+        "text": "Toda",
+        "id": "given-name.41"
+      },
+      {
+        "min": 66,
+        "max": 66,
+        "text": "Bok",
+        "id": "given-name.66"
+      },
+      {
+        "min": 91,
+        "max": 91,
+        "text": "Shakti",
+        "id": "given-name.91"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Anuj",
+        "id": "given-name.17"
+      },
+      {
+        "min": 42,
+        "max": 42,
+        "text": "Xia",
+        "id": "given-name.42"
+      },
+      {
+        "min": 67,
+        "max": 67,
+        "text": "Goran",
+        "id": "given-name.67"
+      },
+      {
+        "min": 92,
+        "max": 92,
+        "text": "Lalit",
+        "id": "given-name.92"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Sharif",
+        "id": "given-name.18"
+      },
+      {
+        "min": 43,
+        "max": 43,
+        "text": "Nikita",
+        "id": "given-name.43"
+      },
+      {
+        "min": 68,
+        "max": 68,
+        "text": "Artem",
+        "id": "given-name.68"
+      },
+      {
+        "min": 93,
+        "max": 93,
+        "text": "Lei",
+        "id": "given-name.93"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Ju",
+        "id": "given-name.19"
+      },
+      {
+        "min": 44,
+        "max": 44,
+        "text": "Kang",
+        "id": "given-name.44"
+      },
+      {
+        "min": 69,
+        "max": 69,
+        "text": "Won",
+        "id": "given-name.69"
+      },
+      {
+        "min": 94,
+        "max": 94,
+        "text": "Viktor",
+        "id": "given-name.94"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Luka",
+        "id": "given-name.20"
+      },
+      {
+        "min": 45,
+        "max": 45,
+        "text": "Arita",
+        "id": "given-name.45"
+      },
+      {
+        "min": 70,
+        "max": 70,
+        "text": "Dabir",
+        "id": "given-name.70"
+      },
+      {
+        "min": 95,
+        "max": 95,
+        "text": "Tristan",
+        "id": "given-name.95"
+      },
+      {
+        "min": 21,
+        "max": 21,
+        "text": "Andreas",
+        "id": "given-name.21"
+      },
+      {
+        "min": 46,
+        "max": 46,
+        "text": "Jimoh",
+        "id": "given-name.46"
+      },
+      {
+        "min": 71,
+        "max": 71,
+        "text": "Elvan",
+        "id": "given-name.71"
+      },
+      {
+        "min": 96,
+        "max": 96,
+        "text": "Reth",
+        "id": "given-name.96"
+      },
+      {
+        "min": 22,
+        "max": 22,
+        "text": "Dursun",
+        "id": "given-name.22"
+      },
+      {
+        "min": 47,
+        "max": 47,
+        "text": "Huw",
+        "id": "given-name.47"
+      },
+      {
+        "min": 72,
+        "max": 72,
+        "text": "Marko",
+        "id": "given-name.72"
+      },
+      {
+        "min": 97,
+        "max": 97,
+        "text": "Faisal",
+        "id": "given-name.97"
+      },
+      {
+        "min": 23,
+        "max": 23,
+        "text": "March",
+        "id": "given-name.23"
+      },
+      {
+        "min": 48,
+        "max": 48,
+        "text": "Emre",
+        "id": "given-name.48"
+      },
+      {
+        "min": 73,
+        "max": 73,
+        "text": "Kenyada",
+        "id": "given-name.73"
+      },
+      {
+        "min": 98,
+        "max": 98,
+        "text": "Simba",
+        "id": "given-name.98"
+      },
+      {
+        "min": 24,
+        "max": 24,
+        "text": "Amana",
+        "id": "given-name.24"
+      },
+      {
+        "min": 49,
+        "max": 49,
+        "text": "Llewelyn",
+        "id": "given-name.49"
+      },
+      {
+        "min": 74,
+        "max": 74,
+        "text": "Deng",
+        "id": "given-name.74"
+      },
+      {
+        "min": 99,
+        "max": 99,
+        "text": "Zhao",
+        "id": "given-name.99"
+      },
+      {
+        "min": 25,
+        "max": 25,
+        "text": "Hadyn",
+        "id": "given-name.25"
+      },
+      {
+        "min": 50,
+        "max": 50,
+        "text": "Ismael",
+        "id": "given-name.50"
+      },
+      {
+        "min": 75,
+        "max": 75,
+        "text": "Alim",
+        "id": "given-name.75"
+      },
+      {
+        "min": 100,
+        "max": 100,
+        "text": "Ramadhani",
+        "id": "given-name.100"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "surname",
+    "title": "인물 성",
+    "english": "Character Surnames",
+    "dice": "d100",
+    "page": [
+      243
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Howells",
+        "id": "surname.1"
+      },
+      {
+        "min": 26,
+        "max": 26,
+        "text": "Niazi",
+        "id": "surname.26"
+      },
+      {
+        "min": 51,
+        "max": 51,
+        "text": "Loxley",
+        "id": "surname.51"
+      },
+      {
+        "min": 76,
+        "max": 76,
+        "text": "Harvard",
+        "id": "surname.76"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Neel",
+        "id": "surname.2"
+      },
+      {
+        "min": 27,
+        "max": 27,
+        "text": "Perrin",
+        "id": "surname.27"
+      },
+      {
+        "min": 52,
+        "max": 52,
+        "text": "Keer",
+        "id": "surname.52"
+      },
+      {
+        "min": 77,
+        "max": 77,
+        "text": "Caruso",
+        "id": "surname.77"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Bush",
+        "id": "surname.3"
+      },
+      {
+        "min": 28,
+        "max": 28,
+        "text": "Megumi",
+        "id": "surname.28"
+      },
+      {
+        "min": 53,
+        "max": 53,
+        "text": "Martínez",
+        "id": "surname.53"
+      },
+      {
+        "min": 78,
+        "max": 78,
+        "text": "Ai",
+        "id": "surname.78"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Dong-Yul",
+        "id": "surname.4"
+      },
+      {
+        "min": 29,
+        "max": 29,
+        "text": "Kang",
+        "id": "surname.29"
+      },
+      {
+        "min": 54,
+        "max": 54,
+        "text": "Lanfen",
+        "id": "surname.54"
+      },
+      {
+        "min": 79,
+        "max": 79,
+        "text": "Xiang",
+        "id": "surname.79"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Doshi",
+        "id": "surname.5"
+      },
+      {
+        "min": 30,
+        "max": 30,
+        "text": "Borroni",
+        "id": "surname.30"
+      },
+      {
+        "min": 55,
+        "max": 55,
+        "text": "Dee",
+        "id": "surname.55"
+      },
+      {
+        "min": 80,
+        "max": 80,
+        "text": "Sharif",
+        "id": "surname.80"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Alexeev",
+        "id": "surname.6"
+      },
+      {
+        "min": 31,
+        "max": 31,
+        "text": "Galla",
+        "id": "surname.31"
+      },
+      {
+        "min": 56,
+        "max": 56,
+        "text": "Egorov",
+        "id": "surname.56"
+      },
+      {
+        "min": 81,
+        "max": 81,
+        "text": "Galindo",
+        "id": "surname.81"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Tenny",
+        "id": "surname.7"
+      },
+      {
+        "min": 32,
+        "max": 32,
+        "text": "Okafor",
+        "id": "surname.32"
+      },
+      {
+        "min": 57,
+        "max": 57,
+        "text": "Nobuo",
+        "id": "surname.57"
+      },
+      {
+        "min": 82,
+        "max": 82,
+        "text": "Nagel",
+        "id": "surname.82"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Azikiwe",
+        "id": "surname.8"
+      },
+      {
+        "min": 33,
+        "max": 33,
+        "text": "Trivedi",
+        "id": "surname.33"
+      },
+      {
+        "min": 58,
+        "max": 58,
+        "text": "Wynne",
+        "id": "surname.58"
+      },
+      {
+        "min": 83,
+        "max": 83,
+        "text": "Magoro",
+        "id": "surname.83"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Ince",
+        "id": "surname.9"
+      },
+      {
+        "min": 34,
+        "max": 34,
+        "text": "Taylor",
+        "id": "surname.34"
+      },
+      {
+        "min": 59,
+        "max": 59,
+        "text": "Yilmaz",
+        "id": "surname.59"
+      },
+      {
+        "min": 84,
+        "max": 84,
+        "text": "Rahim",
+        "id": "surname.84"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Charron",
+        "id": "surname.10"
+      },
+      {
+        "min": 35,
+        "max": 35,
+        "text": "Vogt",
+        "id": "surname.35"
+      },
+      {
+        "min": 60,
+        "max": 60,
+        "text": "Yaozu",
+        "id": "surname.60"
+      },
+      {
+        "min": 85,
+        "max": 85,
+        "text": "Közen",
+        "id": "surname.85"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Kou",
+        "id": "surname.11"
+      },
+      {
+        "min": 36,
+        "max": 36,
+        "text": "Sokolov",
+        "id": "surname.36"
+      },
+      {
+        "min": 61,
+        "max": 61,
+        "text": "Jee",
+        "id": "surname.61"
+      },
+      {
+        "min": 86,
+        "max": 86,
+        "text": "Faure",
+        "id": "surname.86"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Hargest",
+        "id": "surname.12"
+      },
+      {
+        "min": 37,
+        "max": 37,
+        "text": "Robson",
+        "id": "surname.37"
+      },
+      {
+        "min": 62,
+        "max": 62,
+        "text": "Dua",
+        "id": "surname.62"
+      },
+      {
+        "min": 87,
+        "max": 87,
+        "text": "Hosseini",
+        "id": "surname.87"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Ilgaz",
+        "id": "surname.13"
+      },
+      {
+        "min": 38,
+        "max": 38,
+        "text": "Asena",
+        "id": "surname.38"
+      },
+      {
+        "min": 63,
+        "max": 63,
+        "text": "Tew",
+        "id": "surname.63"
+      },
+      {
+        "min": 88,
+        "max": 88,
+        "text": "Pennoyer",
+        "id": "surname.88"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Lang",
+        "id": "surname.14"
+      },
+      {
+        "min": 39,
+        "max": 39,
+        "text": "Campos",
+        "id": "surname.39"
+      },
+      {
+        "min": 64,
+        "max": 64,
+        "text": "Protz",
+        "id": "surname.64"
+      },
+      {
+        "min": 89,
+        "max": 89,
+        "text": "Trahern",
+        "id": "surname.89"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Goswami",
+        "id": "surname.15"
+      },
+      {
+        "min": 40,
+        "max": 40,
+        "text": "Govannon",
+        "id": "surname.40"
+      },
+      {
+        "min": 65,
+        "max": 65,
+        "text": "Lombardo",
+        "id": "surname.65"
+      },
+      {
+        "min": 90,
+        "max": 90,
+        "text": "Mohanty",
+        "id": "surname.90"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Harper",
+        "id": "surname.16"
+      },
+      {
+        "min": 41,
+        "max": 41,
+        "text": "Legrand",
+        "id": "surname.41"
+      },
+      {
+        "min": 66,
+        "max": 66,
+        "text": "Sunder",
+        "id": "surname.66"
+      },
+      {
+        "min": 91,
+        "max": 91,
+        "text": "Ishani",
+        "id": "surname.91"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Kyu",
+        "id": "surname.17"
+      },
+      {
+        "min": 42,
+        "max": 42,
+        "text": "Cornog",
+        "id": "surname.42"
+      },
+      {
+        "min": 67,
+        "max": 67,
+        "text": "Mercier",
+        "id": "surname.67"
+      },
+      {
+        "min": 92,
+        "max": 92,
+        "text": "Glover",
+        "id": "surname.92"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Ayim",
+        "id": "surname.18"
+      },
+      {
+        "min": 43,
+        "max": 43,
+        "text": "Kulikov",
+        "id": "surname.43"
+      },
+      {
+        "min": 68,
+        "max": 68,
+        "text": "Mi-ok",
+        "id": "surname.68"
+      },
+      {
+        "min": 93,
+        "max": 93,
+        "text": "Budak",
+        "id": "surname.93"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Noak",
+        "id": "surname.19"
+      },
+      {
+        "min": 44,
+        "max": 44,
+        "text": "Smith",
+        "id": "surname.44"
+      },
+      {
+        "min": 69,
+        "max": 69,
+        "text": "Rad",
+        "id": "surname.69"
+      },
+      {
+        "min": 94,
+        "max": 94,
+        "text": "Zhu",
+        "id": "surname.94"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Ping",
+        "id": "surname.20"
+      },
+      {
+        "min": 45,
+        "max": 45,
+        "text": "Keshaun",
+        "id": "surname.45"
+      },
+      {
+        "min": 70,
+        "max": 70,
+        "text": "Jovanović",
+        "id": "surname.70"
+      },
+      {
+        "min": 95,
+        "max": 95,
+        "text": "Ali",
+        "id": "surname.95"
+      },
+      {
+        "min": 21,
+        "max": 21,
+        "text": "Necci",
+        "id": "surname.21"
+      },
+      {
+        "min": 46,
+        "max": 46,
+        "text": "Dhingra",
+        "id": "surname.46"
+      },
+      {
+        "min": 71,
+        "max": 71,
+        "text": "Tinibu",
+        "id": "surname.71"
+      },
+      {
+        "min": 96,
+        "max": 96,
+        "text": "Liqin",
+        "id": "surname.96"
+      },
+      {
+        "min": 22,
+        "max": 22,
+        "text": "Porcher",
+        "id": "surname.22"
+      },
+      {
+        "min": 47,
+        "max": 47,
+        "text": "Popov",
+        "id": "surname.47"
+      },
+      {
+        "min": 72,
+        "max": 72,
+        "text": "Steele",
+        "id": "surname.72"
+      },
+      {
+        "min": 97,
+        "max": 97,
+        "text": "Beaulieu",
+        "id": "surname.97"
+      },
+      {
+        "min": 23,
+        "max": 23,
+        "text": "Daewon",
+        "id": "surname.23"
+      },
+      {
+        "min": 48,
+        "max": 48,
+        "text": "Azizi",
+        "id": "surname.48"
+      },
+      {
+        "min": 73,
+        "max": 73,
+        "text": "Hyuk",
+        "id": "surname.73"
+      },
+      {
+        "min": 98,
+        "max": 98,
+        "text": "Eynon",
+        "id": "surname.98"
+      },
+      {
+        "min": 24,
+        "max": 24,
+        "text": "Jie",
+        "id": "surname.24"
+      },
+      {
+        "min": 49,
+        "max": 49,
+        "text": "Mancini",
+        "id": "surname.49"
+      },
+      {
+        "min": 74,
+        "max": 74,
+        "text": "Siegel",
+        "id": "surname.74"
+      },
+      {
+        "min": 99,
+        "max": 99,
+        "text": "Moussa",
+        "id": "surname.99"
+      },
+      {
+        "min": 25,
+        "max": 25,
+        "text": "Onabanjo",
+        "id": "surname.25"
+      },
+      {
+        "min": 50,
+        "max": 50,
+        "text": "Pryce",
+        "id": "surname.50"
+      },
+      {
+        "min": 75,
+        "max": 75,
+        "text": "Guerra",
+        "id": "surname.75"
+      },
+      {
+        "min": 100,
+        "max": 100,
+        "text": "Fu",
+        "id": "surname.100"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "npc-nature",
+    "title": "인물 성향",
+    "english": "NPC Nature",
+    "dice": "d10",
+    "page": [
+      244
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Stoic",
+        "id": "npc-nature.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Shady",
+        "id": "npc-nature.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Cautious",
+        "id": "npc-nature.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Curious",
+        "id": "npc-nature.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Learned",
+        "id": "npc-nature.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Social",
+        "id": "npc-nature.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Practical",
+        "id": "npc-nature.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Friendly",
+        "id": "npc-nature.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Confrontational",
+        "id": "npc-nature.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Pessimistic",
+        "id": "npc-nature.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "npc-quirk",
+    "title": "인물 버릇",
+    "english": "NPC Quirks",
+    "dice": "d20",
+    "page": [
+      245
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Loves gossip",
+        "id": "npc-quirk.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Acts extremely shy",
+        "id": "npc-quirk.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Tends to interrupt others",
+        "id": "npc-quirk.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Makes bad jokes",
+        "id": "npc-quirk.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Constantly picks their nails",
+        "id": "npc-quirk.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Always has a relevant story about one of their uncles",
+        "id": "npc-quirk.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Always flipping an old coin",
+        "id": "npc-quirk.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Unusually provincial",
+        "id": "npc-quirk.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Constantly making references to old, obscure sit-coms",
+        "id": "npc-quirk.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Picks their nose",
+        "id": "npc-quirk.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Always prays before doing something dangerous",
+        "id": "npc-quirk.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Is addicted to nicotine gums",
+        "id": "npc-quirk.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Always wears something red",
+        "id": "npc-quirk.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Carries a little sketch book",
+        "id": "npc-quirk.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Always has messy hair",
+        "id": "npc-quirk.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Gets distracted easily",
+        "id": "npc-quirk.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Constantly cracks their knuckles",
+        "id": "npc-quirk.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Insists on being called “Doc”",
+        "id": "npc-quirk.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Always tries to avoid paying for stuff",
+        "id": "npc-quirk.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Loves humming the same song",
+        "id": "npc-quirk.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "relations",
+    "title": "인물 관계",
+    "english": "Relations",
+    "dice": "d20",
+    "page": [
+      248
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Ignores",
+        "id": "relations.1"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Depends",
+        "id": "relations.11"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Hates",
+        "id": "relations.2"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Rivalry",
+        "id": "relations.12"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Admires",
+        "id": "relations.3"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Inseparable",
+        "id": "relations.13"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Knows a secret",
+        "id": "relations.4"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Blames for a past event",
+        "id": "relations.14"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Loves",
+        "id": "relations.5"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Owes a debt",
+        "id": "relations.15"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Sexual partner",
+        "id": "relations.6"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Respects",
+        "id": "relations.16"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Long-life friend",
+        "id": "relations.7"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Related",
+        "id": "relations.17"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Enemy",
+        "id": "relations.8"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Shares a secret",
+        "id": "relations.18"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Is jealous",
+        "id": "relations.9"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Blackmails",
+        "id": "relations.19"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Envies",
+        "id": "relations.10"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Harasses",
+        "id": "relations.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-brute",
+    "title": "돌격형 전투 행동",
+    "english": "Combat Behavior - Brute",
+    "dice": "d10",
+    "page": [
+      275
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 7,
+        "text": "Makes a Melee attack <OR> rushes toward the closest opponent",
+        "id": "behavior-brute.1"
+      },
+      {
+        "min": 8,
+        "max": 10,
+        "text": "Uses a special ability/skill (if applicable) <OR> makes a Melee attack",
+        "id": "behavior-brute.8"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-lurker",
+    "title": "잠복형 전투 행동",
+    "english": "Combat Behavior - Lurker",
+    "dice": "d10",
+    "page": [
+      276
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "Initiates combat with a surprise attack <OR> attacks someone already engaged with another opponent",
+        "id": "behavior-lurker.1"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Uses its Main attack",
+        "id": "behavior-lurker.5"
+      },
+      {
+        "min": 6,
+        "max": 7,
+        "text": "Maneuvers, either to change targets (roll on the Target table, pg 59), to avoid being surrounded or to leverage the terrain or situation",
+        "id": "behavior-lurker.6"
+      },
+      {
+        "min": 8,
+        "max": 9,
+        "text": "Uses a special ability/skill (if applicable) <OR> uses its Main attack",
+        "id": "behavior-lurker.8"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Uses a piece of gear (if applicable) <OR> uses its Main attack",
+        "id": "behavior-lurker.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-ranged",
+    "title": "원거리형 전투 행동",
+    "english": "Combat Behavior - Ranged",
+    "dice": "d10",
+    "page": [
+      277
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "Uses its main attack (always Ranged unless forced into melee)",
+        "id": "behavior-ranged.1"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Uses its secondary attack (if applicable) <OR> uses its Main attack",
+        "id": "behavior-ranged.5"
+      },
+      {
+        "min": 6,
+        "max": 7,
+        "text": "Maneuvers, either to change targets (roll on the Target table, pg 59), to avoid being surrounded or to leverage the terrain or situation",
+        "id": "behavior-ranged.6"
+      },
+      {
+        "min": 8,
+        "max": 9,
+        "text": "Uses a special ability/skill (if applicable) <OR> uses its Main attack",
+        "id": "behavior-ranged.8"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Uses a piece of gear (if applicable) <OR> uses its Main attack",
+        "id": "behavior-ranged.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-swarm",
+    "title": "군집형 전투 행동",
+    "english": "Combat Behavior - Swarm",
+    "dice": "d10",
+    "page": [
+      278
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 7,
+        "text": "Makes a Melee attack <OR> rushes toward the closest opponent",
+        "id": "behavior-swarm.1"
+      },
+      {
+        "min": 8,
+        "max": 10,
+        "text": "Uses a special ability/skill (if applicable) <OR> makes a Melee attack",
+        "id": "behavior-swarm.8"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-psychic",
+    "title": "초능력형 전투 행동",
+    "english": "Combat Behavior - Psychic",
+    "dice": "d10",
+    "page": [
+      279
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "Uses any abilities they have <OR> attacks normally",
+        "id": "behavior-psychic.1"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "Uses its Main attack",
+        "id": "behavior-psychic.5"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Maneuvers, either to change targets (roll on the Target table, pg 59), to avoid being surrounded or to leverage the terrain or situation",
+        "id": "behavior-psychic.7"
+      },
+      {
+        "min": 8,
+        "max": 9,
+        "text": "Uses a special ability/skill (if applicable) <OR> uses its Main attack",
+        "id": "behavior-psychic.8"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Uses a piece of gear (if applicable) <OR> uses its Main attack",
+        "id": "behavior-psychic.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "creature-trait",
+    "title": "생물 고유 특성",
+    "english": "Creature Unique Trait",
+    "dice": "d10",
+    "page": [
+      280
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "+1 Armor/-1 Defense",
+        "id": "creature-trait.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "+1 Defense/-1 Armor",
+        "id": "creature-trait.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "+5 Attack Skill/-5 Damage",
+        "id": "creature-trait.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "+5 Damage/-5 Attack Skill",
+        "id": "creature-trait.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "+1 Wound/-1 Ability",
+        "id": "creature-trait.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "+2 CON/-2 WIL",
+        "id": "creature-trait.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "+2 WIL/-2 CON",
+        "id": "creature-trait.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "+2 STR/-2 DEX",
+        "id": "creature-trait.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "+2 DEX/-2 STR",
+        "id": "creature-trait.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "+1 Wound/-1 CON/-1 WIL",
+        "id": "creature-trait.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "enemy-ability",
+    "title": "적의 특수 능력",
+    "english": "Enemy Ability",
+    "dice": "d20",
+    "page": [
+      280
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Acid Blood",
+        "id": "enemy-ability.1",
+        "detail": "Passive · Each time the creature receives damage, it deals D20 damage to any character within melee range and has a 50% chance to destroy a piece of their equipped gear."
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Immune",
+        "id": "enemy-ability.11",
+        "detail": "Active · The creature spits an acidic substance against its opponent. The attack deals 2D12 damage on a hit and has a 50% chance to destroy a piece of the target’s equipped gear."
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Acid Spray",
+        "id": "enemy-ability.2",
+        "detail": "Passive · This creature’s hard carapace grants it +3 Armor."
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Infectious",
+        "id": "enemy-ability.12",
+        "detail": "Active · If the creature passes a skill check, it makes a wide attack that hits all opponents in range, dealing 2D10 damage."
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Carapace",
+        "id": "enemy-ability.3",
+        "detail": "Passive · This creature can crawl on any surface—even walls or ceilings—allowing it to potentially be out of range from most Melee weapons."
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Metallic Claws",
+        "id": "enemy-ability.13",
+        "detail": "Active · The creature emits a sudden, bright flash, blinding any opponent situated in front of it for D4 rounds."
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Cleave/Spread Shot",
+        "id": "enemy-ability.4",
+        "detail": "Active · The creature aims an attack at the target’s neck. This might be a bite in melee or a called shot at range. If successful, the target immediately receives 1 Wound, and the creature heals 1 Wound. / / E n e m y A b i l i t i e s"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Paralyzing Bite/Shot",
+        "id": "enemy-ability.14",
+        "detail": "Active · This creature entangles its target (with tentacles, a web-like substance or plant-like tendrils). To escape, the entangled target must perform a DEX check every round until freed or cut out by someone else."
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Crawler",
+        "id": "enemy-ability.5",
+        "detail": "Passive · After being dealt a fatal wound, this creature explodes dealing D20 damage for 30’ in all directions."
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Putrid",
+        "id": "enemy-ability.15",
+        "detail": "Active · The creature sprays its opponent with a flammable chemical substance that ignites when it comes into contact with oxygen (only works in oxygenated environments). It attacks as normal, but instead of dealing damage, its opponent receives the Burning condition."
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Dazzle",
+        "id": "enemy-ability.6",
+        "detail": "Passive · This creature is immune to the effects of heat, cold and even radiation."
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Rebirth",
+        "id": "enemy-ability.16",
+        "detail": "Passive · All Wounds caused by this creature become Infected."
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Drain",
+        "id": "enemy-ability.7",
+        "detail": "Passive · This creature deals an extra +1D4 damage per melee attack."
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Regenerate",
+        "id": "enemy-ability.17",
+        "detail": "Active · The creature has an attack that forces the target to make a CON (-5) check or be paralyzed for D4 rounds."
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Entangle",
+        "id": "enemy-ability.8",
+        "detail": "Passive · Each time this creature deals damage, its target loses 1 CON. This loss persists until healed with a Medical Aid check."
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Tough",
+        "id": "enemy-ability.18",
+        "detail": "Passive · After being killed, the creature partially regenerates and now has one Wound left. Only works once."
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Explosive",
+        "id": "enemy-ability.9",
+        "detail": "Active · If the creature has received a Wound, it spends this turn healing it."
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Uncanny Speed",
+        "id": "enemy-ability.19",
+        "detail": "Passive · This creature is immune to Critical Hits."
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Flame Attack",
+        "id": "enemy-ability.10",
+        "detail": "Active · For 1 Turn after activating this ability, the creature is completely immune to ranged attacks."
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Vicious",
+        "id": "enemy-ability.20",
+        "detail": "Passive · When this creature causes a Wound, its target adds +2 to the Injury table roll."
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "psychic-ability",
+    "title": "초능력",
+    "english": "Psychic Abilities",
+    "dice": "d10",
+    "page": [
+      284
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Buffer",
+        "id": "psychic-ability.1",
+        "detail": "Active · The next time the creature is hit by an attack, they suffer 50% less damage."
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Mind Lash",
+        "id": "psychic-ability.6",
+        "detail": "Active · The creature attempts to control the actions of its target. The target must pass a WIL check to avoid being controlled. A controlled creature may only attempt to free themselves every 2 rounds."
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Control",
+        "id": "psychic-ability.2",
+        "detail": "Passive · Any character in combat against this creature gains 1 Stress/round."
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Organize",
+        "id": "psychic-ability.7",
+        "detail": "Active · The creature triggers a roll on the Dread table."
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Distressing",
+        "id": "psychic-ability.3",
+        "detail": "Active · The creature causes all characters within 30’ to gain 5 Stress."
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Stun",
+        "id": "psychic-ability.8",
+        "detail": "Active · The creature assaults its target’s mind—pass a WIL check or be Knocked Down."
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Dread",
+        "id": "psychic-ability.4",
+        "detail": "Passive · This creature grants +2 Attack skill and +1 WIL to all surrounding creatures (except the PCs)."
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Suffocate",
+        "id": "psychic-ability.9",
+        "detail": "Active · This attack stuns the target for D4 rounds (has 50% Stamina, can only take actions to move)."
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Inspire Terror",
+        "id": "psychic-ability.5",
+        "detail": "Active · The target suffers the effects of Suffocation (page 90)."
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Telekinetik Push",
+        "id": "psychic-ability.10",
+        "detail": "Active · The creature pushes its target away with its mind, slamming them against the nearest solid object and causing 2D10 damage."
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "appearance",
+    "title": "생물의 전반적 외형",
+    "english": "General Appearance",
+    "dice": "d20",
+    "page": [
+      286
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Avian",
+        "id": "appearance.1"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Cancrine",
+        "id": "appearance.11"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Arachnid",
+        "id": "appearance.2"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Chelonian",
+        "id": "appearance.12"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Insectoid",
+        "id": "appearance.3"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "Amorphous",
+        "id": "appearance.13"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Apeish",
+        "id": "appearance.4"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Ichthyic",
+        "id": "appearance.14"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Reptilian",
+        "id": "appearance.5"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Glirine",
+        "id": "appearance.15"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Serpentine",
+        "id": "appearance.6"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "Octopine",
+        "id": "appearance.16"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Canine",
+        "id": "appearance.7"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "Fungine",
+        "id": "appearance.17"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Feline",
+        "id": "appearance.8"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "Plantlike",
+        "id": "appearance.18"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Antilopine",
+        "id": "appearance.9"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "Petrous",
+        "id": "appearance.19"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Bovine",
+        "id": "appearance.10"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Vermian",
+        "id": "appearance.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "covering",
+    "title": "생물을 덮은 것",
+    "english": "The creature is covered with",
+    "dice": "d8",
+    "page": [
+      286
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Scales",
+        "id": "covering.1"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Chitin",
+        "id": "covering.5"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Feathers",
+        "id": "covering.2"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Crystal",
+        "id": "covering.6"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Skin",
+        "id": "covering.3"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Ooze",
+        "id": "covering.7"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Fur",
+        "id": "covering.4"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Stone",
+        "id": "covering.8"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "unique-feature",
+    "title": "생물의 독특한 외형",
+    "english": "Unique Feature",
+    "dice": "d10",
+    "page": [
+      286
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Wings",
+        "id": "unique-feature.1"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Bright colors",
+        "id": "unique-feature.6"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Horns",
+        "id": "unique-feature.2"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Suckers",
+        "id": "unique-feature.7"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Mane",
+        "id": "unique-feature.3"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "Tail",
+        "id": "unique-feature.8"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Several mouths",
+        "id": "unique-feature.4"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Tendrils",
+        "id": "unique-feature.9"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Numerous limbs",
+        "id": "unique-feature.5"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "Translucence",
+        "id": "unique-feature.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "limb-count",
+    "title": "다리 수",
+    "english": "Number of Limbs",
+    "dice": "d4",
+    "page": [
+      287
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "None",
+        "id": "limb-count.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Bipedal, mostly upright",
+        "id": "limb-count.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Quadrupedal",
+        "id": "limb-count.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Sexapedal",
+        "id": "limb-count.4"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "aquatic-limbs",
+    "title": "수생 생물의 사지",
+    "english": "Limbs (Aquatic)",
+    "dice": "d6",
+    "page": [
+      287
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "None",
+        "id": "aquatic-limbs.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "Tentacles",
+        "id": "aquatic-limbs.3"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "Flippers",
+        "id": "aquatic-limbs.5"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-spitter",
+    "title": "Spitter 전투 행동",
+    "english": "Combat Behavior",
+    "dice": "d10",
+    "page": [
+      303
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "UNCANNY SPEED. With a blur of movement, the Spitter becomes impossible to target in any way until its next turn.",
+        "id": "behavior-spitter.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "UNNATURAL REFLEXES. The Spitter increases its Initiative by 1.",
+        "id": "behavior-spitter.2"
+      },
+      {
+        "min": 3,
+        "max": 6,
+        "text": "CORROSIVE SPIT. The Spitter hurls a ball of acidic phlegm that deals 5D6 damage and has a 1 in 6 chance of destroying the piece of protective gear it strikes.",
+        "id": "behavior-spitter.3"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "POUNCE. The Spitter hurls itself against a character, who must pass a DEX check or be automatically Knocked Down.",
+        "id": "behavior-spitter.7"
+      },
+      {
+        "min": 8,
+        "max": 9,
+        "text": "TOXIC SPIT. The Spitter vomits a sphere of mucus—the target must test CON or become blinded and stunned for D4 rounds.",
+        "id": "behavior-spitter.8"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "HORRIFYING HOWL. The Spitter stops its constant movement to let out a blood- curdling howl—all characters must test Resolve or lose their next turn and gain 5 Stress.",
+        "id": "behavior-spitter.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-clobber",
+    "title": "Clobber 전투 행동",
+    "english": "Combat Behavior",
+    "dice": "d10",
+    "page": [
+      305
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 2,
+        "text": "CHARGE. The Clobber charges up to 3 hexes and attacks their target. If the attack hits, the character is automatically Knocked Down, or receives 1 Wound if already Knocked Down.",
+        "id": "behavior-clobber.1"
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "text": "KNOCKBACK. The Clobber spins violently, forcing all adjacent combatants to pass a Hard (-10) STR check or be pushed 3 hexes away.",
+        "id": "behavior-clobber.3"
+      },
+      {
+        "min": 5,
+        "max": 8,
+        "text": "SMASH. The Clobber swings its massive arms down onto its target (2D12 damage on hit).",
+        "id": "behavior-clobber.5"
+      },
+      {
+        "min": 9,
+        "max": 10,
+        "text": "CRUSH. The Clobber attempts to grab and crush its target between its arms. The target must pass an opposed DEX check or suffer 2D20 damage.",
+        "id": "behavior-clobber.9"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-taker",
+    "title": "Taker 전투 행동",
+    "english": "Combat Behavior",
+    "dice": "d10",
+    "page": [
+      307
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "SLASH. The Taker attacks the closest character with its sharp claws, dealing 4D6 damage.",
+        "id": "behavior-taker.1"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "UNNATURAL REFLEXES. The Taker increases its Initiative by 1.",
+        "id": "behavior-taker.5"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "POUNCE. The Taker hurls itself against a character who must pass a DEX check or be Knocked Down.",
+        "id": "behavior-taker.7"
+      },
+      {
+        "min": 8,
+        "max": 9,
+        "text": "KIDNAP. The Taker grabs its target and rushes towards the closest Combat Grid border, attempting to escape. On the victim’s next turn(s), they can perform an opposed STR check to escape. If the Taker is Knocked Down, the victim escapes. After grabbing a victim, the Taker will not perform any action other than rushing toward the nearest exit.",
+        "id": "behavior-taker.8"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "IMMOBILIZE. The Taker spits a web of sticky mucus, completely gluing its target to the nearest surface. The victim cannot perform any action other than attempting to escape by passing a Hard (-10) DEX check. If another character has a blade, they can cut the victim out without rolling a check.",
+        "id": "behavior-taker.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-psybane",
+    "title": "Psybane 전투 행동",
+    "english": "Combat Behavior",
+    "dice": "d10",
+    "page": [
+      309
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "MEMORY WIPE. The Psybane reaches into a random crew member’s mind and pulls out a memory. The victim loses all memory of a specific event, person, place or object, chosen by the player.",
+        "id": "behavior-psybane.1"
+      },
+      {
+        "min": 2,
+        "max": 5,
+        "text": "NOT WHAT THEY APPEAR. Two random characters suddenly perceive each other as personifications of their greatest fears. They must both test WIL or spend their next action attacking the other in a fit of paranoia.",
+        "id": "behavior-psybane.2"
+      },
+      {
+        "min": 6,
+        "max": 9,
+        "text": "VISCERAL HORROR. The target suffers terrible visions, violent enough to cause them chest pain like their heart is threatening to burst. The target suffers D20 damage.",
+        "id": "behavior-psybane.6"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "TERRIFYING MANIFESTATION. The target is assaulted by terrible visions that will haunt them for the rest of their lives. Automatically gain 1 Trauma.",
+        "id": "behavior-psybane.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-bomber",
+    "title": "Bomber 전투 행동",
+    "english": "Combat Behavior",
+    "dice": "d10",
+    "page": [
+      311
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "EXPLOSIVE ATTACK. The Bomber regurgitates a large ball of mucus that explodes on impact. This is an Explosive (2) attack that deals 6D4 damage.",
+        "id": "behavior-bomber.1"
+      },
+      {
+        "min": 5,
+        "max": 7,
+        "text": "GLUE BOMB. A ball of red filaments is violently ejected from the Bomber’s mouth, immobilizing anyone it hits. This is an Explosive (2) attack that immobilizes all targets, forcing them to spend their next turn cutting themselves out.",
+        "id": "behavior-bomber.5"
+      },
+      {
+        "min": 8,
+        "max": 10,
+        "text": "CORROSIVE BLAST. The Bomber belches out a stream of stomach acids, burning anything in front of it. This is a Row (5) attack that deals 4D10 damage.",
+        "id": "behavior-bomber.8"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "behavior-cecaelia",
+    "title": "Cecaelia 전투 행동",
+    "english": "Combat Behavior",
+    "dice": "d10",
+    "page": [
+      313
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 3,
+        "text": "GRAPPLE. The Cecaelia attacks, dealing 3D4 damage and ensnaring the target on hit. Snared characters are automatically hit by attacks and cannot act until they pass a STR check on their turn to escape.",
+        "id": "behavior-cecaelia.1"
+      },
+      {
+        "min": 4,
+        "max": 6,
+        "text": "CONSTRICT. The Cecaelia attacks, ensnaring the target on hit (see above), but keeps squeezing every round, causing its victim 2D10 damage, which is increased by +1D10 each round.",
+        "id": "behavior-cecaelia.4"
+      },
+      {
+        "min": 7,
+        "max": 9,
+        "text": "TENTACLE WHIP. The Cecaelia attacks, causing its target to be immediately Knocked Down on a hit.",
+        "id": "behavior-cecaelia.7"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "SWALLOW. Spreading its mouth wider than physically possible, the Cecaelia attempts to swallow its victim whole. It attacks and if it succeeds, its target suffers 1 Wound and must perform a STR check to successfully release themself. Failure causes 1 Wound per round.",
+        "id": "behavior-cecaelia.10"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "morale-creature",
+    "title": "생물 사기 저하 반응",
+    "english": "Aberration / Local Fauna / Synthetics",
+    "dice": "d6",
+    "page": [
+      317
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Panics, immediately attempts to flee",
+        "id": "morale-creature.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Snarls and growls, but ceases to attack for D4 rounds",
+        "id": "morale-creature.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Confused by fear, it attacks the nearest target, friend or foe",
+        "id": "morale-creature.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Attempts to pull back to assess the situation",
+        "id": "morale-creature.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Confused, it attacks a downed opponent or freezes if none are downed",
+        "id": "morale-creature.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Ignores everything for a round",
+        "id": "morale-creature.6"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "morale-humanoid",
+    "title": "인간형 적 사기 저하 반응",
+    "english": "Demoralized Reaction - Humanoid",
+    "dice": "d6",
+    "page": [
+      317
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "Panics, immediately attempts to flee",
+        "id": "morale-humanoid.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "Ceases to attack for D4 rounds while it cowers in fear",
+        "id": "morale-humanoid.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "Confused by fear, it attacks the nearest target, friend or foe",
+        "id": "morale-humanoid.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "Attempts to pull back to assess the situation",
+        "id": "morale-humanoid.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "Freezes in confusion, losing its turn",
+        "id": "morale-humanoid.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "Blindly attacks the nearest opponent at -5 to its combat skill",
+        "id": "morale-humanoid.6"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "carousing",
+    "title": "정거장 유흥",
+    "english": "Carousing",
+    "dice": "d66",
+    "page": [
+      334,
+      335
+    ],
+    "rows": [
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Whoever’s fault it was, a heated conversation with a stranger turned into a full-blown fight. Perform a CON check or get badly beaten up and robbed of D20 DC.",
+        "id": "carousing.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "You make a fool out of yourself. People will mock you from now on when you visit the same locale.",
+        "id": "carousing.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "You intervened and stopped an ugly situation before it started. You got free drinks for the rest of the night.",
+        "id": "carousing.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "You did way too many drugs last night. Your CON is reduced by 1 for the next week.",
+        "id": "carousing.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "The details are blurry, but someone gifted you a traditional Chinese gong.",
+        "id": "carousing.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "You met a person who insisted on giving you a lecture on the EM drive’s inner workings. +1 Technology.",
+        "id": "carousing.16"
+      },
+      {
+        "min": 21,
+        "max": 21,
+        "text": "You just discovered you’re terribly allergic to something new. What was it?",
+        "id": "carousing.21"
+      },
+      {
+        "min": 22,
+        "max": 22,
+        "text": "You won a long, intense game of poker. +50 DC.",
+        "id": "carousing.22"
+      },
+      {
+        "min": 23,
+        "max": 23,
+        "text": "You wake up in a stranger’s bed, alone. There’s nobody else in these private quarters.",
+        "id": "carousing.23"
+      },
+      {
+        "min": 24,
+        "max": 24,
+        "text": "You played a few games. Lost them all. -D20 DC.",
+        "id": "carousing.24"
+      },
+      {
+        "min": 25,
+        "max": 25,
+        "text": "You accidentally caused a small fire. Fortunately, the KSA doesn’t seem to be aware it was you.",
+        "id": "carousing.25"
+      },
+      {
+        "min": 26,
+        "max": 26,
+        "text": "You got a tattoo. It’s okay.",
+        "id": "carousing.26"
+      },
+      {
+        "min": 31,
+        "max": 31,
+        "text": "You wake up in your bed, somehow 2D20 DC poorer.",
+        "id": "carousing.31"
+      },
+      {
+        "min": 32,
+        "max": 32,
+        "text": "You helped someone. Now they owe you one.",
+        "id": "carousing.32"
+      },
+      {
+        "min": 33,
+        "max": 33,
+        "text": "You had a minor misunderstanding with a KSA agent. Perform a CHA check or pay a 50 DC fine.",
+        "id": "carousing.33"
+      },
+      {
+        "min": 34,
+        "max": 34,
+        "text": "You joined a funeral celebration. Another crew who didn’t make it back.",
+        "id": "carousing.34"
+      },
+      {
+        "min": 35,
+        "max": 35,
+        "text": "You made a stupid promise to someone in public, which you can’t take back.",
+        "id": "carousing.35"
+      },
+      {
+        "min": 36,
+        "max": 36,
+        "text": "You dramatically changed something about your appearance.",
+        "id": "carousing.36"
+      },
+      {
+        "min": 41,
+        "max": 41,
+        "text": "You felt terrible and spent the night having visions about supernovas, planets being destroyed and choruses of desperate screams.",
+        "id": "carousing.41"
+      },
+      {
+        "min": 42,
+        "max": 42,
+        "text": "You spent hours discussing the meaning of life with a total stranger. It made you feel motivated, despite it all. +1 Resolve.",
+        "id": "carousing.42"
+      },
+      {
+        "min": 43,
+        "max": 43,
+        "text": "You partook in a series of religious ceremonies—some bizarre practices that a few folks have started developing on Karum Station. You’re unsure what to think.",
+        "id": "carousing.43"
+      },
+      {
+        "min": 44,
+        "max": 44,
+        "text": "You wake up in the Garden (pg 343), sleepily rolling over flowers that probably cost thousands of DC. You better get out of here fast.",
+        "id": "carousing.44"
+      },
+      {
+        "min": 45,
+        "max": 45,
+        "text": "You wake up with a small item in your pocket. Roll a D6: [1-2] ring, [3-4] necklace, [5-6] earring. WHO D O ES TH IS",
+        "id": "carousing.45"
+      },
+      {
+        "min": 46,
+        "max": 46,
+        "text": "You fall in love. B E L O NG TO ?",
+        "id": "carousing.46"
+      },
+      {
+        "min": 51,
+        "max": 51,
+        "text": "Someone helped you out big time. You owe them a favor.",
+        "id": "carousing.51"
+      },
+      {
+        "min": 52,
+        "max": 52,
+        "text": "You wake up with a massive hangover. -2 to all Skill checks for the next 2 cycles.",
+        "id": "carousing.52"
+      },
+      {
+        "min": 53,
+        "max": 53,
+        "text": "You spend the night listening to the terrible, wondrous tales of a famous Diver. They have several missions to their name, but never managed to get a big break.",
+        "id": "carousing.53"
+      },
+      {
+        "min": 54,
+        "max": 54,
+        "text": "You spend a fantastic night in the District (pg 345). Lose 20 Stress and 30 DC.",
+        "id": "carousing.54"
+      },
+      {
+        "min": 55,
+        "max": 55,
+        "text": "You had a great time casually playing cards with some friends. +1 Luck.",
+        "id": "carousing.55"
+      },
+      {
+        "min": 56,
+        "max": 56,
+        "text": "You spend a few hours training at the gym. Next time you enter combat, you have +3 Stamina in your first turn.",
+        "id": "carousing.56"
+      },
+      {
+        "min": 61,
+        "max": 61,
+        "text": "You’ve been hypnotized. Each time someone says the word “tentacle” you laugh maniacally.",
+        "id": "carousing.61"
+      },
+      {
+        "min": 62,
+        "max": 62,
+        "text": "You wake up with an extra D20 DC in your account. A subconscious discomfort says you shouldn’t investigate where they came from.",
+        "id": "carousing.62"
+      },
+      {
+        "min": 63,
+        "max": 63,
+        "text": "You wake up completely naked inside a public bathroom.",
+        "id": "carousing.63"
+      },
+      {
+        "min": 64,
+        "max": 64,
+        "text": "You spent half of all your savings in the party to end all parties. People you don’t know greet you on the streets for weeks.",
+        "id": "carousing.64"
+      },
+      {
+        "min": 65,
+        "max": 65,
+        "text": "You ate something bad. -1 CON for the next day.",
+        "id": "carousing.65"
+      },
+      {
+        "min": 66,
+        "max": 66,
+        "text": "You somehow gained access to one of the spaceship research centers. There’s a blank space in your memory, but you are haunted by visions of rendered flesh and pumping blood. You gain 10 Stress.",
+        "id": "carousing.66"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "last-night",
+    "title": "Red Asteroid에서 지난밤에 생긴 일",
+    "english": "What Happened Last Night at the Red Asteroid?",
+    "dice": "d20",
+    "page": [
+      346
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A bunch of Divers came in, bragging about their last expedition, and spent a real fortune.",
+        "id": "last-night.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A couple of ex-monks sang church songs the whole night. It was surprisingly good.",
+        "id": "last-night.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "An agitated tourist stormed in looking for someone. They were immediately kicked out.",
+        "id": "last-night.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A drunk Diver started preaching about the sins of humanity and how they should be punished.",
+        "id": "last-night.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A gambling table somehow accumulated 30,000 DC in stakes. The whole place was watching.",
+        "id": "last-night.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A fight broke out.",
+        "id": "last-night.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "Somehow, the place ran out of whiskey.",
+        "id": "last-night.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A generous Diver bought drinks for everyone, the whole night.",
+        "id": "last-night.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "Someone was killed. No one’s sure what happened.",
+        "id": "last-night.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "The staff got sick, all at once. Or so they say.",
+        "id": "last-night.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "Two Divers got in a screaming match over what the Àrsaidh really looked like.",
+        "id": "last-night.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "A new Diver who wanted to make some friends drew caricatures for anyone who asked. He was good.",
+        "id": "last-night.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "KSA security came looking for someone.",
+        "id": "last-night.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "Two Divers got into a fight over who had seen the worst things while on an expedition. One of them is still at the medical center.",
+        "id": "last-night.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "Someone lit a fire and the whole place had to be evacuated.",
+        "id": "last-night.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "A Diver desperately tried to recruit others for an expedition to the last planet they visited. They swore there were rivers of molten gold.",
+        "id": "last-night.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "The place was unusually gloomy. The mood was dark and everyone spoke in whispers.",
+        "id": "last-night.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "A drunk Diver showed off their new augmentations by lifting people above their head.",
+        "id": "last-night.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "A new guy was trying to sell his services as a hypnotist.",
+        "id": "last-night.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "An impromptu stand up show brought everyone to tears.",
+        "id": "last-night.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "locals",
+    "title": "개성 있는 정거장 주민",
+    "english": "Colorful Locals",
+    "dice": "d20",
+    "page": [
+      347
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "A group of tourists constantly recording everything they see.",
+        "id": "locals.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "A drunken off-duty security officer.",
+        "id": "locals.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "A Diver, quietly staring into the void.",
+        "id": "locals.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "A tourist dressed like an 1890s English explorer.",
+        "id": "locals.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "A sex worker having a drink.",
+        "id": "locals.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "A group of Divers guiding a blindfolded member of their crew.",
+        "id": "locals.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "A guide escorting a group of tourists.",
+        "id": "locals.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "A Diver crew getting mentally ready to embark on their next mission.",
+        "id": "locals.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "A couple of technicians talking shop.",
+        "id": "locals.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "A somewhat famous Diver being hounded by tourists.",
+        "id": "locals.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "A reporter trying to get some interesting stories from a Diver.",
+        "id": "locals.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "Three figures dressed in white robes, silently passing by.",
+        "id": "locals.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "A couple of on-duty security officers.",
+        "id": "locals.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "A seemingly desperate Diver asking for a loan to pay this week’s fees.",
+        "id": "locals.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "A couple of security officers dragging a Diver while they kick and scream.",
+        "id": "locals.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "A small crowd watching a couple of Divers sing and perform acrobatic feats.",
+        "id": "locals.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "A maintenance crew trying to get inside a maintenance vent.",
+        "id": "locals.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "A Diver and a tourist beating the crap out of each other.",
+        "id": "locals.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "A tourist carrying an obnoxiously loud speaker that’s blasting the latest hits.",
+        "id": "locals.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "Some sort of preacher spouting nonsense about the Àrsaidh.",
+        "id": "locals.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "npc-talents",
+    "title": "NPC 재능",
+    "english": "NPC Talents",
+    "dice": "d20",
+    "page": [
+      360,
+      361
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 1,
+        "text": "AIM: The NPC spends their turn aiming with a Ranged weapon. On their next turn, their attack hits automatically. Roll damage as usual.",
+        "id": "npc-talents.1"
+      },
+      {
+        "min": 2,
+        "max": 2,
+        "text": "BACKSTAB: Following a successful Stealth check, the NPC may use a knife to perform a powerful surprise attack, dealing an additional +1D10 damage to one enemy. Can only be used when not engaged in combat.",
+        "id": "npc-talents.2"
+      },
+      {
+        "min": 3,
+        "max": 3,
+        "text": "BASH: The NPC can choose to deal +D10 damage with a melee weapon, but suffers -2 Defense for the next round.",
+        "id": "npc-talents.3"
+      },
+      {
+        "min": 4,
+        "max": 4,
+        "text": "CLEAVE: When wielding a two-handed melee weapon, all enemies adjacent to the NPC’s target also take half of the rolled damage.",
+        "id": "npc-talents.4"
+      },
+      {
+        "min": 5,
+        "max": 5,
+        "text": "COUP DE GRACE: Deals +D8 damage against knocked-down enemies.",
+        "id": "npc-talents.5"
+      },
+      {
+        "min": 6,
+        "max": 6,
+        "text": "DEFENSIVE: Gains +1 Defense.",
+        "id": "npc-talents.6"
+      },
+      {
+        "min": 7,
+        "max": 7,
+        "text": "DILIGENT MEDIC: The NPC may attempt to heal the same Wound twice per Time Track, instead of once.",
+        "id": "npc-talents.7"
+      },
+      {
+        "min": 8,
+        "max": 8,
+        "text": "FAST: Adds +1 to all Initiative rolls.",
+        "id": "npc-talents.8"
+      },
+      {
+        "min": 9,
+        "max": 9,
+        "text": "FIELD MEDIC: Advantage on all Medical Aid checks.",
+        "id": "npc-talents.9"
+      },
+      {
+        "min": 10,
+        "max": 10,
+        "text": "FRUGAL: The NPC can make each ration last 2 weeks instead of 1.",
+        "id": "npc-talents.10"
+      },
+      {
+        "min": 11,
+        "max": 11,
+        "text": "HACKING: With uncanny ease, the NPC can attempt to hack not only human computers but some Àrsaidh technology as well.",
+        "id": "npc-talents.11"
+      },
+      {
+        "min": 12,
+        "max": 12,
+        "text": "HARD TO KILL: Gains +1 max Wounds.",
+        "id": "npc-talents.12"
+      },
+      {
+        "min": 13,
+        "max": 13,
+        "text": "MARKSMAN: Deals +2 damage on ranged attacks.",
+        "id": "npc-talents.13"
+      },
+      {
+        "min": 14,
+        "max": 14,
+        "text": "MOMENTUM: As their action, the NPC attempts to eliminate a downed opponent. Their attack deals +D6 damage, and if the opponent is eliminated they gain +2 damage for the rest of the combat. This effect stacks with itself.",
+        "id": "npc-talents.14"
+      },
+      {
+        "min": 15,
+        "max": 15,
+        "text": "PACK MULE: The NPC perfectly arranges the things in their bag. Gain +4 Gear Slots.",
+        "id": "npc-talents.15"
+      },
+      {
+        "min": 16,
+        "max": 16,
+        "text": "RESUSCITATE: Within 1 minute after a character dies, the NPC may perform a Medical Aid check. If they roll an Impressive success or more, the character is revived, but remains unconscious for D10+10 hours with 1 Wound remaining.",
+        "id": "npc-talents.16"
+      },
+      {
+        "min": 17,
+        "max": 17,
+        "text": "STRONG: Deals +2 damage on all melee attacks.",
+        "id": "npc-talents.17"
+      },
+      {
+        "min": 18,
+        "max": 18,
+        "text": "TARGETED STRIKES: Gains +1 to all rolls on the Hit Location table.",
+        "id": "npc-talents.18"
+      },
+      {
+        "min": 19,
+        "max": 19,
+        "text": "TECH SAVVY: Advantage on all Technology checks.",
+        "id": "npc-talents.19"
+      },
+      {
+        "min": 20,
+        "max": 20,
+        "text": "TOUGH: Rolls Recovery checks with +2 WIL.",
+        "id": "npc-talents.20"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  },
+  {
+    "id": "experimental-malfunction",
+    "title": "실험 장비 고장",
+    "english": "Experimental Gear Malfunction",
+    "dice": "d6",
+    "page": [
+      366
+    ],
+    "rows": [
+      {
+        "min": 1,
+        "max": 4,
+        "text": "The device jams or stops working, such that you must spend time (+1 ) repairing it before it can be used again",
+        "id": "experimental-malfunction.1"
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "text": "The device explodes and is destroyed, causing you 2D20 damage",
+        "id": "experimental-malfunction.5"
+      }
+    ],
+    "language": "en",
+    "coverage": "source-table"
+  }
+];
