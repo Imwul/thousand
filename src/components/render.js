@@ -1,5 +1,4 @@
 import {PROCEDURES,ODDS,SLOT_COUNTS} from '../domain/model.js';
-import {PAPER_CHECKS} from '../domain/desk.js';
 import {PROCEDURE_GROUPS,guideNext,playGuide} from '../domain/play.js';
 import {tables,tableList,CATEGORIES} from '../data/tables.js';
 import {icon,esc} from './icons.js';
@@ -54,15 +53,11 @@ export function nextStepView(procedureId, run){
   const note=matched?'이 굴림에서 이어질 상황입니다. 이미 있는 절차만 엽니다.':'이미 있는 상황만 엽니다.';
   return `<section class="desk-card"><h3><span class="desk-kicker">Next</span>이어서 굴릴 상황</h3><div class="next-list">${steps.map(p=>`<button type="button" class="next-step" data-action="procedure" data-id="${p.id}"><span>${String(PROCEDURES.indexOf(p)+1).padStart(2,'0')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.en)}</small></span></button>`).join('')}</div><p class="desk-note">${note}</p></section>`;
 }
-export function paperDesk(run){
-  const on=new Set(run?.paper??[]);
-  const checks=run?`<div class="paper-list">${PAPER_CHECKS.map(item=>`<button type="button" class="paper-check${on.has(item.id)?' is-on':''}" data-action="paper" data-key="${item.id}" aria-pressed="${on.has(item.id)}"><span aria-hidden="true">${on.has(item.id)?'●':'○'}</span><span>${esc(item.label)}</span></button>`).join('')}</div>`:'<p class="desk-note">굴림을 남기면 여기에 표시할 수 있습니다.</p>';
-  return `<section class="desk-card"><h3><span class="desk-kicker">Paper</span>종이로 옮긴 항목</h3>${checks}<p class="desk-note">체크는 이 굴림 기록에 남습니다. 수치와 시간트랙은 앱이 바꾸지 않습니다.</p></section>`;
-}
 export function asideLog(records,currentId){
   const list=records.filter(r=>r.aside&&r.parentId===currentId).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,4);
+  if(!list.length)return '';
   const cards=list.map(r=>{const v=localizeRecord(r,tables);return `<div class="aside-card"><strong>${esc(v.headline)}</strong><small>${esc(r.options?.question||v.subline)}</small><button type="button" data-action="record" data-id="${esc(r.id)}">이 기록 열기</button></div>`;}).join('');
-  return `<section class="desk-card"><h3><span class="desk-kicker">Aside</span>이 보고서 곁의 질문</h3>${cards||'<p class="desk-note">위의 질문은 지금 보고서를 바꾸지 않고 기록됩니다.</p>'}</section>`;
+  return `<section class="desk-card"><h3><span class="desk-kicker">Aside</span>이 보고서 곁의 질문</h3>${cards}</section>`;
 }
 function diceRibbon(run){
   const faces=run.trace.filter(t=>!t.discarded).slice(0,8);
@@ -133,7 +128,7 @@ function playBanner(run,records){
     run.encounter?`<button type="button" data-action="adopt-encounter" class="adopt-button">${icon('npc',18)} ${run.encounter.slot}번 조우 슬롯에 이 유형 기록</button>`:''
   ].join('');
   const now=acts||lock||hack||approach||adopt?`<section class="play-now" aria-label="지금 할 일"><h3><span>Now</span>지금 할 일</h3>${acts?`<ul class="play-acts">${acts}</ul>`:''}${lock}${hack}${approach}${adopt}</section>`:'';
-  const copy=guide.copy?`<p class="copy-line"><span>종이에 옮길 줄</span>${esc(guide.copy)}</p>`:'';
+  const copy=guide.copy?`<p class="copy-line"><span>저널에 적을 문장</span>${esc(guide.copy)}</p>`:'';
   return now+copy+(guide.landing?landingMap(guide.landing):'');
 }
 export function reportView(run,records,{unsaved=false,saving=false}={}){

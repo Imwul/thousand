@@ -24,6 +24,9 @@ test('actual app controller preserves drafts, writes records, annotates, filters
   q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
   await until(async()=>(await db.load()).records.length===1);
   assert.ok(q('#result-headline'));const first=(await db.load()).records[0];
+  assert.equal(q('#paper-desk'),null);
+  assert.doesNotMatch(q('#field-desk').textContent,/종이로 옮긴 항목/);
+  assert.equal(q('#aside-log').textContent.trim(),'');
   input('#record-memo','환기구 너머의 신호.');
   await until(async()=>(await db.load()).records[0].memo==='환기구 너머의 신호.');
   click('[data-action="pin"]');
@@ -50,9 +53,8 @@ test('actual app controller preserves drafts, writes records, annotates, filters
   assert.equal(q('#report-host [data-record-id]').dataset.recordId,openId);
   const aside=(await db.load()).records.find(r=>r.aside);
   assert.equal(aside.parentId,openId);assert.equal(aside.options.question,'복도에 소리가 있나?');assert.equal(aside.procedureId,'question');
+  assert.match(q('#aside-log').textContent,/이 보고서 곁의 질문/);
   assert.match(q('#aside-log').textContent,/복도에 소리가 있나/);
-  click('[data-action="paper"][data-key="time"]');
-  await until(async()=>(await db.load()).records.find(r=>r.id===openId)?.paper?.includes('time'));
   assert.match(q('#expedition').textContent,/반전/);
   assert.ok(q('.procedure-recent'));
   click('#next-steps [data-action="procedure"]');

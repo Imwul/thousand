@@ -75,9 +75,11 @@ test('the report leads with paper acts, the landing grid, and one copy line',()=
   assert.match(copyLine(week),/^항해 계속 · /);
   assert.ok(recordsMarkdown({name:'일지'},[week]).includes(copyLine(week)));
   assert.equal(copyLine({procedureId:'creature',headline:'Name',items:[{title:'기본 능력치',text:'STR 1'},{title:'전투 수치',text:'상처 1'},{title:'공격과 피해',text:'공격 +1'}]}),'Name · STR 1 · 상처 1 · 공격 +1');
-  assert.equal(copyLine({procedureId:'question',headline:'예',subline:'질문'}), '');
+  assert.equal(copyLine({procedureId:'question',headline:'예',subline:'질문'}),'예 · 질문');
   const asked=make('question',{question:'살아 있나?'},()=>0.5);
-  assert.doesNotMatch(reportView(asked,[asked]),/play-now|copy-line|hex-grid/);
+  assert.ok(copyLine(asked).startsWith('살아 있나? · '));
+  assert.match(reportView(asked,[asked]),/저널에 적을 문장/);
+  assert.doesNotMatch(reportView(asked,[asked]),/play-now|hex-grid|종이로 옮긴/);
 });
 
 test('the metal globe rolls only as a child after the player approaches',()=>{

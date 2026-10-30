@@ -40,14 +40,21 @@ export function guideNext(procedureId,run){
   return fallback;
 }
 
+function journalLine(run,extra=[]){
+  const question=typeof run.options?.question==='string'?run.options.question.trim():'';
+  const parts=[question,run.headline,run.subline,...extra].map(part=>typeof part==='string'?part.trim():'').filter(Boolean);
+  const unique=[];
+  for(const part of parts) if(!unique.includes(part)) unique.push(part);
+  return unique.join(' · ');
+}
+
 export function copyLine(run){
   if(!run) return '';
-  if(run.procedureId==='planet') return [run.headline,run.subline,named(run,'장소 활동도')?.text].filter(Boolean).join(' · ');
-  if(run.procedureId==='creature') return [run.headline,named(run,'기본 능력치')?.text,named(run,'전투 수치')?.text,named(run,'공격과 피해')?.text].filter(Boolean).join(' · ');
-  if(run.procedureId==='travel') return [run.headline,run.subline].filter(Boolean).join(' · ');
-  if(run.procedureId==='arrival'&&run.adopt) return [run.headline,run.subline,named(run,'Site Report 준비')?.text].filter(Boolean).join(' · ');
-  if(run.procedureId==='npc-profile') return [run.headline,named(run,'NPC 기본 능력치')?.text].filter(Boolean).join(' · ');
-  return '';
+  if(run.procedureId==='planet') return journalLine(run,[named(run,'장소 활동도')?.text]);
+  if(run.procedureId==='creature') return journalLine(run,[named(run,'기본 능력치')?.text,named(run,'전투 수치')?.text,named(run,'공격과 피해')?.text]);
+  if(run.procedureId==='arrival'&&run.adopt) return journalLine(run,[named(run,'Site Report 준비')?.text]);
+  if(run.procedureId==='npc-profile') return journalLine(run,[named(run,'NPC 기본 능력치')?.text]);
+  return journalLine(run);
 }
 
 function timeAct(run){

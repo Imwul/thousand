@@ -72,12 +72,10 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .desk-card h3{display:flex;flex-direction:column;gap:1px;font-family:Hahmlet,serif;font-size:16px;font-weight:550;margin-bottom:4px}
 .desk-kicker{font-family:BarlowCondensed,sans-serif;font-weight:900;font-size:13px;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase}
 .desk-note{font-size:12px;color:#9bb0b0;line-height:1.6;margin-top:8px}
-.next-step,.paper-check{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:9px 0;border-top:1px solid #2a4548;color:#e7f2ef}
+.next-step{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:9px 0;border-top:1px solid #2a4548;color:#e7f2ef}
 .next-step>span:first-child{font-size:11px;color:var(--cyan);width:1.6rem;flex:0 0 auto}
 .next-step strong{display:block;font-family:Hahmlet,serif;font-weight:550;font-size:15px}
 .next-step small{display:block;color:#8eaaaa;font-size:11px}
-.paper-check{align-items:flex-start;font-size:14px;line-height:1.45}
-.paper-check.is-on{color:var(--accent)}
 .aside-card{padding:10px 0 4px;border-top:1px solid #2a4548}
 .aside-card strong{display:block;font-family:Hahmlet,serif;font-size:20px;line-height:1.35}
 .aside-card small{display:block;color:#d5e4e1;font-size:13px;line-height:1.55;overflow-wrap:anywhere}
@@ -89,7 +87,7 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .die-face small,.die-more{font-family:SUIT,sans-serif;font-size:10px;color:#5c6e6d}
 .die-more{color:#3d5554;font-size:14px}
 .report::after,.empty-report::after{content:"";position:absolute;top:0;right:0;border-top:16px solid var(--coral);border-left:16px solid transparent}
-@media(hover:hover) and (pointer:fine){.expedition-open:hover .expedition-edit{color:var(--accent)}.next-step:hover{color:var(--cyan)}.paper-check:hover{color:var(--white)}}
+@media(hover:hover) and (pointer:fine){.expedition-open:hover .expedition-edit{color:var(--accent)}.next-step:hover{color:var(--cyan)}}
 @media(max-width:800px){.expedition{grid-template-columns:1fr;padding:12px 0 16px;margin-bottom:16px}.recent-procedures{grid-column:1/-1}.procedure-recent{min-height:44px;flex-direction:row;text-align:left}.field-desk{margin-top:14px}}
 @media(max-width:480px){.expedition-cell strong{font-size:14px}.quick-heading span{font-size:15px}.die-face{min-width:42px;min-height:46px}.die-face b{font-size:22px}}
 @media(min-width:2500px){.expedition{grid-template-columns:minmax(0,1fr) 480px;gap:28px;padding:18px 0 22px}.expedition-cell strong{font-size:22px}.quick-form textarea{min-height:92px;font-size:18px}.quick-heading span{font-size:22px}.workbench-content{grid-template-columns:340px minmax(0,72ch) minmax(280px,360px)}#report-host{max-width:72ch}.field-desk{position:sticky;top:28px;margin-top:0;max-height:calc(100dvh - 36px);overflow:auto}.desk-card h3{font-size:18px}.next-step strong{font-size:17px}.result-text,.report-title>p,.result-detail{max-width:66ch}}
