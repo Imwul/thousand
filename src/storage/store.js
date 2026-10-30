@@ -1,4 +1,5 @@
 import {newCampaign,normalizeContext,normalizeOptions} from '../domain/model.js';
+import {PAPER_CHECKS,sanitizePaper,sanitizeRecent} from '../domain/desk.js';
 export const DATABASE_NAME='thousand-worlds-logbook';
 const req = request => new Promise((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error??new Error('저장 요청에 실패했습니다.'));});
 function done(tx) {return new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error??new Error('저장 작업이 중단되었습니다.'));tx.onerror=()=>reject(tx.error??new Error('저장 공간에 기록할 수 없습니다.'));});}
@@ -25,13 +26,15 @@ class LogStore {
   }
   async createCampaign(name){const c=newCampaign(name),tx=this.db.transaction(['campaigns','meta'],'readwrite'),finished=done(tx);tx.objectStore('campaigns').add(c);tx.objectStore('meta').put({key:'selected',value:c.id});await finished;return c;}
   async selectCampaign(id){const tx=this.db.transaction('meta','readwrite'),finished=done(tx);tx.objectStore('meta').put({key:'selected',value:id});await finished;}
-  async saveCampaign(c){normalizeContext(c.context);normalizeOptions(c.options);const tx=this.db.transaction('campaigns','readwrite'),finished=done(tx);tx.objectStore('campaigns').put(c);await finished;}
+  async saveCampaign(c){normalizeContext(c.context);normalizeOptions(c.options);if(c.recentProcedures!==undefined)c.recentProcedures=sanitizeRecent(c.recentProcedures);const tx=this.db.transaction('campaigns','readwrite'),finished=done(tx);tx.objectStore('campaigns').put(c);await finished;}
   async saveRecord(r){const tx=this.db.transaction('records','readwrite'),finished=done(tx);tx.objectStore('records').add(r);await finished;}
   async annotateRecord(id,patch){
+    const paper=patch.paper===undefined?undefined:sanitizePaper(patch.paper);
     const tx=this.db.transaction('records','readwrite'),finished=done(tx),s=tx.objectStore('records');
     const record=await req(s.get(id));if(!record){tx.abort();await finished;throw new Error('해당 기록을 찾을 수 없습니다.');}
     if(typeof patch.memo==='string')record.memo=patch.memo.slice(0,10000);
     if(typeof patch.pinned==='boolean')record.pinned=patch.pinned;
+    if(paper!==undefined)record.paper=paper;
     s.put(record);await finished;return record;
   }
   async importBackup(backup){
@@ -52,7 +55,7 @@ export function validateBackup(input){
   const ids=new Set(),rids=new Set();
   for(const c of input.campaigns){
     if(!c||!string(c.id,100)||!c.id||ids.has(c.id)||!string(c.name,200)||!c.name.trim()||!date(c.createdAt))throw new Error('캠페인 정보가 손상되었거나 중복됩니다.');
-    normalizeContext(c.context);normalizeOptions(c.options);ids.add(c.id);
+    normalizeContext(c.context);normalizeOptions(c.options);if(c.recentProcedures!==undefined)sanitizeRecent(c.recentProcedures);ids.add(c.id);
   }
   for(const r of input.records){
     if(!r||!string(r.id,100)||!r.id||rids.has(r.id)||!ids.has(r.campaignId)||!date(r.createdAt)||!string(r.title,2000)||!string(r.headline,3000)||!string(r.subline,5000)||!string(r.procedureId,100)||!string(r.memo,10000)||typeof r.pinned!=='boolean'||!['neutral','positive','negative','danger'].includes(r.tone)||!string(r.rulesVersion,100))throw new Error('굴림 기록의 기본 정보가 손상되었습니다.');
@@ -67,6 +70,8 @@ export function validateBackup(input){
     if(r.adopt)normalizeContext({...r.context,...r.adopt});
     if(r.encounter&&(!Number.isInteger(r.encounter.slot)||r.encounter.slot<1||r.encounter.slot>r.context.slots.length||!string(r.encounter.label,300)))throw new Error('조우 슬롯이 손상되었습니다.');
     if(r.parentId!==null&&!string(r.parentId,100))throw new Error('이전 기록 연결이 손상되었습니다.');
+    if(r.paper!==undefined)sanitizePaper(r.paper);
+    if('aside' in r&&typeof r.aside!=='boolean')throw new Error('곁질문 표시가 손상되었습니다.');
     rids.add(r.id);
   }
   for(const r of input.records)if(r.parentId&&!rids.has(r.parentId))throw new Error('연결된 이전 굴림 기록이 백업에 없습니다.');
@@ -83,6 +88,8 @@ export function recordsMarkdown(campaign,records){
     lines.push(`## ${r.title}: ${r.headline}`,'',r.subline,'',`생성: ${r.createdAt} / 규칙: ${r.rulesVersion}`,'');
     for(const i of r.items)lines.push(`- **${i.title}**: ${i.text}${i.detail?` — ${i.detail}`:''} (p.${[i.page].flat().join(', ')})`);
     lines.push('','주사위: '+r.trace.map(t=>`${t.title} ${t.notation} [${t.values.join(',')}]=${t.value}${t.discarded?' (재굴림 제외)':''}`).join(' / '),'');
+    if(r.aside&&r.options?.question)lines.push(`곁질문: ${r.options.question}`,'');
+    if(Array.isArray(r.paper)&&r.paper.length)lines.push('종이: '+r.paper.map(id=>PAPER_CHECKS.find(item=>item.id===id)?.label??id).join(' · '),'');
     if(r.memo)lines.push('### 해석 메모','',r.memo,'');
   }
   return lines.join('\n');

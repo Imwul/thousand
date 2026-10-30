@@ -2,7 +2,7 @@ import {PROCEDURES,SLOT_COUNTS,newCampaign,normalizeContext,normalizeOptions,end
 import {tableList,tables,CATEGORIES} from './data/tables.js';
 import {runProcedure,runLockAttempt,runHackReroll} from './generators/procedures.js';
 import {openStore,makeBackup,validateBackup,recordsMarkdown} from './storage/store.js';
-import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView} from './components/render.js';
+import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView,expeditionReadout,nextStepView,paperDesk,asideLog} from './components/render.js';
 import {icon,esc} from './components/icons.js';
 import {localizeRecord} from './data/localization.js';
 
@@ -24,17 +24,43 @@ function enqueue(task,onFailure){
   return state.queue;
 }
 function saveCampaign(){const snapshot=structuredClone(campaign());return enqueue(async()=>{if(!state.db)throw new Error('브라우저 저장 공간에 연결하지 못했습니다. 현재 기록은 백업으로 보관하세요.');await state.db.saveCampaign(snapshot);});}
+function recentIds(){
+  const stored=campaign()?.recentProcedures;
+  if(Array.isArray(stored)&&stored.length)return stored.filter(id=>PROCEDURES.some(p=>p.id===id)).slice(0,5);
+  const seen=[];
+  for(const r of [...ownRecords()].sort((a,b)=>b.createdAt.localeCompare(a.createdAt))){
+    if(!PROCEDURES.some(p=>p.id===r.procedureId)||seen.includes(r.procedureId))continue;
+    seen.push(r.procedureId);if(seen.length===5)break;
+  }
+  return seen;
+}
+function touchRecent(id){
+  if(!PROCEDURES.some(p=>p.id===id))return;
+  const c=campaign();
+  c.recentProcedures=[id,...(Array.isArray(c.recentProcedures)?c.recentProcedures:[]).filter(v=>v!==id&&PROCEDURES.some(p=>p.id===v))].slice(0,5);
+}
+function renderDesk(){
+  const c=campaign();if(!c||!$('#next-steps'))return;
+  const keepMore=$('#procedures .more-procedures')?.open;
+  $('#procedures').innerHTML=procedureList(state.procedure,{compact:innerWidth<801,recent:recentIds()});
+  if(keepMore){const more=$('#procedures .more-procedures');if(more)more.open=true;}
+  $('#expedition-readout').innerHTML=expeditionReadout(c.context,ownRecords().length);
+  $('#next-steps').innerHTML=nextStepView(state.procedure);
+  $('#paper-desk').innerHTML=paperDesk(current());
+  $('#aside-log').innerHTML=asideLog(ownRecords(),state.currentId);
+}
 function renderControls(){
   const p=PROCEDURES.find(p=>p.id===state.procedure),c=campaign();
-  $('#procedures').innerHTML=procedureList(state.procedure,{compact:innerWidth<801});
   $('#procedure-title').textContent=p.name;$('#procedure-english').textContent=p.en;$('#procedure-source').textContent=`Core p. ${p.pages}`;
   $('#options').innerHTML=optionFields(state.procedure,c.options,c.context);
   $('#context-label').textContent=c.context.siteName||'탐사 맥락';
+  renderDesk();
 }
 function renderReport(animate=false){
   const host=$('#report-host'),r=current();
   host.innerHTML=r?reportView(r,state.records,{unsaved:state.unsaved.has(r.id),saving:state.saving.has(r.id)}):emptyReport(state.procedure);
   host.classList.toggle('report-entrance',animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches);
+  renderDesk();
 }
 function updateRecordStatus(){
   const r=current(),el=$('.record-state');if(!r||!el)return;
@@ -44,7 +70,7 @@ function updateRecordStatus(){
 }
 function renderHistory(){
   const all=ownRecords(),q=state.historyQuery.toLowerCase();
-  const filtered=all.filter(r=>{const v=localizeRecord(r,tables);return (state.filter==='all'||r.pinned)&&`${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline}`.toLowerCase().includes(q);});
+  const filtered=all.filter(r=> (state.filter==='all'||r.pinned)&&recordHaystack(r).includes(q));
   $('#history-count').textContent=all.length;$('#total-count').textContent=all.length;
   $('#history-list').innerHTML=filtered.length?historyCards(filtered,state.currentId):all.length?'<p class="no-results">일치하는 기록이 없습니다.</p>':historyCards([],null);
   document.querySelector('[data-action="filter-all"]').classList.toggle('selected',state.filter==='all');
@@ -53,6 +79,7 @@ function renderHistory(){
 function renderCampaigns(){
   $('#campaign').innerHTML=state.campaigns.map(c=>`<option value="${esc(c.id)}" ${c.id===state.selectedId?'selected':''}>${esc(c.name)}</option>`).join('');
 }
+function recordHaystack(r){const v=localizeRecord(r,tables);return `${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline} ${r.options?.question??''}`.toLowerCase();}
 function refresh(){renderCampaigns();renderControls();renderReport();renderHistory();status();}
 function collectOptions(){
   const form=$('#roll-form'),c=campaign(),next={...c.options};
@@ -96,7 +123,7 @@ async function retain(run,{keyboard=false}={}){
 async function roll({keyboard=false,tableId,parent=null,lockGuess=null,hackIndex=null}={}){
   const button=$('#roll-button');button.disabled=true;
   try{
-    collectOptions();await saveCampaign();
+    collectOptions();if(!tableId)touchRecent(parent?.procedureId??state.procedure);await saveCampaign();
     let run;
     if(Number.isInteger(hackIndex))run=runHackReroll(parent,hackIndex);
     else if(lockGuess)run=runLockAttempt(parent,lockGuess,{campaignId:state.selectedId});
@@ -114,7 +141,7 @@ function historyDialog(){
 function renderHistoryDialog(){
   if(state.modal!=='history')return;
   const q=($('#all-history-search')?.value??'').toLowerCase(),pinned=$('#all-history-pinned')?.checked;
-  const records=ownRecords().filter(r=>{const v=localizeRecord(r,tables);return (!pinned||r.pinned)&&`${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline}`.toLowerCase().includes(q);});
+  const records=ownRecords().filter(r=>(!pinned||r.pinned)&&recordHaystack(r).includes(q));
   $('#all-history-list').innerHTML=records.length?historyCards(records,state.currentId,state.historyLimit):'<p class="no-results">찾는 기록이 없습니다.</p>';
   $('#history-more').innerHTML=records.length>state.historyLimit?`<button class="secondary" data-action="more-history">50개 더 보기 (${Math.min(state.historyLimit,records.length)}/${records.length})</button>`:'';
 }
@@ -146,7 +173,7 @@ document.addEventListener('click',async event=>{
   const action=button.dataset.action;
   try{
     if(action==='procedure'){
-      await flushMemo();await flushOptions();state.procedure=button.dataset.id;
+      await flushMemo();touchRecent(button.dataset.id);await flushOptions();state.procedure=button.dataset.id;
       state.currentId=ownRecords().filter(r=>r.procedureId===state.procedure).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
       renderControls();renderReport();renderHistory();
       const panel=$('.control-panel'),top=panel.getBoundingClientRect().top;
@@ -163,6 +190,17 @@ document.addEventListener('click',async event=>{
     else if(action==='reroll'){await roll({parent:current(),keyboard:event.detail===0});}
     else if(action==='lock'){await roll({parent:current(),lockGuess:button.dataset.value,keyboard:event.detail===0});}
     else if(action==='hack'){await roll({parent:current(),hackIndex:Number(button.dataset.value),keyboard:event.detail===0});}
+    else if(action==='paper'){
+      const r=current(),key=button.dataset.key;if(!r)return;
+      const next=new Set(r.paper??[]);next.has(key)?next.delete(key):next.add(key);r.paper=[...next];renderDesk();
+      await flushMemo();
+      await enqueue(async()=>{
+        if(!state.db)throw new Error('종이 체크를 저장할 수 없습니다.');
+        if(!state.persisted.has(r.id)){await state.db.saveRecord(r);state.persisted.add(r.id);}
+        else await state.db.annotateRecord(r.id,{paper:r.paper});
+        state.unsaved.delete(r.id);status();
+      },()=>{state.unsaved.add(r.id);status();});
+    }
     else if(action==='pin'){
       const r=current();await flushMemo();
       r.pinned=!r.pinned;renderReport();renderHistory();
@@ -204,13 +242,14 @@ document.addEventListener('click',async event=>{
       c.context.slots[r.encounter.slot-1]=r.encounter.label;if(!await saveCampaign())return;renderControls();message(`${r.encounter.slot}번 슬롯에 유형을 기록했습니다.`);
     }
     else if(action==='source-info')showDialog('원문 확인',`<p class="about-copy">이 결과의 규칙은 제공하신 Core Rulebook의 p. ${esc(button.dataset.page)}를 사용합니다. 원본 PDF는 앱에 업로드하거나 포함하지 않았습니다.</p>`);
-    else if(action==='about')showDialog('규칙·사용 안내',`<div class="about-copy"><p>종이 캐릭터 시트 옆에 펼쳐 두는 <strong>Across a Thousand Dead Worlds</strong> 개인용 오라클 작업대입니다.</p><ul><li>상황을 선택하고 「굴리기」를 누르면 필요한 하위 표까지 한 보고서로 펼칩니다.</li><li>모든 새 결과는 이 브라우저에 자동 보관합니다. 「다시 굴림」은 이전 값을 보존한 새 기록입니다.</li><li>현재 맥락은 결과 생성에 필요한 값만 사용합니다. Wounds·Stress·소지품과 시간트랙은 종이에 기록하세요.</li><li>장면 종료 시 통제를 잃었다면 반전 확률을 올리고, 수기 시간트랙 초기화 때 1/6로 되돌리세요.</li></ul><p>2024 Core Rulebook의 기본 플레이용 ${tableList.length}개 표를 제공합니다. 솔로 GM·탐사지·행성·인물·생물·전투·정신 상태·항해·정거장·캐릭터 생성 표를 한국어로 번역했습니다. 인명·지명·기업명은 원문을 유지하며 생물명은 한글과 원문을 병기합니다. 수록 시나리오 전용 표는 제외했습니다. 원문 범위가 겹치는 감정 하위 표 1개는 직접 선택하도록 남겼고, 잘못 인쇄된 낮·밤 길이 값도 추정하지 않았습니다.</p><p>「반반」은 책의 기준인 D20 10 이상(55%)을 그대로 사용합니다. 돌발사건은 D8 두 개의 행·열 선택입니다. 자동 보안은 D10 표의 이름을 기준으로 본문 효과를 연결했습니다.</p><p>PC와 3440px 화면, 모바일을 지원합니다. ⌘/Ctrl+Enter: 굴리기, ⌘/Ctrl+K: 표 검색. 모든 기록은 브라우저에 저장되며 로그인만으로 기기 간 동기화되지 않습니다.</p><p>비공식 개인용 팬 도구. 원작 © Blackoath Entertainment. <a href="https://blackoathgames.com/across-a-thousand-dead-worlds" target="_blank" rel="noopener noreferrer">공식 게임 소개</a></p></div>`,{type:'about'});
+    else if(action==='about')showDialog('규칙·사용 안내',`<div class="about-copy"><p>종이 캐릭터 시트 옆에 펼쳐 두는 <strong>Across a Thousand Dead Worlds</strong> 개인용 오라클 작업대입니다.</p><ul><li>상황을 선택하고 「굴리기」를 누르면 필요한 하위 표까지 한 보고서로 펼칩니다.</li><li>모든 새 결과는 이 브라우저에 자동 보관합니다. 「다시 굴림」은 이전 값을 보존한 새 기록입니다.</li><li>현재 맥락은 결과 생성에 필요한 값만 사용합니다. 화면 위 탐사 막대에서 장소·인원·반전을 확인합니다.</li><li>곁질문은 열린 보고서를 유지한 채 예/아니오를 기록합니다. 종이 체크는 옮긴 표시만 남기며, Wounds·Stress·소지품과 시간트랙은 앱이 바꾸지 않습니다.</li><li>장면 종료 시 통제를 잃었다면 반전 확률을 올리고, 수기 시간트랙 초기화 때 1/6로 되돌리세요.</li></ul><p>2024 Core Rulebook의 기본 플레이용 ${tableList.length}개 표를 제공합니다. 솔로 GM·탐사지·행성·인물·생물·전투·정신 상태·항해·정거장·캐릭터 생성 표를 한국어로 번역했습니다. 인명·지명·기업명은 원문을 유지하며 생물명은 한글과 원문을 병기합니다. 수록 시나리오 전용 표는 제외했습니다. 원문 범위가 겹치는 감정 하위 표 1개는 직접 선택하도록 남겼고, 잘못 인쇄된 낮·밤 길이 값도 추정하지 않았습니다.</p><p>「반반」은 책의 기준인 D20 10 이상(55%)을 그대로 사용합니다. 돌발사건은 D8 두 개의 행·열 선택입니다. 자동 보안은 D10 표의 이름을 기준으로 본문 효과를 연결했습니다.</p><p>PC와 3440px 화면, 모바일을 지원합니다. ⌘/Ctrl+Enter: 굴리기, ⌘/Ctrl+K: 표 검색. 모든 기록은 브라우저에 저장되며 로그인만으로 기기 간 동기화되지 않습니다.</p><p>비공식 개인용 팬 도구. 원작 © Blackoath Entertainment. <a href="https://blackoathgames.com/across-a-thousand-dead-worlds" target="_blank" rel="noopener noreferrer">공식 게임 소개</a></p></div>`,{type:'about'});
   }catch(e){message(e.message||'작업을 완료하지 못했습니다.',true);}
 });
 document.addEventListener('submit',async event=>{
   event.preventDefault();const form=event.target;
   try{
     if(form.id==='roll-form')await roll({keyboard:event.submitter?.matches(':focus-visible')??false});
+    else if(form.id==='quick-form')await askAside();
     else if(form.id==='context-form')await saveContext(form);
     else if(form.id==='campaign-form'){
       await flushMemo();await flushOptions();const name=new FormData(form).get('name');
@@ -260,12 +299,34 @@ document.addEventListener('change',async event=>{
 document.addEventListener('keydown',event=>{
   if(!(event.metaKey||event.ctrlKey)||event.isComposing)return;
   if(event.key.toLowerCase()==='k'){event.preventDefault();libraryDialog();}
-  if(event.key==='Enter'&&!$('#dialog').open&&!$('#roll-button').disabled){event.preventDefault();roll({keyboard:true});}
+  if(event.key==='Enter'&&!$('#dialog').open){
+    if(event.target.closest('#quick-form')){event.preventDefault();askAside();return;}
+    if(!$('#roll-button').disabled){event.preventDefault();roll({keyboard:true});}
+  }
 });
 $('#dialog').addEventListener('cancel',()=>{state.modal=null;state.backup=null;});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){flushMemo();flushOptions();}});
 window.addEventListener('pagehide',()=>{flushMemo();flushOptions();});
 
+async function fileAside(run){
+  await flushMemo();state.records.push(run);state.saving.add(run.id);renderHistory();renderDesk();status();
+  await enqueue(async()=>{
+    if(!state.db)throw new Error('저장 공간에 연결하지 못했습니다. 곁질문은 화면에 남아 있습니다. 백업을 내려받으세요.');
+    await state.db.saveRecord(run);state.persisted.add(run.id);state.saving.delete(run.id);state.unsaved.delete(run.id);status();
+  },()=>{state.saving.delete(run.id);state.unsaved.add(run.id);status();});
+}
+async function askAside(){
+  const text=$('#quick-question').value.trim();
+  if(!text){message('곁질문을 입력하세요.',true);return;}
+  const button=$('#quick-form button[type="submit"]');button.disabled=true;
+  try{
+    touchRecent('question');await flushOptions();
+    const options=normalizeOptions({...campaign().options,question:text,odds:$('#quick-odds').value||'even'});
+    const run=runProcedure('question',{context:campaign().context,options,campaignId:state.selectedId,parentId:state.currentId});
+    run.aside=true;await fileAside(run);$('#quick-question').value='';
+    message(`곁질문 기록: ${localizeRecord(run,tables).headline}`);
+  }catch(e){message(e.message,true);}finally{button.disabled=false;}
+}
 async function start(){
   try{
     state.db=await openStore();const data=await state.db.load();Object.assign(state,data);state.persisted=new Set(state.records.map(r=>r.id));
