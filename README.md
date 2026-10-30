@@ -7,7 +7,7 @@ npm ci
 npm run dev -- --port 5180
 ```
 
-<http://127.0.0.1:5180/>에서 연다. Node 22 이상. 런타임 외부 API나 유료 생성 서비스가 필요하지 않다.
+<http://127.0.0.1:5180/>에서 연다. 공개 주소는 <https://imwul.github.io/thousand/> 이다. Node 22 이상. 런타임 외부 API나 유료 생성 서비스가 필요하지 않다.
 
 ```sh
 npm test
