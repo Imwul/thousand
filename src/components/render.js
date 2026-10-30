@@ -44,7 +44,7 @@ export function expeditionReadout(c,count=0){
     ['Remain','잔여',remain],
     ['Log','기록',String(count)]
   ];
-  return `<button type="button" class="expedition-open" data-action="context" aria-label="탐사 맥락 수정">${cells.map(([en,ko,value])=>`<span class="expedition-cell"><small>${en}</small><b>${esc(ko)}</b><strong>${esc(value)}</strong></span>`).join('')}<span class="expedition-edit">맥락 수정</span></button>`;
+  return `<button type="button" class="expedition-open" data-action="context" aria-label="탐사 맥락 수정"><span class="expedition-cells">${cells.map(([en,ko,value])=>`<span class="expedition-cell"><small>${en}</small><b>${esc(ko)}</b><strong>${esc(value)}</strong></span>`).join('')}</span><span class="expedition-edit">맥락 수정</span></button>`;
 }
 export function nextStepView(procedureId, run){
   const matched=!!run&&run.procedureId===procedureId;
