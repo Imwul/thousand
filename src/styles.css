@@ -110,6 +110,8 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .approach-choice button{padding:10px 14px;background:#1a3330;color:#efe7c2;font-family:SUIT,sans-serif;font-size:13px}
 .copy-line{display:flex;flex-direction:column;gap:4px;margin:0 0 16px;padding:10px 12px;background:#fff;border-left:3px solid var(--cyan-paper);color:var(--paper-ink);font-size:15px;line-height:1.65;overflow-wrap:anywhere;max-width:70ch}
 .copy-line>span{font-family:SUIT,sans-serif;font-size:11px;letter-spacing:.04em;color:var(--cyan-paper)}
+.journal-text{font-weight:550}
+.copy-line button{align-self:flex-start;min-height:44px;padding:0 2px;font-family:SUIT,sans-serif;font-size:12px;color:var(--cyan-paper)}
 .landing-map{margin:0 0 16px}
 .landing-map figcaption{font-family:SUIT,sans-serif;font-size:12px;line-height:1.55;color:#5e6c60;margin-bottom:8px;max-width:70ch}
 .hex-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:2px;max-width:420px}
@@ -118,5 +120,5 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 @media(max-width:800px){.procedure-list{display:flex;flex-direction:column;gap:8px}.procedure-group .procedure{flex-direction:row;justify-content:flex-start;text-align:left;align-items:center;min-height:44px;padding:8px 10px;gap:10px}.procedure-group .procedure strong{font-size:13px;letter-spacing:0;line-height:1.35}.procedure-group .procedure small{display:block;font-size:10px}.procedure-group .procedure-code{display:grid}.procedure-group .procedure-mark{display:inline}}
 @media(max-width:480px){.procedure-group .procedure{min-height:44px;padding:8px 10px}.procedure-group .procedure strong{font-size:13px}.play-now .lock-choice>div,.play-now .hack-choice>div{flex-direction:column}}
 @media(min-width:2500px){.copy-line,.play-acts{max-width:66ch}}
-@media print{.play-now,.copy-line,.landing-map{color:black;background:white}.play-now{border-color:black}.hex-cell{border:1px solid #bbb;background:white;color:black}.hex-cell.is-land{background:#222;color:#fff;print-color-adjust:exact}}
+@media print{.play-now,.copy-line,.landing-map{color:black;background:white}.play-now{border-color:black}.copy-line button{display:none}.hex-cell{border:1px solid #bbb;background:white;color:black}.hex-cell.is-land{background:#222;color:#fff;print-color-adjust:exact}}
 

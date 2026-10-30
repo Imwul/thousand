@@ -40,9 +40,9 @@ export function guideNext(procedureId,run){
   return fallback;
 }
 
-function journalLine(run,extra=[]){
+function journalLine(run,extra=[],skipSubline=false){
   const question=typeof run.options?.question==='string'?run.options.question.trim():'';
-  const parts=[question,run.headline,run.subline,...extra].map(part=>typeof part==='string'?part.trim():'').filter(Boolean);
+  const parts=[question,run.headline,skipSubline?'':run.subline,...extra].map(part=>typeof part==='string'?part.trim():'').filter(Boolean);
   const unique=[];
   for(const part of parts) if(!unique.includes(part)) unique.push(part);
   return unique.join(' · ');
@@ -54,6 +54,9 @@ export function copyLine(run){
   if(run.procedureId==='creature') return journalLine(run,[named(run,'기본 능력치')?.text,named(run,'전투 수치')?.text,named(run,'공격과 피해')?.text]);
   if(run.procedureId==='arrival'&&run.adopt) return journalLine(run,[named(run,'Site Report 준비')?.text]);
   if(run.procedureId==='npc-profile') return journalLine(run,[named(run,'NPC 기본 능력치')?.text]);
+  if(run.procedureId==='injury') return journalLine(run,[named(run,'치명적 부상')?.text],true);
+  if(run.procedureId==='trauma') return journalLine(run,[named(run,'부정적 특성')?.text],true);
+  if(run.procedureId==='activity') return journalLine(run,[named(run,'활동 확인')?.text,named(run,'추적 위협')?.text],true);
   return journalLine(run);
 }
 
@@ -76,6 +79,8 @@ export function playGuide(run,records=[]){
   const blob=[run.subline,...(run.notes??[])].join('\n');
   if(/Oxygen Tank 1개와 Supplies 1개|산소 탱크 1개와 보급품 1개/.test(blob)) acts.push({id:'rations',text:'대원마다 산소 탱크 1, 보급품 1'});
   if(/Battery 1개와 Oxygen Pellet 1개|배터리 1개와 산소 펠릿 1개/.test(blob)) acts.push({id:'reset',text:'배터리 1 · 산소 펠릿 1 · 사격했다면 탄약 1'});
+  if(run.procedureId==='injury') acts.push({id:'injury',text:'부상과 효과를 시트에'});
+  if(run.procedureId==='trauma') acts.push({id:'trauma',text:'장기 효과를 시트에'});
   if(run.procedureId==='hex'&&run.notes?.some(note=>note.includes('Àrsaidh 탐사지를 발견'))) acts.push({id:'site',text:'용도·규모·위험은 표 찾아보기에서 따로 굴리세요'});
   const globe=run.items?.some(item=>item.tableId==='biome-hazards-7'&&item.roll===7);
   const child=globe?records.find(record=>record.parentId===run.id&&record.tableId==='toxic-globe'):null;

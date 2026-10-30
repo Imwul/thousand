@@ -79,7 +79,16 @@ test('the report leads with paper acts, the landing grid, and one copy line',()=
   const asked=make('question',{question:'살아 있나?'},()=>0.5);
   assert.ok(copyLine(asked).startsWith('살아 있나? · '));
   assert.match(reportView(asked,[asked]),/저널에 적을 문장/);
+  assert.match(reportView(asked,[asked]),/data-action="copy-journal"/);
   assert.doesNotMatch(reportView(asked,[asked]),/play-now|hex-grid|종이로 옮긴/);
+  const hurt=make('injury',{},()=>0);
+  assert.equal(copyLine(hurt).includes('종이 시트'),false);
+  assert.ok(playGuide(hurt).acts.some(act=>act.id==='injury'));
+  assert.match(reportView(hurt,[hurt]),/시트에 적을 것/);
+  const hour=make('activity',{},()=>0.9);
+  assert.equal(copyLine(hour).includes('갱신하세요'),false);
+  assert.match(copyLine(hour),/한 시간이 지났습니다/);
+  assert.doesNotMatch(reportView(hurt,[hurt]),/종이에 기록할 효과/);
 });
 
 test('the metal globe rolls only as a child after the player approaches',()=>{

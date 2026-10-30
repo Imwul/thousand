@@ -88,7 +88,7 @@ export function recordsMarkdown(campaign,records){
   for(const r of [...records].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))){
     lines.push(`## ${r.title}: ${r.headline}`,'',r.subline,'');
     const paperLine=copyLine(r);
-    if(paperLine)lines.push(paperLine,'');
+    if(paperLine)lines.push(`저널: ${paperLine}`,'');
     lines.push(`생성: ${r.createdAt} / 규칙: ${r.rulesVersion}`,'');
     for(const i of r.items)lines.push(`- **${i.title}**: ${i.text}${i.detail?` — ${i.detail}`:''} (p.${[i.page].flat().join(', ')})`);
     lines.push('','주사위: '+r.trace.map(t=>`${t.title} ${t.notation} [${t.values.join(',')}]=${t.value}${t.discarded?' (재굴림 제외)':''}`).join(' / '),'');
