@@ -130,6 +130,22 @@ function travel(r,run) {
   run.subline=`${o.week}주차 · ${event?'항해 사건 발생':'항해 사건 없음'}${o.destination==='unknown'?` · 도착 확률 ${arrival}%`:''}`;
   run.notes.push('이번 주 대원마다 Oxygen Tank 1개와 Supplies 1개를 종이 시트에서 소비하세요. 사건 확률은 사건 발생으로 초기화되지 않으며 목적지 도착 시 초기화됩니다.');
 }
+function fillSite(r,run,location){
+  const purpose=r.table('purpose','시설의 정체');
+  if(run.options.history)r.table('site-story','시설의 정체');
+  const descriptor=r.table('site-descriptor','첫인상');
+  if(location==='planet')r.table('planet-descriptor','첫인상');
+  const protective=r.check('protection','추가 보호장비 필요',20,130,'탐사 조건');
+  if(protective){const levelA=r.check('level-a','A등급 보호 필요',40,130,'탐사 조건');r.item('보호장비',levelA?'A등급 방호복 필요':'방호복 또는 진공복 필요',130,{group:'탐사 조건'});}
+  const size=r.table('size','탐사 조건'),activity=r.table('activity','탐사 조건'),hazard=r.table('hazard','탐사 조건');
+  const sides=[4,10,20,20][size.value-1],offset=[10,20,20,40][size.value-1];
+  const resourcesTotal=r.raw('resource-slots','자원 탐사 한도',sides,143)+offset;
+  const artifactsTotal=r.raw('artifact-slots','유물 탐사 한도',sides,143)+offset;
+  r.item('Site Report 준비',`자원 ${resourcesTotal} / 유물 ${artifactsTotal} / 조우 유형 ${SLOT_COUNTS[size.value-1]}칸 / 매복 최대 ${activity.value}회`,143,{group:'종이에 기록',detail:`활동도에 따른 최대 매복 ${activity.value}회. 자원·유물 한도는 실제 아이템 개수가 아닙니다.`});
+  run.subline=`${purpose.row.text} · ${size.row.text} · ${hazard.row.text} · ${descriptor.row.text}`;
+  run.adopt={location,purpose:purpose.value,hazard:hazard.value,size:size.value,resources:true,artifacts:true,slots:Array(SLOT_COUNTS[size.value-1]).fill('')};
+  run.notes.push('기본 대기는 산소가 부족하므로 호흡 장비가 필요합니다. 인공 중력은 별도 결과가 없으면 1.5g. 맥락에 채택하면 이 장소용 조우 슬롯을 새로 준비합니다.');
+}
 function site(r,run) {
   let arrival;
   for(let i=0;i<1000;i++){
@@ -140,21 +156,15 @@ function site(r,run) {
   }
   run.headline=arrival.row.text;
   if(arrival.value<16) {run.tone='danger';run.subline='이 좌표에서는 탐사지 상세를 생성하지 않습니다.';return;}
-  const purpose=r.table('purpose','시설의 정체');
-  if(run.options.history)r.table('site-story','시설의 정체');
-  const descriptor=r.table('site-descriptor','첫인상');
-  const location=arrival.value>=36&&arrival.value<=60?'planet':'space';
-  if(location==='planet')r.table('planet-descriptor','첫인상');
-  const protective=r.check('protection','추가 보호장비 필요',20,130,'탐사 조건');
-  if(protective) {const levelA=r.check('level-a','A등급 보호 필요',40,130,'탐사 조건');r.item('보호장비',levelA?'A등급 방호복 필요':'방호복 또는 진공복 필요',130,{group:'탐사 조건'});}
-  const size=r.table('size','탐사 조건'),activity=r.table('activity','탐사 조건'),hazard=r.table('hazard','탐사 조건');
-  const sides=[4,10,20,20][size.value-1],offset=[10,20,20,40][size.value-1];
-  const resourcesTotal=r.raw('resource-slots','자원 탐사 한도',sides,143)+offset;
-  const artifactsTotal=r.raw('artifact-slots','유물 탐사 한도',sides,143)+offset;
-  r.item('Site Report 준비',`자원 ${resourcesTotal} / 유물 ${artifactsTotal} / 조우 유형 ${SLOT_COUNTS[size.value-1]}칸`,143,{group:'종이에 기록',detail:`활동도에 따른 최대 매복 ${activity.value}회. 자원·유물 한도는 실제 아이템 개수가 아닙니다.`});
-  run.subline=`${purpose.row.text} · ${size.row.text} · ${descriptor.row.text}`;
-  run.adopt={location,purpose:purpose.value,hazard:hazard.value,size:size.value,resources:true,artifacts:true,slots:Array(SLOT_COUNTS[size.value-1]).fill('')};
-  run.notes.push('기본 대기는 산소가 부족하므로 호흡 장비가 필요합니다. 인공 중력은 별도 결과가 없으면 1.5g. 맥락에 채택하면 이 장소용 조우 슬롯을 새로 준비합니다.');
+  fillSite(r,run,arrival.value>=36&&arrival.value<=60?'planet':'space');
+}
+export function runFoundSite(previous,{campaignId=previous?.campaignId,rng=random}={}){
+  if(!previous?.id)throw new Error('먼저 헥스에서 Àrsaidh 탐사지를 찾으세요.');
+  const run=createRun('site-from-hex',previous.context,previous.options,campaignId,previous.id),r=runner(run,rng);
+  run.siteFromHex=true;run.title='발견한 Àrsaidh 시설';run.headline='Àrsaidh 시설';
+  fillSite(r,run,'planet');
+  run.notes.unshift('도착표는 굴리지 않았습니다. 이 시설은 이미 행성 헥스에서 찾았습니다.');
+  return run;
 }
 function area(r,run) {
   const o=run.options,c=run.context;

@@ -47,7 +47,7 @@ export function expeditionReadout(c,count=0){
   return `<button type="button" class="expedition-open" data-action="context" aria-label="탐사 맥락 수정"><span class="expedition-cells">${cells.map(([en,ko,value])=>`<span class="expedition-cell"><small>${en}</small><b>${esc(ko)}</b><strong>${esc(value)}</strong></span>`).join('')}</span><span class="expedition-edit">맥락 수정</span></button>`;
 }
 export function nextStepView(procedureId, run){
-  const matched=!!run&&run.procedureId===procedureId;
+  const matched=!!run&&(run.procedureId===procedureId||run.siteFromHex===true);
   const steps=guideNext(procedureId, matched?run:null).map(id=>PROCEDURES.find(p=>p.id===id)).filter(Boolean);
   if(!steps.length)return '';
   const note=matched?'이 굴림에서 이어질 상황입니다. 이미 있는 절차만 엽니다.':'이미 있는 상황만 엽니다.';
@@ -122,13 +122,14 @@ function playBanner(run,records){
   const lock=run.pending?`<section class="lock-choice"><h3>접근 노드는 어디에 있을까요?</h3><p>방화벽 ${run.pending.lo}–${run.pending.hi} · ${run.pending.secure?'보안문 / D10 두 개 중 불리한 결과':'D10 한 개'}</p><div><button type="button" data-action="lock" data-value="inside">안쪽 선택 ${icon('dice',18)}</button><button type="button" data-action="lock" data-value="outside">바깥쪽 선택 ${icon('dice',18)}</button></div></section>`:'';
   const hack=run.hacking?`<section class="hack-choice"><h3>허용된 재굴림 사용</h3><p>판정 성공이나 사이퍼(Cypher)로 얻은 횟수만큼만 사용하세요.</p><div>${run.hacking.values.map((value,index)=>`<button type="button" data-action="hack" data-value="${index}">${index+1}번 D6 <b>${value}</b></button>`).join('')}</div></section>`:'';
   const approach=guide.approach?`<section class="approach-choice"><h3>금속 구체</h3><p>다가가기 전에는 이 표를 굴리지 않습니다. 원래 헥스 기록은 그대로 둡니다.</p>${guide.approach.recordId?`<button type="button" data-action="record" data-id="${esc(guide.approach.recordId)}">${esc(guide.approach.text)}</button>`:`<button type="button" data-action="approach" data-table="toxic-globe">${esc(guide.approach.text)}</button>`}</section>`:'';
+  const found=guide.foundSite?`<section class="approach-choice"><h3>Àrsaidh 시설</h3><p>도착표는 다시 굴리지 않습니다. 원래 헥스 기록은 그대로 둡니다.</p>${guide.foundSite.recordId?`<button type="button" data-action="record" data-id="${esc(guide.foundSite.recordId)}">${esc(guide.foundSite.text)}</button>`:`<button type="button" data-action="found-site">${esc(guide.foundSite.text)}</button>`}</section>`:'';
   const adopt=[
     Number.isInteger(run.terrain)?`<button type="button" data-action="adopt-terrain" class="adopt-button">이 지형을 이전 헥스로 사용</button>`:'',
     run.adopt?`<button type="button" data-action="adopt" class="adopt-button">${icon('arrival',18)} 이 장소를 현재 탐사 맥락으로 사용</button>`:'',
     run.encounter?`<button type="button" data-action="adopt-encounter" class="adopt-button">${icon('npc',18)} ${run.encounter.slot}번 조우 슬롯에 이 유형 기록</button>`:''
   ].join('');
   const sheet=acts?`<h3><span>Sheet</span>시트에 적을 것</h3><ul class="play-acts">${acts}</ul>`:'';
-  const choices=lock||hack||approach||adopt?`<h3><span>Now</span>지금 할 일</h3>${lock}${hack}${approach}${adopt}`:'';
+  const choices=lock||hack||approach||found||adopt?`<h3><span>Now</span>지금 할 일</h3>${lock}${hack}${approach}${found}${adopt}`:'';
   const now=sheet||choices?`<section class="play-now" aria-label="${[acts&&'시트에 적을 것',choices&&'지금 할 일'].filter(Boolean).join(' · ')}">${sheet}${choices}</section>`:'';
   const copy=guide.copy?`<p class="copy-line"><span>저널에 적을 문장</span><b class="journal-text">${esc(guide.copy)}</b><button type="button" data-action="copy-journal">이 문장 복사</button></p>`:'';
   return copy+now+(guide.landing?landingMap(guide.landing):'');

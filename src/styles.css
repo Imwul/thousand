@@ -53,7 +53,7 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .expedition-cell b{font-weight:500;font-size:10px;color:#8eaaaa}
 .expedition-cell strong{font-weight:550;font-size:15px;line-height:1.35;word-break:keep-all;overflow-wrap:anywhere}
 .expedition-edit{font-size:12px;color:var(--coral);padding-top:2px}
-.journal-text,.copy-line,.history-card small,.aside-card strong,.aside-card small,.play-acts li,.landing-map figcaption,.next-step strong,.desk-note{word-break:keep-all;overflow-wrap:anywhere}
+.journal-text,.copy-line,.history-card small,.aside-card strong,.aside-card small,.play-acts li,.landing-map figcaption,.next-step strong,.desk-note,.approach-choice p,.approach-choice button{word-break:keep-all;overflow-wrap:anywhere}
 .quick-form{display:flex;flex-direction:column;gap:8px;min-width:0;padding:12px;border:1px solid #3d5656;border-top:2px solid var(--cyan);background:rgba(8,24,28,.82)}
 .quick-heading{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .quick-heading span{font-family:Hahmlet,serif;font-size:16px}
@@ -109,7 +109,7 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .play-now .adopt-button{margin:8px 0}
 .approach-choice h3{font-size:16px;font-weight:650}
 .approach-choice p{font-family:SUIT,sans-serif;font-size:12px;line-height:1.6;margin:6px 0 10px;max-width:62ch}
-.approach-choice button{padding:10px 14px;background:#1a3330;color:#efe7c2;font-family:SUIT,sans-serif;font-size:13px}
+.approach-choice button{padding:10px 14px;background:#1a3330;color:#efe7c2;font-family:SUIT,sans-serif;font-size:13px;white-space:normal;text-align:left}
 .copy-line{display:flex;flex-direction:column;gap:4px;margin:0 0 16px;padding:10px 12px;background:#fff;border-left:3px solid var(--cyan-paper);color:var(--paper-ink);font-size:15px;line-height:1.65;overflow-wrap:anywhere;max-width:70ch}
 .copy-line>span{font-family:SUIT,sans-serif;font-size:11px;letter-spacing:.04em;color:var(--cyan-paper)}
 .journal-text{font-weight:550}

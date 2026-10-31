@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {PROCEDURES,defaultContext} from '../src/domain/model.js';
 import {nextStepIds} from '../src/domain/desk.js';
 import {PROCEDURE_GROUPS,guideNext,copyLine,playGuide} from '../src/domain/play.js';
-import {runProcedure} from '../src/generators/procedures.js';
+import {runProcedure,runFoundSite} from '../src/generators/procedures.js';
 import {reportView,procedureList,nextStepView} from '../src/components/render.js';
 import {recordsMarkdown} from '../src/storage/store.js';
 import {localizeRecord} from '../src/data/localization.js';
@@ -92,7 +92,9 @@ test('the report leads with paper acts, the landing grid, and one copy line',()=
   assert.equal(copyLine(locked).includes('안쪽 또는 바깥쪽'),false);
   assert.equal(copyLine(locked).includes('살아 있나?'),false);
   assert.ok(copyLine(locked).includes(locked.headline));
+  assert.ok(copyLine(locked).includes('침착(Composed)'));
   assert.equal(copyLine({procedureId:'door',headline:'접근점이 열립니다',subline:'방화벽 2–8 · 안쪽 선택 · 접근 노드 5',options:{question:'살아 있나?'}}),'접근점이 열립니다 · 방화벽 2–8 · 안쪽 선택 · 접근 노드 5');
+  assert.equal(copyLine({procedureId:'door',headline:'접근점이 열립니다',subline:'방화벽 2–8 · 안쪽 선택 · 접근 노드 5',items:[{tableId:'behind-door',title:'문 너머',text:'부식성 가스 · A등급 방호복 없으면 매 라운드 D20 피해'},{title:'데이터 크리스털',text:'2개'},{title:'합금 큐브',text:'1개'}]}),'접근점이 열립니다 · 방화벽 2–8 · 안쪽 선택 · 접근 노드 5 · 부식성 가스 · A등급 방호복 없으면 매 라운드 D20 피해 · 데이터 크리스털 2개 · 합금 큐브 1개');
   const faces=[[20,1],[10,6],[10,3]];
   let face=0;
   const hazardHex=runProcedure('hex',{campaignId:'test',options:{question:'살아 있나?'},context:defaultContext(),rng:()=>{const [sides,value]=faces[face++];return (value-.5)/sides;}});
@@ -137,4 +139,80 @@ test('the metal globe rolls only as a child after the player approaches',()=>{
   const opened=reportView(parent,[parent,child]);
   assert.match(opened,/다가간 결과 열기/);
   assert.doesNotMatch(opened,/data-action="approach"/);
+});
+
+function facesOf(pairs){
+  let i=0;
+  return ()=>{
+    if(i>=pairs.length) throw new Error('unexpected extra die');
+    const [sides,value]=pairs[i++];
+    return (value-.5)/sides;
+  };
+}
+function rollHex(pairs,context=defaultContext(),options={}){
+  return runProcedure('hex',{campaignId:'test',context,options,rng:facesOf(pairs)});
+}
+
+test('a hex journal keeps the printed line and appends the artifact or encounter already rolled',()=>{
+  const found=rollHex([[20,1],[10,1],[10,10],[20,3]]);
+  const line=copyLine(found);
+  assert.ok(line.startsWith(found.headline));
+  assert.ok(line.includes('150쪽'));
+  assert.ok(line.includes('금속 막대'));
+  assert.equal(line.includes('표 찾아보기'),false);
+  const fight=rollHex([[20,17],[10,6],[10,1],[10,1],[4,1],[20,1],[6,4],[20,9]],{...defaultContext(),biome:2,knownThreats:false});
+  const fightLine=copyLine(fight);
+  assert.ok(fightLine.includes('146쪽'));
+  assert.ok(fightLine.includes('쉬움 1'));
+  assert.ok(fightLine.includes('토착 생물(Local Fauna)'));
+  assert.ok(fightLine.includes('인간 정도'));
+  assert.equal(guideNext('hex',fight)[0],'creature');
+  const watched=rollHex([[20,17],[10,6],[10,1],[10,7],[20,1]],{...defaultContext(),biome:2,knownThreats:false});
+  assert.ok(copyLine(watched).includes('날개가 네 개'));
+  assert.equal(copyLine(watched).includes('146쪽'),false);
+  const calmFight=rollHex([[20,1],[10,6],[10,1]],{...defaultContext(),biome:2,knownThreats:false});
+  assert.ok(copyLine(calmFight).includes('순탄한 길이므로 전투 조우를 적용하지 않음'));
+  assert.equal(copyLine(calmFight).includes('146쪽'),false);
+});
+
+test('an Àrsaidh hex rolls the site tables once, without the arrival table',()=>{
+  const hex=rollHex([[20,1],[10,10]],defaultContext(),{question:'살아 있나?'});
+  const before=structuredClone(hex);
+  assert.equal(hex.trace.some(entry=>entry.id==='arrival'),false);
+  assert.equal(hex.trace.some(entry=>entry.id==='purpose'),false);
+  assert.equal(playGuide(hex,[]).foundSite.recordId,null);
+  assert.equal(playGuide(hex,[]).acts.some(act=>act.id==='site'),false);
+  const html=reportView(hex,[hex]);
+  assert.match(html,/data-action="found-site"/);
+  assert.doesNotMatch(html,/표 찾아보기에서 따로/);
+  const child=runFoundSite({...hex,options:{...hex.options,question:'살아 있나?'}},{rng:facesOf([[20,1],[10,1],[12,1],[10,1],[100,90],[4,1],[6,2],[8,2],[4,2],[4,4]])});
+  assert.equal(child.parentId,hex.id);
+  assert.equal(child.siteFromHex,true);
+  assert.equal(child.trace.some(entry=>entry.id==='arrival'),false);
+  assert.equal(child.adopt.location,'planet');
+  assert.equal(child.adopt.purpose,1);
+  assert.equal(child.adopt.size,1);
+  assert.equal(child.adopt.hazard,2);
+  assert.deepEqual(hex,before);
+  const journal=copyLine(child);
+  assert.equal(journal.includes('살아 있나?'),false);
+  assert.ok(journal.includes('감옥'));
+  assert.ok(journal.includes('소형'));
+  assert.ok(journal.includes('독성 대기'));
+  assert.ok(journal.includes('자원 12'));
+  assert.ok(journal.includes('매복 최대 2회'));
+  assert.ok(journal.includes('생물에게 점령됨'));
+  assert.ok(journal.includes('고대 유적'));
+  assert.ok(journal.includes('방호복'));
+  assert.deepEqual(guideNext('hex',child),['area','site-name','door']);
+  assert.match(nextStepView('hex',child),/data-id="area"/);
+  assert.equal(playGuide(hex,[child]).foundSite.recordId,child.id);
+  const opened=reportView(hex,[hex,child]);
+  assert.match(opened,/생성한 시설 열기/);
+  assert.doesNotMatch(opened,/data-action="found-site"/);
+  const suited=runFoundSite(hex,{rng:facesOf([[20,1],[10,1],[12,1],[10,1],[100,10],[100,50],[4,1],[6,1],[8,1],[4,1],[4,1]])});
+  assert.ok(playGuide(suited,[suited]).acts.some(act=>act.text==='방호복 또는 진공복 필요'));
+  const again=runFoundSite(child,{rng:facesOf([[20,2],[10,1],[12,1],[10,1],[100,90],[4,1],[6,1],[8,1],[4,1],[4,1]])});
+  assert.equal(again.parentId,child.id);
+  assert.equal(again.trace.some(entry=>entry.id==='arrival'),false);
 });

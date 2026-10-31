@@ -94,7 +94,7 @@ function hex(r,run,hooks){
       else {const type=r.table('planet-encounter','조우');if(type.value<=6)hooks.encounter(r,run,{ignoreHazard:true,location:'planet'});else r.table('close-encounter','가까운 목격');}
     }
     if(c.biome===7&&hazard.value===7)run.notes.push('금속 구체는 다가간다고 선택한 뒤에만 굴립니다. 보고서 위의 버튼이 그 표입니다.');
-  }else if(e.value===10)run.notes.push('Àrsaidh 탐사지를 발견했습니다. 「목적지 도착」의 도착표를 다시 굴리는 대신 시설 용도·규모·위험을 직접 생성해 탐사를 시작하세요.');
+  }else if(e.value===10)run.notes.push('Àrsaidh 탐사지를 발견했습니다. 도착표는 다시 굴리지 않습니다. 위의 버튼이 용도·규모·위험과 탐사 한도를 굴립니다.');
   if(run.options.sights)r.table(`biome-sights-${c.biome}`,'5헥스마다 보는 풍경');
   run.subline=`${tables['landing-biome'].rows[c.biome-1].text} · ${c.biome===10?'수중 이동':tables[`terrain-${c.terrain}`].title}`;
   run.notes.push(`기본 이동 비용: 시간트랙 +${[3,8,9,10].includes(c.biome)?2:1}. 추가 지형 비용과 보호장비 효과를 수기 시트에 적용하세요. 지형 결과는 보고서의 「이 지형을 이전 헥스로 사용」으로 채택할 수 있습니다.`);

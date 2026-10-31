@@ -13,7 +13,43 @@ export const PROCEDURE_GROUPS = [
 
 const PROCEDURE_IDS = new Set(PROCEDURES.map(procedure=>procedure.id));
 const named = (run,title)=>run.items?.find(item=>item.title===title);
-const hazardText = run=>run.items?.find(item=>typeof item.tableId==='string'&&item.tableId.startsWith('biome-hazards-'))?.text;
+const texts = (run,pred)=>(run.items??[]).filter(pred).map(item=>item.text);
+
+function doorCarry(run){
+  const items=run.items??[];
+  const effect=items.find(item=>item.tableId==='door')?.detail;
+  const behind=items.find(item=>item.tableId==='behind-door');
+  const out=[];
+  if(effect) out.push(effect);
+  if(behind?.text) out.push(behind.text);
+  if(behind){
+    const crystals=items.find(item=>item.title==='데이터 크리스털');
+    const alloys=items.find(item=>item.title==='합금 큐브');
+    if(crystals?.text) out.push(`데이터 크리스털 ${crystals.text}`);
+    if(alloys?.text) out.push(`합금 큐브 ${alloys.text}`);
+  }
+  return out;
+}
+function siteCarry(run){
+  const hazard=run.items?.find(item=>item.tableId==='hazard');
+  return [named(run,'Site Report 준비')?.text,named(run,'장소의 과거')?.text,named(run,'지상 시설의 주변')?.text,hazard?.detail];
+}
+function hexCarry(run){
+  const items=run.items??[];
+  const hazard=items.find(item=>typeof item.tableId==='string'&&item.tableId.startsWith('biome-hazards-'));
+  return [
+    hazard?.text,
+    items.find(item=>item.tableId==='planet-findings')?.text,
+    ...texts(run,item=>item.tableId==='artifact'),
+    items.find(item=>item.tableId==='planet-encounter')?.text,
+    items.find(item=>item.tableId==='close-encounter')?.text,
+    ...texts(run,item=>item.title==='조우 구성'||(typeof item.tableId==='string'&&/^encounter-\d+\./.test(item.tableId))),
+    ...texts(run,item=>item.title==='생물 유형'||item.tableId==='creature-planet'||item.tableId==='creature-space'),
+    ...texts(run,item=>item.tableId==='creature-size'),
+    ...texts(run,item=>item.title==='전투 제한'),
+    items.find(item=>item.tableId==='known-threat')?.text
+  ];
+}
 
 function pick(ids){
   const chosen=[];
@@ -22,6 +58,7 @@ function pick(ids){
 }
 
 export function guideNext(procedureId,run){
+  if(run?.siteFromHex===true) return pick(['area','site-name','door']);
   const fallback=nextStepIds(procedureId);
   if(!run||run.procedureId!==procedureId) return fallback;
   if(run.pending?.type==='lock') return pick(['hacking','alternate','question']);
@@ -57,15 +94,17 @@ function journalLine(run,extra=[],skipSubline=false){
 
 export function copyLine(run){
   if(!run) return '';
-  if(run.procedureId==='planet') return journalLine(run,[named(run,'장소 활동도')?.text]);
-  if(run.procedureId==='creature') return journalLine(run,[named(run,'기본 능력치')?.text,named(run,'전투 수치')?.text,named(run,'공격과 피해')?.text]);
-  if(run.procedureId==='arrival'&&run.adopt) return journalLine(run,[named(run,'Site Report 준비')?.text]);
-  if(run.procedureId==='npc-profile') return journalLine(run,[named(run,'NPC 기본 능력치')?.text]);
-  if(run.procedureId==='injury') return journalLine(run,[named(run,'치명적 부상')?.text],true);
-  if(run.procedureId==='trauma') return journalLine(run,[named(run,'부정적 특성')?.text],true);
-  if(run.procedureId==='activity') return journalLine(run,[named(run,'활동 확인')?.text,named(run,'추적 위협')?.text],true);
-  if(run.procedureId==='hex') return journalLine(run,[hazardText(run)]);
-  return journalLine(run);
+  const door=doorCarry(run);
+  if(run.procedureId==='planet') return journalLine(run,[named(run,'장소 활동도')?.text,...door]);
+  if(run.procedureId==='creature') return journalLine(run,[named(run,'기본 능력치')?.text,named(run,'전투 수치')?.text,named(run,'공격과 피해')?.text,...door]);
+  if((run.procedureId==='arrival'&&run.adopt)||run.siteFromHex===true) return journalLine(run,[...siteCarry(run),...door]);
+  if(run.procedureId==='npc-profile') return journalLine(run,[named(run,'NPC 기본 능력치')?.text,...door]);
+  if(run.procedureId==='injury') return journalLine(run,[named(run,'치명적 부상')?.text,...door],true);
+  if(run.procedureId==='trauma') return journalLine(run,[named(run,'부정적 특성')?.text,...door],true);
+  if(run.procedureId==='activity') return journalLine(run,[named(run,'활동 확인')?.text,named(run,'추적 위협')?.text,...door],true);
+  if(run.procedureId==='hex') return journalLine(run,[...hexCarry(run),...door]);
+  if(run.procedureId==='door') return journalLine(run,door);
+  return journalLine(run,door);
 }
 
 function timeAct(run){
@@ -78,7 +117,7 @@ function timeAct(run){
 }
 
 export function playGuide(run,records=[]){
-  if(!run) return {acts:[],copy:'',next:[],approach:null,landing:null};
+  if(!run) return {acts:[],copy:'',next:[],approach:null,foundSite:null,landing:null};
   const acts=[];
   const landing=run.items?.find(item=>item.title==='착륙 칸'&&Number.isInteger(item.roll)&&item.roll>=1&&item.roll<=100);
   if(landing) acts.push({id:'landing',text:`착륙 칸 ${landing.roll}을 지도에 표시`});
@@ -89,9 +128,13 @@ export function playGuide(run,records=[]){
   if(/Battery 1개와 Oxygen Pellet 1개|배터리 1개와 산소 펠릿 1개/.test(blob)) acts.push({id:'reset',text:'배터리 1 · 산소 펠릿 1 · 사격했다면 탄약 1'});
   if(run.procedureId==='injury') acts.push({id:'injury',text:'부상과 효과를 시트에'});
   if(run.procedureId==='trauma') acts.push({id:'trauma',text:'장기 효과를 시트에'});
-  if(run.procedureId==='hex'&&run.notes?.some(note=>note.includes('Àrsaidh 탐사지를 발견'))) acts.push({id:'site',text:'용도·규모·위험은 표 찾아보기에서 따로 굴리세요'});
+  const gear=run.items?.find(item=>item.title==='보호장비');
+  if(gear?.text) acts.push({id:'gear',text:gear.text});
   const globe=run.items?.some(item=>item.tableId==='biome-hazards-7'&&item.roll===7);
   const child=globe?records.find(record=>record.parentId===run.id&&record.tableId==='toxic-globe'):null;
   const approach=globe?{tableId:'toxic-globe',text:child?'다가간 결과 열기':'금속 구체에 다가간다',recordId:child?.id??null}:null;
-  return {acts,copy:copyLine(run),next:guideNext(run.procedureId,run),approach,landing:landing?.roll??null};
+  const discovered=run.procedureId==='hex'&&run.notes?.some(note=>note.includes('Àrsaidh 탐사지를 발견'));
+  const siteChild=discovered?records.find(record=>record.parentId===run.id&&record.siteFromHex===true):null;
+  const foundSite=discovered?{text:siteChild?'생성한 시설 열기':'용도·규모·위험 굴리기',recordId:siteChild?.id??null}:null;
+  return {acts,copy:copyLine(run),next:guideNext(run.procedureId,run),approach,foundSite,landing:landing?.roll??null};
 }
