@@ -38,23 +38,29 @@ export const PROCEDURES = [
   {id:'alternate',name:'우회 경로 찾기',en:'Alternate access',icon:'door',pages:'159'},
   {id:'activity',name:'시간트랙이 찼을 때',en:'Activity check',icon:'surprise',pages:'129, 138'},
   {id:'artifact-activate',name:'유물 활성화',en:'Artifact activation',icon:'inspiration',pages:'152'},
+  {id:'biome-border',name:'인접 생물군계',en:'Adjacent biome',icon:'area',pages:'185–189'},
+  {id:'appraisal',name:'귀환 정산',en:'Return appraisal',icon:'resolution',pages:'148, 153'},
   {id:'scatter',name:'투척 산포',en:'Throw scatter',icon:'resolution',pages:'63'}
 ];
 export const SLOT_COUNTS = [4,6,8,12];
 export function defaultContext() {
-  return {siteId:'unassigned',siteName:'',crew:1,presentCrew:1,location:'space',purpose:0,hazard:0,size:1,twist:1,resources:true,artifacts:true,knownThreats:true,slots:Array(4).fill(''),biome:1,terrain:4,singleBiome:false};
+  return {siteId:'unassigned',siteName:'',crew:1,presentCrew:1,location:'space',mode:'site',purpose:0,hazard:0,size:1,twist:1,resources:true,artifacts:true,knownThreats:true,slots:Array(4).fill(''),slotRefs:Array(4).fill(null),biome:1,terrain:4,singleBiome:false};
 }
 export function defaultOptions() {
-  return {question:'',odds:'even',qualifier:true,complication:true,details:true,connector:true,known:false,history:true,week:1,destination:'unknown',knownWeeks:3,tier:'standard',species:'random',guardianModel:'titan',randomIntelligence:false,aquatic:false,moodDepth:3,stationActivity:'carousing',behavior:'brute',retarget:false,cautious:false,generateCover:true,checkEncounterReaction:true,hackingDifficulty:1,diceExpression:'1d20',sights:false};
+  return {question:'',odds:'even',qualifier:true,complication:true,details:true,connector:true,known:false,history:true,week:1,destination:'unknown',knownWeeks:3,tier:'standard',species:'random',guardianModel:'titan',randomIntelligence:false,aquatic:false,moodDepth:3,stationActivity:'carousing',behavior:'brute',retarget:false,cautious:false,generateCover:true,checkEncounterReaction:true,hackingDifficulty:1,diceExpression:'1d20',sights:false,hackingRandom:false,voyage:'outbound',artifactCount:1,crystalCount:0,alloyCount:0,findCount:0,encounterCount:0,combatAmbush:false};
 }
 export function newCampaign(name='첫 번째 탐사') {
   return {id:crypto.randomUUID(),name:name.trim()||'새 탐사',createdAt:new Date().toISOString(),context:defaultContext(),options:defaultOptions()};
 }
 export function normalizeContext(value={}) {
   const c={...defaultContext(),...value};
+  if(value.slotRefs===undefined||(Array.isArray(value.slotRefs)&&value.slotRefs.every(v=>v===null)))c.slotRefs=Array(c.slots?.length??4).fill(null);
   if(![1,3,5].includes(c.crew)) throw new Error('탐사 출발 정원은 1·3·5명 중 하나여야 합니다.');
   if(!Number.isInteger(c.presentCrew)||c.presentCrew<1||c.presentCrew>5) throw new Error('현재 대원 수는 1–5명이어야 합니다.');
   if(![1,2,3,4].includes(c.size)||![1,2,3].includes(c.twist)) throw new Error('규모 또는 반전 범위가 잘못되었습니다.');
+  if(!['site','surface'].includes(c.mode))throw new Error('탐사 모드가 잘못되었습니다.');
+  if(c.mode==='surface'&&c.location!=='planet')throw new Error('야외 탐사는 행성 표면에서만 사용합니다.');
+  if(!Array.isArray(c.slotRefs)||c.slotRefs.length!==c.slots?.length||c.slotRefs.some(v=>v!==null&&(typeof v!=='string'||v.length>100)))throw new Error('조우 연결이 손상되었습니다.');
   if(!['space','planet'].includes(c.location)) throw new Error('장소 유형이 잘못되었습니다.');
   if(!Number.isInteger(c.purpose)||c.purpose<0||c.purpose>20||!Number.isInteger(c.hazard)||c.hazard<0||c.hazard>8) throw new Error('장소의 용도 또는 위험 범위가 잘못되었습니다.');
   if(typeof c.siteId!=='string'||c.siteId.length>100||typeof c.siteName!=='string'||c.siteName.length>200||typeof c.resources!=='boolean'||typeof c.artifacts!=='boolean') throw new Error('장소 정보가 잘못되었습니다.');
@@ -65,10 +71,12 @@ export function normalizeContext(value={}) {
 export function normalizeOptions(value={}) {
   const o={...defaultOptions(),...value};
   if(typeof o.question!=='string'||o.question.length>2000||!ODDS.some(v=>v.id===o.odds)) throw new Error('질문 또는 가능성 값이 잘못되었습니다.');
-  for(const key of ['qualifier','complication','details','connector','known','history','randomIntelligence','aquatic','retarget','cautious','generateCover','checkEncounterReaction','sights']) if(typeof o[key]!=='boolean') throw new Error('굴림 옵션이 잘못되었습니다.');
+  for(const key of ['qualifier','complication','details','connector','known','history','randomIntelligence','aquatic','retarget','cautious','generateCover','checkEncounterReaction','sights','combatAmbush','hackingRandom']) if(typeof o[key]!=='boolean') throw new Error('굴림 옵션이 잘못되었습니다.');
   if(!Number.isInteger(o.week)||o.week<1||o.week>52||!Number.isInteger(o.knownWeeks)||o.knownWeeks<1||o.knownWeeks>52||!['unknown','known'].includes(o.destination)) throw new Error('항해 설정이 잘못되었습니다.');
   if(!['easy','standard','elite','overwhelming'].includes(o.tier)||!['random','Guardian','Aberration','Synthetic','Local Fauna'].includes(o.species)||!['titan','anansi','arash','brahmari'].includes(o.guardianModel))throw new Error('생물 생성 옵션이 잘못되었습니다.');
   if(!Number.isInteger(o.moodDepth)||o.moodDepth<1||o.moodDepth>3||!Number.isInteger(o.hackingDifficulty)||o.hackingDifficulty<1||o.hackingDifficulty>6||typeof o.diceExpression!=='string'||o.diceExpression.length>100)throw new Error('굴림 깊이 또는 주사위 설정이 잘못되었습니다.');
+  if(!['outbound','return'].includes(o.voyage))throw new Error('항해 방향이 잘못되었습니다.');
+  for(const key of ['artifactCount','crystalCount','alloyCount','findCount','encounterCount'])if(!Number.isInteger(o[key])||o[key]<0||o[key]>(key==='artifactCount'?100:10000))throw new Error('정산 수량을 확인하세요. 유물은 0–100개를 지원합니다.');
   if(!['carousing','night','locals','news'].includes(o.stationActivity)||!['brute','lurker','ranged','swarm','psychic','spitter','clobber','taker','psybane','bomber','cecaelia'].includes(o.behavior))throw new Error('상황 선택이 잘못되었습니다.');
   return structuredClone(o);
 }

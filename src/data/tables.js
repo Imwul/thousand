@@ -3,7 +3,7 @@ import {compoundTables} from './compound-tables.js';
 import {completeTables} from './completions.js';
 import {applyKorean} from './localization.js';
 // Korean summaries and original-language tables from the user's 2024 rulebook.
-export const RULES_VERSION = 'atdw-core-2024-logbook-ko-2';
+export const RULES_VERSION = 'atdw-core-2024-logbook-ko-3';
 export const tables = {};
 function define(id, title, english, dice, page, rows) {
   tables[id] = { id, title, english, dice, page, rows: rows.map((r, i) => ({ id: `${id}.${i + 1}`, ...r })) };

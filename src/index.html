@@ -20,7 +20,7 @@
     <div class="utility-bar"><div class="campaign-picker"><label for="campaign">탐사</label><select id="campaign" aria-label="현재 캠페인"></select><button class="icon-button" data-action="new-campaign" aria-label="새 캠페인 만들기">+</button></div><nav class="view-nav" aria-label="작업대 메뉴"><button data-action="workbench" class="selected">굴림 작업대</button><button data-action="history">탐사 기록 <span id="total-count">0</span></button><button data-action="library">표 찾아보기 <kbd>⌘ K</kbd></button></nav><button data-action="context" class="context-trigger"><span id="context-label">탐사 맥락</span><span aria-hidden="true">↗</span></button></div>
     <section id="expedition" class="expedition" aria-label="현재 탐사">
       <div id="expedition-readout"></div>
-      <form id="quick-form" class="quick-form">
+      <details id="quick-disclosure" class="quick-disclosure" hidden><summary>곁질문</summary><form autocomplete="off" id="quick-form" class="quick-form">
         <div class="quick-heading"><span>곁에서 묻는 질문</span><small>열린 보고서는 유지</small></div>
         <textarea id="quick-question" maxlength="2000" rows="2" aria-label="열린 보고서를 유지한 채 묻는 질문" placeholder="이 복도에 소리가 있을까?"></textarea>
         <div class="quick-row">
@@ -37,11 +37,11 @@
           </label>
           <button class="primary" type="submit">질문만 기록</button>
         </div>
-      </form>
+      </form></details>
     </section>
     <main id="workbench" class="workspace">
-      <aside class="scenario-rail" aria-label="굴림 상황"><div class="rail-heading"><span>굴림 상황</span><span class="tiny-line"></span></div><div id="procedures" class="procedure-list"></div></aside>
-      <section class="workbench-content" aria-label="상황과 보고서"><div class="control-panel"><div class="control-heading"><div><p id="procedure-english"></p><h2 id="procedure-title"></h2></div><span id="procedure-source" class="control-source"></span></div><form id="roll-form"><div id="options"></div><div class="roll-bottom"><p>새 결과는 브라우저에 자동 저장됩니다.</p><button id="roll-button" class="primary roll-button" type="submit"><span class="roll-icon" aria-hidden="true">◇</span><span>굴리기</span><kbd>⌘ ↵</kbd></button></div></form></div><div id="report-host" aria-live="polite" aria-atomic="false"></div><aside id="field-desk" class="field-desk" aria-label="이어서 할 일"><div id="next-steps"></div><div id="aside-log" aria-live="polite"></div></aside></section>
+      <aside class="scenario-rail" aria-label="굴림 상황"><div class="rail-heading"><span>굴림 상황</span><span class="tiny-line"></span></div><details id="procedure-picker" open><summary><span id="procedure-picker-label">상황 선택</span><span>상황 변경</span></summary><div id="procedures" class="procedure-list"></div></details><a class="mobile-roll-link" href="#roll-form">굴림으로 이동 ↓</a></aside>
+      <section class="workbench-content" aria-label="상황과 보고서"><div class="control-panel"><div class="control-heading"><div><p id="procedure-english"></p><h2 id="procedure-title"></h2></div><span id="procedure-source" class="control-source"></span></div><form id="roll-form" autocomplete="off"><div id="options"></div><div class="roll-bottom"><p>새 결과는 브라우저에 자동 저장됩니다.</p><button id="roll-button" class="primary roll-button" type="submit"><span class="roll-icon" aria-hidden="true">◇</span><span>굴리기</span><kbd>⌘ ↵</kbd></button></div></form></div><div id="report-host" aria-live="polite" aria-atomic="false"></div><aside id="field-desk" class="field-desk" aria-label="이어서 할 일"><div id="enemy-desk"></div><div id="next-steps"></div><div id="aside-log" aria-live="polite"></div></aside></section>
       <aside class="history-rail" aria-label="최근 탐사 기록"><div class="history-heading"><h2>최근 기록</h2><span id="history-count">0</span></div><label class="history-search"><span aria-hidden="true">⌕</span><input type="search" id="history-search" aria-label="최근 기록 검색" placeholder="이 탐사에서 찾기"></label><div class="history-filter"><button data-action="filter-all" class="selected">전체</button><button data-action="filter-pinned">고정한 기록</button></div><div id="history-list"></div><button class="text-button all-history" data-action="history">모든 기록 보기 <span aria-hidden="true">↗</span></button></aside>
     </main>
     <footer class="site-footer"><span>오라클·탐사 기록</span><span>ATDW © Blackoath Entertainment · 비공식 팬 도구</span><button data-action="about">규칙·사용 안내</button></footer>

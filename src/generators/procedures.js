@@ -3,6 +3,7 @@ import {ODDS,PROCEDURES,SLOT_COUNTS,normalizeContext,normalizeOptions} from '../
 import {die,rollDice,lookup,random} from './dice.js';
 import {runExtended} from './extended.js';
 import {creatureLabel} from '../data/glossary.js';
+import {knownThreatItems,KNOWN_THREATS} from '../data/enemies.js';
 
 function createRun(procedureId,context,options,campaignId,parentId) {
   return {id:crypto.randomUUID(),campaignId,procedureId,createdAt:new Date().toISOString(),parentId:parentId??null,
@@ -18,11 +19,11 @@ function runner(run,rng) {
       return value;
     },
     item(title,text,page,extra={}) {const v={title,text,page,...extra};run.items.push(v);return v;},
-    table(id,group='결과') {
+    table(id,group='결과',fixedValue) {
       const t=tables[id];if(!t)throw new Error('해당 표를 찾을 수 없습니다.');if(t.rollable===false)throw new Error(t.sourceNote||'원문의 범위를 먼저 확인하세요.');
-      const rolled=rollDice(t.dice,rng),row=lookup(t,rolled.value);
-      run.trace.push({id,title:t.title,page:t.page,...rolled});
-      run.items.push({title:t.title,text:row.text,key:row.key,detail:row.detail??'',en:row.en??'',...(row.sourceText?{sourceText:row.sourceText}:{}),page:row.page??t.page,tableId:id,roll:rolled.value,dice:t.dice,values:rolled.values,group,...(row.image?{image:row.image}:{})});
+      const rolled=fixedValue===undefined?rollDice(t.dice,rng):{value:fixedValue,values:[]},row=lookup(t,rolled.value);
+      if(fixedValue===undefined)run.trace.push({id,title:t.title,page:t.page,...rolled});
+      run.items.push({title:t.title,text:row.text,key:row.key,detail:row.detail??'',en:row.en??'',...(row.sourceText?{sourceText:row.sourceText}:{}),page:row.page??t.page,tableId:id,roll:rolled.value,dice:t.dice,values:rolled.values,...(fixedValue!==undefined?{reused:true}:{}),group,...(row.image?{image:row.image}:{})});
       return {value:rolled.value,row};
     },
     check(id,title,percent,page,group='결과') {
@@ -34,7 +35,7 @@ function runner(run,rng) {
 }
 function inspiration(r,group='해석 단서') {const a=r.table('action',group),t=r.table('theme',group);return `${a.row.text} / ${t.row.text}`;}
 function surprise(r,o) {const s=r.table('surprise','돌발사건');if(o.details)inspiration(r);return s.row.text;}
-function encounter(r,run,{forcedTier,forcedType,ignoreHazard=false,location}={}) {
+function encounter(r,run,{forcedTier,forcedType,ignoreHazard=false,location,ambush=false}={}) {
   const c=run.context;
   const slot=r.raw('encounter-slot','기존 조우 슬롯',SLOT_COUNTS[c.size-1],143);
   const tier=forcedTier??r.table('encounter-difficulty','조우').value;
@@ -43,17 +44,56 @@ function encounter(r,run,{forcedTier,forcedType,ignoreHazard=false,location}={})
   if(c.crew===1&&tierKey==='easy') {composition='쉬움 1';r.item('조우 구성',composition,264,{group:'조우'});}
   else composition=r.table(`encounter-${c.crew}.${tierKey}`,'조우').row.text;
   r.item(`조우 슬롯 ${slot}`,forcedType?'지형이 지정한 유형 사용':c.slots[slot-1]||'처음 만나는 유형',143,{group:'조우',detail:`이번 탐사 출발 정원 ${c.crew}명 기준. 동일 조우의 모든 개체는 같은 유형이다.`});
-  if(c.slots[slot-1]&&!forcedType) return `${c.slots[slot-1]} · ${composition}`;
+  const spec={slot,label:c.slots[slot-1]||'',composition:parseComposition(composition),ambush,ref:forcedType?null:c.slotRefs?.[slot-1]??null};run.encounters??=[];run.encounters.push(spec);run.encounter??=spec;
+  if(c.slots[slot-1]&&!forcedType){spec.type=legacySpecies(c.slots[slot-1]);return `${c.slots[slot-1]} · ${composition}`;}
   let type;
   if(forcedType){type=forcedType;r.item('생물 유형',creatureLabel(type),193,{key:type,group:'조우',detail:'현재 지형·생물군계가 지정한 유형.'});}
   else if(c.hazard===4&&!ignoreHazard) {type='Aberration';r.item('생물 유형',creatureLabel(type),140,{key:type,group:'조우',detail:'주된 위험이 「괴물에게 점령됨」이므로 모든 조우는 변이체(Aberration).'});}
   else type=r.table((location??c.location)==='planet'?'creature-planet':'creature-space','조우').row.key;
   const size=r.table('creature-size','조우').row.text;
-  if(type==='Aberration')run.notes.push('Aberration과 조우하면 Stress +5. 상세 능력치·특성은 룰북 p.270–289를 참조하세요.');
-  else run.notes.push('생물의 상세 능력치·특성·역할은 룰북 p.270–299에서 정하세요.');
-  run.encounter={slot,label:`${creatureLabel(type)} · ${size}`};
+  if(type==='Aberration')run.notes.push('변이체(Aberration)와 조우하면 스트레스 +5. 이 조우의 적 생성에서 난도별 카드를 만듭니다.');
+  else run.notes.push('이 조우의 적 생성에서 같은 종의 난도별 능력치·외형·특성을 만듭니다.');
+  Object.assign(spec,{type,sizeRoll:run.items.at(-1).roll,label:`${creatureLabel(type)} · ${size}`});
   return `${creatureLabel(type)} · ${composition}`;
 }
+
+export function parseComposition(text){
+  const tiers={'쉬움':'easy','보통':'standard','정예':'elite','압도적':'overwhelming'};
+  return [...text.matchAll(/(쉬움|보통|정예|압도적)\s*(\d+)/g)].map(m=>({tier:tiers[m[1]],count:Number(m[2])}));
+}
+function legacySpecies(label){
+  return ['Guardian','Aberration','Synthetic','Local Fauna'].find(type=>label.includes(type))??(/Titan|Anansi|Arash|Brahmari/i.test(label)?'Guardian':null);
+}
+function knownThreat(r,run){
+  const threat=r.table('known-threat','매복 위협');
+  const key=Object.keys(KNOWN_THREATS)[threat.value-1];
+  for(const {title,text,page,...extra} of knownThreatItems(key))r.item(title,text,page,extra);
+  run.enemy={name:creatureLabel(KNOWN_THREATS[key].name),type:'Aberration',role:key,tier:'elite',known:true,ambush:true};
+  run.ambush=true;
+  return threat;
+}
+export function runEncounterRoster(previous,{blueprint,encounterIndex=0,context=previous?.context,options={},campaignId=previous?.campaignId,rng=random}={}){
+  if(!(previous?.encounters?.[encounterIndex]??previous?.encounter)?.composition?.length)throw new Error('먼저 조우 구성을 생성하세요.');
+  const spec=previous.encounters?.[encounterIndex]??previous.encounter,type=blueprint?.type??spec.type??options.species;
+  if(!type)throw new Error('기존 조우 슬롯에 적힌 생물의 유형을 먼저 선택하세요.');
+  const merged={...previous.options,...options,species:type};
+  const tiers=['overwhelming','elite','standard','easy'];
+  const composition=[...spec.composition].sort((a,b)=>tiers.indexOf(a.tier)-tiers.indexOf(b.tier));
+  const run=createRun('encounter-roster',context,merged,campaignId,previous.id);
+  run.title='조우의 적';run.encounterIndex=encounterIndex;run.encounter=structuredClone(spec);run.cards=[];run.ambush=spec.ambush;
+  let shared=blueprint?structuredClone(blueprint):{type,...(spec.sizeRoll?{tables:{'creature-size':spec.sizeRoll}}:{})};
+  for(const {tier,count} of composition){
+    const card=runProcedure('creature',{context,options:{...merged,tier},campaignId,rng,blueprint:shared});
+    shared=structuredClone(card.blueprint);card.enemy.ambush=!!spec.ambush;
+    run.cards.push({count,enemy:card.enemy,items:card.items,notes:card.notes});
+    run.items.push(...card.items.map(item=>({...item,group:`${card.enemy.name} · ${{easy:'쉬움',standard:'보통',elite:'정예',overwhelming:'압도적'}[tier]} ×${count} / ${item.group??'능력치'}`})));
+    run.trace.push(...card.trace);run.notes.push(...card.notes);
+  }
+  run.blueprint=shared;run.headline=run.cards[0].enemy.name;run.subline=spec.composition.map(x=>`${{easy:'쉬움',standard:'보통',elite:'정예',overwhelming:'압도적'}[x.tier]} ${x.count}`).join(' + ')+' · '+creatureLabel(type);
+  run.encounter.label=run.headline;run.notes=[...new Set(run.notes)];
+  return run;
+}
+
 function dread(r,run) {const d=r.table('dread','공포');if(d.value===1)r.table('taint','공포');run.notes.push('지속 효과, 피해와 Stress는 종이 시트에 기록하세요. 조건이 충족된 경우에만 효과 주사위를 굴립니다.');return d.row.text;}
 function security(r,run) {
   const s=r.table('security','보안');
@@ -124,10 +164,10 @@ function travel(r,run) {
     if((v===3&&detail.value===7)||(v===4&&detail.value===3))misjump(r,run);
   }
   let arrived;
-  if(o.destination==='unknown')arrived=r.check('destination-check','목적지 확인',arrival,126,'도착 여부');
+  if(o.destination==='unknown'&&o.voyage!=='return')arrived=r.check('destination-check','목적지 확인',arrival,126,'도착 여부');
   else {arrived=o.week>=o.knownWeeks;r.item('알려진 항해 일정',arrived?'목적지에 도착':'항해 계속',118,{detail:`예정 ${o.knownWeeks}주 / 현재 ${o.week}주. 귀환은 최초 기간, 다른 팀의 장소는 최초 D6+1주로 정한 값을 사용하세요.`,group:'도착 여부'});}
-  run.headline=arrived?'목적지 도착':'항해 계속';
-  run.subline=`${o.week}주차 · ${event?'항해 사건 발생':'항해 사건 없음'}${o.destination==='unknown'?` · 도착 확률 ${arrival}%`:''}`;
+  run.arrived=arrived;run.headline=arrived?(o.voyage==='return'?'Karum Station 귀환':'목적지 도착'):'항해 계속';
+  run.subline=`${o.week}주차 · ${event?'항해 사건 발생':'항해 사건 없음'}${o.destination==='unknown'&&o.voyage!=='return'?` · 도착 확률 ${arrival}%`:''}`;
   run.notes.push('이번 주 대원마다 Oxygen Tank 1개와 Supplies 1개를 종이 시트에서 소비하세요. 사건 확률은 사건 발생으로 초기화되지 않으며 목적지 도착 시 초기화됩니다.');
 }
 function fillSite(r,run,location){
@@ -143,7 +183,7 @@ function fillSite(r,run,location){
   const artifactsTotal=r.raw('artifact-slots','유물 탐사 한도',sides,143)+offset;
   r.item('Site Report 준비',`자원 ${resourcesTotal} / 유물 ${artifactsTotal} / 조우 유형 ${SLOT_COUNTS[size.value-1]}칸 / 매복 최대 ${activity.value}회`,143,{group:'종이에 기록',detail:`활동도에 따른 최대 매복 ${activity.value}회. 자원·유물 한도는 실제 아이템 개수가 아닙니다.`});
   run.subline=`${purpose.row.text} · ${size.row.text} · ${hazard.row.text} · ${descriptor.row.text}`;
-  run.adopt={location,purpose:purpose.value,hazard:hazard.value,size:size.value,resources:true,artifacts:true,slots:Array(SLOT_COUNTS[size.value-1]).fill('')};
+  run.adopt={location,mode:'site',knownThreats:true,slotRefs:Array(SLOT_COUNTS[size.value-1]).fill(null),purpose:purpose.value,hazard:hazard.value,size:size.value,resources:true,artifacts:true,slots:Array(SLOT_COUNTS[size.value-1]).fill('')};
   run.notes.push('기본 대기는 산소가 부족하므로 호흡 장비가 필요합니다. 인공 중력은 별도 결과가 없으면 1.5g. 맥락에 채택하면 이 장소용 조우 슬롯을 새로 준비합니다.');
 }
 function site(r,run) {
@@ -172,7 +212,7 @@ function area(r,run) {
     const connector=r.table('connector','이동');
     if(connector.value<=10||(connector.value>=13&&connector.value<=16)){
       if(r.check('hallway-ambush','복도 매복',20,144,'이동')){
-        const e=encounter(r,run);run.headline='새 구역에 닿기 전, 매복';run.subline=e;run.tone='danger';
+        const e=encounter(r,run,{ambush:true});run.headline='새 구역에 닿기 전, 매복';run.subline=e;run.tone='danger';
         run.notes.push('먼저 매복을 해결하세요. 이후 「연결부도 굴리기」를 끄고 새 구역을 탐사하면 됩니다. 아직 구역 내용은 생성하지 않았습니다.');return;
       }
     }
@@ -200,8 +240,9 @@ function area(r,run) {
   else if(event.value===10)run.subline=occurrence(r,run);
   run.notes.push('새 구역 진입은 시간트랙 +1. 앱은 수기 시간트랙을 자동 변경하지 않습니다.');
 }
-export function runProcedure(procedureId,{context={},options={},campaignId,parentId,rng=random,tableId}={}) {
+export function runProcedure(procedureId,{context={},options={},campaignId,parentId,rng=random,tableId,blueprint}={}) {
   const run=createRun(procedureId,context,options,campaignId,parentId),r=runner(run,rng),o=run.options;
+  if(blueprint)run.blueprint=structuredClone(blueprint);
   if(procedureId==='question') {
     const odds=ODDS.find(v=>v.id===o.odds),v=r.raw('prediction','예/아니오 판정',20,229);
     const yes=v===20||(v!==1&&v>=odds.threshold),exceptional=v===1||v===20;
@@ -231,12 +272,22 @@ export function runProcedure(procedureId,{context={},options={},campaignId,paren
   else if(procedureId==='travel')travel(r,run);
   else if(procedureId==='door'){run.headline=door(r,run);run.subline='안쪽 또는 바깥쪽을 선택해 잠금 해제를 시도하세요.';}
   else if(procedureId==='resolution'){const v=r.table('resolution');run.headline=v.row.text;run.subline='능력치·기술 판정을 대신할 필요가 있을 때만 사용하세요.';}
-  else if(procedureId==='table'){const t=r.table(tableId);run.title=tables[tableId].title;run.headline=t.row.text;run.tableId=tableId;}
-  else if(runExtended(procedureId,r,run,{encounter,inspiration,site,resources,artifacts,door,security})){}
+  else if(procedureId==='table'){const t=tableId==='known-threat'?knownThreat(r,run):r.table(tableId);run.title=tables[tableId].title;run.headline=t.row.text;run.tableId=tableId;}
+  else if(runExtended(procedureId,r,run,{encounter,inspiration,site,resources,artifacts,door,security,knownThreat})){}
   else throw new Error('알 수 없는 굴림 묶음입니다.');
   if(run.headline.length>160)run.headline=run.headline.slice(0,110).trimEnd()+'…';
   return run;
 }
+
+export function runManualTable(tableId,rowIndex,{context={},options={},campaignId,parentId}={}){
+  const table=tables[tableId];
+  if(!table||table.rollable!==false||!Number.isInteger(rowIndex)||!table.rows[rowIndex])throw new Error('직접 선택할 표와 결과를 확인하세요.');
+  const run=createRun('table',context,options,campaignId,parentId),row=table.rows[rowIndex];
+  run.title=table.title;run.tableId=tableId;run.headline=row.text;run.manual=true;run.selectedRow=rowIndex;
+  run.items.push({title:table.title,text:row.text,detail:row.detail??'',page:table.page,tableId,group:'직접 선택'});
+  run.notes.push('원문의 주사위 범위가 중복되어 플레이어가 직접 선택한 결과입니다. 주사위는 굴리지 않았습니다.');return run;
+}
+
 export function runLockAttempt(previous,guess,{campaignId=previous.campaignId,rng=random}={}) {
   if(previous.pending?.type!=='lock'||!['inside','outside'].includes(guess))throw new Error('먼저 방화벽을 생성하고 안/밖을 선택하세요.');
   const run=createRun('door',previous.context,previous.options,campaignId,previous.id),r=runner(run,rng),p=previous.pending;

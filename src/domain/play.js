@@ -5,10 +5,10 @@ export const PROCEDURE_GROUPS = [
   {id:'ask',label:'질문',ids:['question','scene','surprise','inspiration','resolution']},
   {id:'voyage',label:'항해',ids:['travel','ship-name','arrival']},
   {id:'site',label:'시설',ids:['site-name','area','door','hacking','alternate','activity','artifact-activate']},
-  {id:'planet',label:'행성',ids:['planet','hex']},
+  {id:'planet',label:'행성',ids:['planet','hex','biome-border']},
   {id:'people',label:'인물',ids:['npc','npc-profile','emotion','information','conversation']},
   {id:'fight',label:'전투',ids:['creature','combat-start','behavior','injury','stress','trauma','scatter','dice']},
-  {id:'station',label:'정거장',ids:['station']}
+  {id:'station',label:'정거장',ids:['station','appraisal']}
 ];
 
 const PROCEDURE_IDS = new Set(PROCEDURES.map(procedure=>procedure.id));
@@ -58,6 +58,8 @@ function pick(ids){
 }
 
 export function guideNext(procedureId,run){
+  if(run?.procedureId==='encounter-roster')return pick(['combat-start','behavior','injury']);
+  if(run?.enemy?.known)return pick(['combat-start','behavior','injury']);
   if(run?.siteFromHex===true) return pick(['area','site-name','door']);
   const fallback=nextStepIds(procedureId);
   if(!run||run.procedureId!==procedureId) return fallback;
@@ -66,15 +68,22 @@ export function guideNext(procedureId,run){
     if(!run.adopt) return pick(['travel','question','inspiration']);
     return run.adopt.location==='planet'?pick(['planet','site-name','area']):pick(['area','site-name','door']);
   }
+  if(run.procedureId==='travel'&&run.options?.voyage==='return')return run.arrived?pick(['appraisal','station','npc']):pick(['travel','question','surprise']);
   if(run.procedureId==='travel') return run.headline==='목적지 도착'?pick(['arrival','planet','site-name']):pick(['travel','question','surprise']);
   if(run.procedureId==='door'&&/열립니다/.test(run.headline??'')) return pick(['area','question','npc']);
+  if(run.procedureId==='area'&&run.encounter)return pick(['creature','combat-start','question']);
+  if(run.procedureId==='area'&&run.items?.some(i=>i.tableId==='artifact'))return pick(['artifact-activate','area','question']);
+  if(run.procedureId==='area'&&run.items?.some(i=>i.title==='데이터 크리스털'))return pick(['area','question','appraisal']);
   if(run.procedureId==='area'&&/매복/.test(run.headline??'')) return pick(['combat-start','creature','injury']);
   if(run.procedureId==='scene') return /예상 밖/.test(run.headline??'')?pick(['question','area','npc']):pick(['area','npc','question']);
   if(run.procedureId==='combat-start'&&/떠납/.test(run.headline??'')) return pick(['question','scene','npc']);
+  if(run.procedureId==='biome-border')return pick(['hex','question','inspiration']);
+  if(run.procedureId==='planet')return pick(['hex','question','biome-border']);
   if(run.procedureId==='hex'){
     if(run.notes?.some(note=>note.includes('Àrsaidh 탐사지를 발견'))) return pick(['site-name','question','inspiration']);
     if(run.items?.some(item=>item.title==='조우 구성'||item.title==='생물 유형'||item.tableId==='encounter-difficulty')) return pick(['creature','combat-start','injury']);
   }
+  if(run.procedureId==='hex')return pick(['hex','question','biome-border']);
   return fallback;
 }
 

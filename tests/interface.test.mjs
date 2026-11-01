@@ -7,7 +7,7 @@ import {openStore} from '../src/storage/store.js';
 
 async function until(check){for(let i=0;i<300;i++){if(await check())return;await new Promise(r=>setTimeout(r,10));}throw new Error('Expected UI state did not appear');}
 test('actual app controller preserves drafts, writes records, annotates, filters and changes context', {timeout:15000},async()=>{
-  const w=new Window({url:'http://localhost/'});
+  const w=new Window({url:'http://localhost/',settings:{disableJavaScriptFileLoading:true,disableCSSFileLoading:true}});
   const html=await readFile(new URL('../src/index.html',import.meta.url),'utf8');
   w.document.body.innerHTML=html.match(/<body>([\s\S]*)<\/body>/)[1];
   globalThis.window=w;globalThis.document=w.document;globalThis.innerWidth=1440;globalThis.innerHeight=1100;
@@ -57,7 +57,28 @@ test('actual app controller preserves drafts, writes records, annotates, filters
   assert.match(q('#aside-log').textContent,/복도에 소리가 있나/);
   assert.match(q('#expedition').textContent,/반전/);
   assert.ok(q('.procedure-recent'));
-  click('#next-steps [data-action="procedure"]');
+  click('#next-steps [data-action="follow"]');
   await until(()=>q('#procedure-title').textContent!==procedure);
+  click('[data-action="procedure"][data-id="creature"]');await until(()=>q('[name="species"]'));
+  q('[name="species"]').value='Guardian';q('[name="guardianModel"]').value='anansi';
+  q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(async()=>(await db.load()).records.length===5);
+  const anansi=(await db.load()).records.find(r=>r.procedureId==='creature');
+  click('#report-host [data-action="enemy-action"]');
+  await until(async()=>(await db.load()).records.length===6);
+  const action=(await db.load()).records.find(r=>r.procedureId==='behavior');
+  assert.equal(action.options.behavior,'lurker');assert.equal(action.actor.recordId,anansi.id);
+  assert.match(q('#enemy-desk').textContent,/아난시/);
+  click('#enemy-desk [data-action="quick-table"][data-id="critical-melee"]');
+  await until(async()=>(await db.load()).records.length===7);
+  assert.equal((await db.load()).records.find(r=>r.tableId==='critical-melee').procedureId,'table');
+  click('#next-steps [data-action="follow"][data-id="injury"]');await until(()=>q('#procedure-title').textContent==='부상');
+  click('[data-action="new-campaign"]');q('#campaign-form [name="name"]').value='새 캠페인';
+  q('#campaign-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(async()=>{const next=(await db.load()).campaigns.find(c=>c.name==='새 캠페인');return next&&q('#campaign').value===next.id;});
+  q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(async()=>(await db.load()).records.length===8);
+  const data=await db.load(),newCampaign=data.campaigns.find(c=>c.name==='새 캠페인');
+  assert.equal(data.records.find(r=>r.campaignId===newCampaign.id).parentId,null);
   db.close();await w.happyDOM.abort();
 });

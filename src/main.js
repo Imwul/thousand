@@ -1,13 +1,18 @@
 import {PROCEDURES,SLOT_COUNTS,newCampaign,normalizeContext,normalizeOptions,endScene} from './domain/model.js';
 import {tableList,tables,CATEGORIES} from './data/tables.js';
-import {runProcedure,runLockAttempt,runHackReroll,runFoundSite} from './generators/procedures.js';
+import {runProcedure,runLockAttempt,runHackReroll,runFoundSite,runEncounterRoster,runManualTable} from './generators/procedures.js';
 import {openStore,makeBackup,validateBackup,recordsMarkdown} from './storage/store.js';
 import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView,expeditionReadout,nextStepView,asideLog} from './components/render.js';
 import {icon,esc} from './components/icons.js';
 import {localizeRecord} from './data/localization.js';
+import {adoptLocation,rememberLocation,restoreLocation,prepareContinuation} from './domain/locations.js';
+import {enemyCards,continuationOptions,RELATED_PROCEDURES} from './domain/continuation.js';
+import {enemyDeskView,rosterOptions,locationList} from './components/play-tools.js';
 
 const $=s=>document.querySelector(s);
-const state={db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50};
+const desktopLayout=matchMedia('(min-width: 801px)');
+desktopLayout.addEventListener('change',event=>{$('#procedure-picker').open=event.matches;});
+const state={db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50,followParentId:null,followEncounterIndex:0,nextActor:null};
 let toastTimer,optionTimer,pendingMemo=null;
 const campaign=()=>state.campaigns.find(c=>c.id===state.selectedId);
 const current=()=>state.records.find(r=>r.id===state.currentId);
@@ -23,7 +28,7 @@ function enqueue(task,onFailure){
   state.queue=promise.then(()=>true).catch(error=>{onFailure?.(error);message(error.message||'저장하지 못했습니다. 백업을 내려받아 기록을 보관하세요.',true);status();return false;});
   return state.queue;
 }
-function saveCampaign(){const snapshot=structuredClone(campaign());return enqueue(async()=>{if(!state.db)throw new Error('브라우저 저장 공간에 연결하지 못했습니다. 현재 기록은 백업으로 보관하세요.');await state.db.saveCampaign(snapshot);});}
+function saveCampaign(){rememberLocation(campaign());const snapshot=structuredClone(campaign());return enqueue(async()=>{if(!state.db)throw new Error('브라우저 저장 공간에 연결하지 못했습니다. 현재 기록은 백업으로 보관하세요.');await state.db.saveCampaign(snapshot);});}
 function recentIds(){
   const stored=campaign()?.recentProcedures;
   if(Array.isArray(stored)&&stored.length)return stored.filter(id=>PROCEDURES.some(p=>p.id===id)).slice(0,5);
@@ -39,6 +44,46 @@ function touchRecent(id){
   const c=campaign();
   c.recentProcedures=[id,...(Array.isArray(c.recentProcedures)?c.recentProcedures:[]).filter(v=>v!==id&&PROCEDURES.some(p=>p.id===v))].slice(0,5);
 }
+
+function pName(id){return PROCEDURES.find(p=>p.id===id)?.name??'상황 선택';}
+function activeCard(){
+  const ref=campaign()?.activeEnemy;if(!ref)return null;
+  const source=state.records.find(r=>r.id===ref.recordId&&r.campaignId===state.selectedId);
+  if(!source||source.context.siteId!==campaign().context.siteId)return null;
+  const card=enemyCards(localizeRecord(source,tables))[ref.index];
+  return card?{...card,sourceId:source.id,index:ref.index}:null;
+}
+function activateEnemy(run){
+  if(enemyCards(run).length)campaign().activeEnemy={recordId:run.id,index:0};
+  else if(run.encounter)campaign().activeEnemy=run.encounter.ref?{recordId:run.encounter.ref,index:0}:null;
+  else if(run.actor)campaign().activeEnemy=structuredClone(run.actor);
+}
+async function openFresh(id){
+  await flushMemo();await flushOptions();state.followParentId=null;state.nextActor=null;state.currentId=null;state.procedure=id;touchRecent(id);
+  renderControls();renderReport();renderHistory();if(innerWidth<801)$('#procedure-picker').open=false;
+  $('.control-panel').scrollIntoView({behavior:'instant',block:'start'});
+}
+async function followProcedure(id,parent=current(),index=0,encounterIndex=0){
+  if(parent?.encounters)parent={...parent,encounter:parent.encounters[encounterIndex]??parent.encounter};
+  state.followEncounterIndex=encounterIndex;
+  if(!parent){await openFresh(id);return;}
+  await flushMemo();await flushOptions();
+  if(id==='npc-profile'&&parent.subject?.recordId){const profile=ownRecords().find(r=>r.id===parent.subject.recordId);if(profile){state.procedure=id;state.currentId=profile.id;state.followParentId=null;renderControls();renderReport();renderHistory();$('#report-host').scrollIntoView({behavior:'instant'});return;}}
+  if(id==='creature'&&parent.encounter){
+    const child=ownRecords().find(r=>r.parentId===parent.id&&r.procedureId==='encounter-roster'&&(r.encounterIndex??0)===encounterIndex);
+    if(child){state.currentId=child.id;state.procedure='creature';state.followParentId=null;activateEnemy(child);renderControls();renderReport();renderHistory();$('#report-host').scrollIntoView({behavior:'instant'});return;}
+  }
+  prepareContinuation(campaign(),parent,id);
+  const card=enemyCards(parent)[index]??activeCard();
+  const existingSpecies=parent.encounter?.ref?state.records.find(r=>r.id===parent.encounter.ref)?.blueprint:null;
+  campaign().options=continuationOptions(parent,id,campaign().options,card?.enemy);
+  if(id==='creature'&&existingSpecies)Object.assign(campaign().options,{species:existingSpecies.type,...(existingSpecies.guardianModel?{guardianModel:existingSpecies.guardianModel}:{})});
+  state.nextActor=['behavior','combat-start','injury','scatter'].includes(id)?card?{recordId:card.sourceId??parent.id,index:card.index??index}:parent.actor??null:null;
+  state.followParentId=parent.id;state.currentId=null;state.procedure=id;touchRecent(id);await saveCampaign();
+  renderControls();renderReport();renderHistory();if(innerWidth<801)$('#procedure-picker').open=false;
+  $('.control-panel').scrollIntoView({behavior:'instant',block:'start'});
+}
+
 function renderDesk(){
   const c=campaign();if(!c||!$('#next-steps'))return;
   const openGroups=[...document.querySelectorAll('#procedures .procedure-group[open]')].map(el=>el.dataset.group);
@@ -46,11 +91,16 @@ function renderDesk(){
   $('#expedition-readout').innerHTML=expeditionReadout(c.context,ownRecords().length);
   $('#next-steps').innerHTML=nextStepView(state.procedure, current());
   $('#aside-log').innerHTML=asideLog(ownRecords(),state.currentId);
+  $('#enemy-desk').innerHTML=enemyDeskView(activeCard(),state.procedure);
+  $('#quick-disclosure').hidden=!current()||state.procedure==='question';
+  $('#procedure-picker-label').textContent=pName(state.procedure);
+  if(innerWidth>800)$('#procedure-picker').open=true;
 }
 function renderControls(){
   const p=PROCEDURES.find(p=>p.id===state.procedure),c=campaign();
   $('#procedure-title').textContent=p.name;$('#procedure-english').textContent=p.en;$('#procedure-source').textContent=`Core p. ${p.pages}`;
-  $('#options').innerHTML=optionFields(state.procedure,c.options,c.context);
+  const original=state.records.find(r=>r.id===state.followParentId),source=original?{...original,encounter:original.encounters?.[state.followEncounterIndex]??original.encounter}:null;
+  $('#options').innerHTML=state.procedure==='creature'&&source?.encounter?rosterOptions(source,c.options):optionFields(state.procedure,c.options,c.context);
   $('#context-label').textContent=c.context.siteName||'탐사 맥락';
   renderDesk();
 }
@@ -77,7 +127,7 @@ function renderHistory(){
 function renderCampaigns(){
   $('#campaign').innerHTML=state.campaigns.map(c=>`<option value="${esc(c.id)}" ${c.id===state.selectedId?'selected':''}>${esc(c.name)}</option>`).join('');
 }
-function recordHaystack(r){const v=localizeRecord(r,tables);return `${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline} ${r.options?.question??''}`.toLowerCase();}
+function recordHaystack(r){const v=localizeRecord(r,tables);return `${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline} ${r.options?.question??''} ${v.subject?.name??''} ${v.items.map(i=>`${i.text} ${i.detail??''}`).join(' ')} ${r.items.map(i=>i.text).join(' ')}`.toLowerCase();}
 function refresh(){renderCampaigns();renderControls();renderReport();renderHistory();status();}
 function collectOptions(){
   const form=$('#roll-form'),c=campaign(),next={...c.options};
@@ -108,7 +158,7 @@ function showDialog(title,html,{wide=false,type=null}={}){
 }
 function closeDialog(){state.modal=null;state.backup=null;$('#dialog').close();}
 async function retain(run,{keyboard=false}={}){
-  await flushMemo();state.records.push(run);state.currentId=run.id;state.saving.add(run.id);renderReport(!keyboard);renderHistory();status();
+  await flushMemo();state.records.push(run);state.currentId=run.id;state.followParentId=null;campaign().currentRecordId=run.id;activateEnemy(run);state.saving.add(run.id);renderControls();renderReport(!keyboard);renderHistory();status();
   const heading=$('#result-headline');if(keyboard)heading?.focus({preventScroll:true});
   const reportTop=$('#report-host').getBoundingClientRect().top;
   if(innerWidth<801||reportTop<0||reportTop>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant',block:'start'});
@@ -117,21 +167,33 @@ async function retain(run,{keyboard=false}={}){
     await state.db.saveRecord(run);state.persisted.add(run.id);state.saving.delete(run.id);state.unsaved.delete(run.id);
     if(current()?.id===run.id)updateRecordStatus();status();
   },()=>{state.saving.delete(run.id);state.unsaved.add(run.id);if(current()?.id===run.id)updateRecordStatus();});
+  await saveCampaign();
 }
 async function roll({keyboard=false,tableId,parent=null,lockGuess=null,hackIndex=null,foundSite=false}={}){
   const button=$('#roll-button');button.disabled=true;
   try{
     collectOptions();if(!tableId&&!foundSite)touchRecent(parent?.procedureId??state.procedure);await saveCampaign();
-    let run;
-    if(Number.isInteger(hackIndex))run=runHackReroll(parent,hackIndex);
+    let run;const source=ownRecords().find(r=>r.id===state.followParentId),origin=parent??source;
+    const encounterSpec=origin?.encounters?.[state.followEncounterIndex]??origin?.encounter;
+    if(tableId)run=runProcedure('table',{tableId,context:origin?.context??campaign().context,options:campaign().options,campaignId:state.selectedId,parentId:origin?.id});
+    else if(parent?.procedureId==='encounter-roster'||(!parent&&source?.encounter&&state.procedure==='creature')){
+      const base=encounterSpec.ref?state.records.find(r=>r.id===encounterSpec.ref)?.blueprint:origin.blueprint;
+      run=runEncounterRoster(origin,{campaignId:state.selectedId,blueprint:base,context:parent?.context??campaign().context,encounterIndex:parent?.encounterIndex??state.followEncounterIndex,options:parent?parent.options:campaign().options});
+    }
+    else if(Number.isInteger(hackIndex))run=runHackReroll(parent,hackIndex);
     else if(lockGuess)run=runLockAttempt(parent,lockGuess,{campaignId:state.selectedId});
     else if(parent?.lockAttempt)run=runLockAttempt({...parent,pending:parent.lockAttempt.pending},parent.lockAttempt.guess,{campaignId:state.selectedId});
     else if(foundSite||parent?.siteFromHex===true)run=runFoundSite(parent,{campaignId:state.selectedId});
-    else run=runProcedure(tableId?'table':parent?.procedureId??state.procedure,{context:parent?.context??campaign().context,options:parent?.options??campaign().options,campaignId:state.selectedId,parentId:parent?.id,tableId:tableId??parent?.tableId});
+    else run=runProcedure(tableId?'table':parent?.procedureId??state.procedure,{context:parent?.context??campaign().context,options:parent?.options??campaign().options,campaignId:state.selectedId,parentId:origin?.id,tableId:tableId??parent?.tableId});
+    if(state.nextActor)run.actor=structuredClone(state.nextActor);
+    else if(origin?.actor)run.actor=structuredClone(origin.actor);
+    if(run.procedureId==='npc-profile')run.subject={name:run.headline,recordId:run.id};
+    else if(origin?.subject&&['npc','emotion','information','conversation'].includes(run.procedureId))run.subject=structuredClone(origin.subject);
+    state.nextActor=null;
     await retain(run,{keyboard});
   }catch(e){message(e.message,true);}finally{button.disabled=false;}
 }
-function contextDialog(){showDialog('현재 탐사 맥락',contextFields(campaign().context),{type:'context'});}
+function contextDialog(){showDialog('현재 탐사 맥락',locationList(campaign())+contextFields(campaign().context),{type:'context'});}
 function libraryDialog(){showDialog(`표 찾아보기 · ${tableList.length}개`,`<div class="library-toolbar"><input class="dialog-search" id="library-search" type="search" aria-label="표 검색" placeholder="한글 또는 영문으로 표 찾기"><select id="library-category" aria-label="표 분류">${Object.entries(CATEGORIES).map(([id,label])=>`<option value="${id}">${label}</option>`).join('')}</select></div><div id="library-results">${libraryView()}</div>`,{type:'library'});$('#library-search').focus();}
 function historyDialog(){
   state.historyLimit=50;
@@ -160,33 +222,45 @@ async function previewImport(file){
 }
 async function saveContext(form){
   const f=new FormData(form),size=Number(f.get('size')),c=campaign();
-  const context=normalizeContext({...c.context,siteName:String(f.get('siteName')).trim(),crew:Number(f.get('crew')),presentCrew:Number(f.get('presentCrew')),location:f.get('location'),size,purpose:Number(f.get('purpose')),hazard:Number(f.get('hazard')),resources:f.has('resources'),artifacts:f.has('artifacts'),knownThreats:f.has('knownThreats'),biome:Number(f.get('biome')),terrain:Number(f.get('terrain')),singleBiome:f.has('singleBiome'),slots:Array.from({length:SLOT_COUNTS[size-1]},(_,i)=>String(f.get(`slot-${i}`)??''))});
-  c.context=context;if(!await saveCampaign())return;closeDialog();renderControls();message('현재 탐사 맥락을 저장했습니다.');
+  const context=normalizeContext({...c.context,siteName:String(f.get('siteName')).trim(),crew:Number(f.get('crew')),presentCrew:Number(f.get('presentCrew')),location:f.get('location'),mode:f.get('mode'),size,purpose:Number(f.get('purpose')),hazard:Number(f.get('hazard')),resources:f.has('resources'),artifacts:f.has('artifacts'),knownThreats:f.has('knownThreats'),biome:Number(f.get('biome')),terrain:Number(f.get('terrain')),singleBiome:f.has('singleBiome'),slots:Array.from({length:SLOT_COUNTS[size-1]},(_,i)=>String(f.get(`slot-${i}`)??'')),slotRefs:Array.from({length:SLOT_COUNTS[size-1]},(_,i)=>String(f.get(`slot-${i}`)??'')===c.context.slots[i]?c.context.slotRefs?.[i]??null:null)});
+  c.context=context;rememberLocation(c);if(!await saveCampaign())return;closeDialog();renderControls();message('현재 탐사 맥락을 저장했습니다.');
 }
 async function adoptSite(){
   const r=current();if(!r?.adopt)return;
-  showDialog('새 장소로 이어가기',`<form id="adopt-form" class="dialog-form"><p class="field-help">${r.procedureId==='planet'?'행성의 생물군계를 현재 맥락으로 사용합니다.':'이 결과의 용도·위험·규모를 현재 맥락으로 사용하고 새 장소의 조우 슬롯을 준비합니다.'} 이전 굴림 기록은 보존됩니다.</p><label>장소 이름<input name="name" maxlength="200" placeholder="종이에 적은 이름" value="${esc(r.generatedName??((tables.purpose.rows[r.adopt.purpose-1]?.text??'새 장소')+' 탐사지'))}"></label><button class="primary" type="submit">이 장소를 현재 맥락으로 사용</button></form>`,{type:'adopt'});
+  showDialog('새 장소로 이어가기',`<form id="adopt-form" class="dialog-form"><p class="field-help">${['planet','biome-border'].includes(r.procedureId)?'새 생물군계의 맥락과 빈 조우 목록을 준비합니다. 생물군계 유형을 현재 맥락으로 사용합니다.':'이 결과의 용도·위험·규모를 현재 맥락으로 사용하고 새 장소의 조우 슬롯을 준비합니다.'} 이전 굴림 기록은 보존됩니다.</p><label>장소 이름<input name="name" maxlength="200" placeholder="종이에 적은 이름" value="${esc(r.generatedName??((tables.purpose.rows[r.adopt.purpose-1]?.text??'새 장소')+' 탐사지'))}"></label><button class="primary" type="submit">이 장소를 현재 맥락으로 사용</button></form>`,{type:'adopt'});
 }
 document.addEventListener('click',async event=>{
   const button=event.target.closest('[data-action]');if(!button||button.disabled||!campaign())return;
   const action=button.dataset.action;
   try{
     if(action==='procedure'){
-      await flushMemo();touchRecent(button.dataset.id);await flushOptions();state.procedure=button.dataset.id;
+      state.followParentId=null;state.nextActor=null;await flushMemo();touchRecent(button.dataset.id);await flushOptions();state.procedure=button.dataset.id;
       state.currentId=ownRecords().filter(r=>r.procedureId===state.procedure).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
-      renderControls();renderReport();renderHistory();
+      renderControls();renderReport();renderHistory();if(innerWidth<801)$('#procedure-picker').open=false;
       const panel=$('.control-panel'),top=panel.getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight-160)panel.scrollIntoView({behavior:'instant',block:'start'});
     }
     else if(action==='workbench'){await flushMemo();closeDialog();$('#workbench').scrollIntoView({behavior:'instant'});}
     else if(action==='record'){
-      await flushMemo();const record=state.records.find(r=>r.id===button.dataset.id);if(!record)return;
-      state.currentId=record.id;if(PROCEDURES.some(p=>p.id===record.procedureId))state.procedure=record.procedureId;
+      await flushMemo();const record=ownRecords().find(r=>r.id===button.dataset.id);if(!record)return;
+      state.followParentId=null;state.nextActor=null;state.currentId=record.id;campaign().currentRecordId=record.id;activateEnemy(record);await saveCampaign();if(record.procedureId==='encounter-roster')state.procedure='creature';else if(PROCEDURES.some(p=>p.id===record.procedureId))state.procedure=record.procedureId;
       if($('#dialog').open)closeDialog();renderControls();renderReport();renderHistory();$('#result-headline')?.focus({preventScroll:true});
       const top=$('#report-host').getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant'});
     }
-    else if(action==='reroll'){await roll({parent:current(),keyboard:event.detail===0});}
+    else if(action==='follow'){await followProcedure(button.dataset.id,current(),0,Number(button.dataset.encounter??0));}
+    else if(action==='enemy-action'||action==='enemy-combat'){
+      const source=state.records.find(r=>r.id===button.dataset.source&&r.campaignId===state.selectedId);if(!source)return;
+      const index=Number(button.dataset.index??0);campaign().activeEnemy={recordId:source.id,index};
+      await followProcedure(action==='enemy-action'?'behavior':'combat-start',source,index);await roll({keyboard:event.detail===0});
+    }
+    else if(action==='enemy-close'){campaign().activeEnemy=null;await saveCampaign();renderDesk();}
+    else if(action==='restore-location'){await flushOptions();restoreLocation(campaign(),button.dataset.id);await saveCampaign();closeDialog();refresh();message('저장한 장소의 맥락을 복원했습니다.');}
+    else if(action==='related-procedure'){
+      const id=RELATED_PROCEDURES[button.dataset.table];if(!id)return;closeDialog();await openFresh(id);
+    }
+    else if(action==='quick-table'){await roll({tableId:button.dataset.id,parent:current()});}
+    else if(action==='reroll'){const r=current();if(r.manual)showDialog(tables[r.tableId].title,tableView(r.tableId,{parentId:r.id}),{type:'table'});else await roll({parent:r,keyboard:event.detail===0});}
     else if(action==='lock'){await roll({parent:current(),lockGuess:button.dataset.value,keyboard:event.detail===0});}
     else if(action==='hack'){await roll({parent:current(),hackIndex:Number(button.dataset.value),keyboard:event.detail===0});}
     else if(action==='approach'){
@@ -221,6 +295,7 @@ document.addEventListener('click',async event=>{
     else if(action==='context')contextDialog();
     else if(action==='twist'){campaign().context.twist=Number(button.dataset.value);await saveCampaign();renderControls();}
     else if(action==='library')libraryDialog();
+    else if(action==='table-select'){const parent=ownRecords().find(r=>r.id===button.dataset.parent),run=runManualTable(button.dataset.table,Number(button.dataset.row),{context:parent?.context??campaign().context,options:campaign().options,campaignId:state.selectedId,parentId:parent?.id});if(parent?.subject)run.subject=structuredClone(parent.subject);if($('#dialog').open)closeDialog();state.nextActor=null;await retain(run,{keyboard:event.detail===0});}
     else if(action==='table'){
       const id=button.dataset.id;if(!tables[id])return;showDialog(tables[id].title,tableView(id),{type:'table'});
     }
@@ -239,14 +314,14 @@ document.addEventListener('click',async event=>{
     }
     else if(action==='import-json'){
       if(!state.backup||!state.db)return;button.disabled=true;
-      const result=await state.db.importBackup(state.backup);state.campaigns.push(...result.campaigns);state.records.push(...result.records);for(const r of result.records)state.persisted.add(r.id);state.selectedId=result.campaigns[0].id;state.currentId=null;closeDialog();refresh();message('기존 기록을 보존하고 새 캠페인으로 가져왔습니다.');
+      const result=await state.db.importBackup(state.backup);state.campaigns.push(...result.campaigns);state.records.push(...result.records);for(const r of result.records)state.persisted.add(r.id);state.selectedId=result.campaigns[0].id;state.currentId=null;state.followParentId=null;state.nextActor=null;closeDialog();refresh();message('기존 기록을 보존하고 새 캠페인으로 가져왔습니다.');
     }
     else if(action==='adopt')await adoptSite();
     else if(action==='adopt-terrain'){const r=current();if(r.context.siteId!==campaign().context.siteId)throw new Error('현재 장소가 기록 당시와 다릅니다. 탐사 맥락에서 지형을 직접 선택하세요.');campaign().context.terrain=r.terrain;if(await saveCampaign()){renderControls();message('다음 헥스의 이전 지형으로 사용합니다.');}}
     else if(action==='adopt-encounter'){
       const r=current(),c=campaign();
       if(c.context.siteId!==r.context.siteId||c.context.size!==r.context.size)throw new Error('현재 장소가 기록 당시와 달라졌습니다. 탐사 맥락에서 조우 슬롯을 직접 지정하세요.');
-      c.context.slots[r.encounter.slot-1]=r.encounter.label;if(!await saveCampaign())return;renderControls();message(`${r.encounter.slot}번 슬롯에 유형을 기록했습니다.`);
+      c.context.slots[r.encounter.slot-1]=r.encounter.label;c.context.slotRefs[r.encounter.slot-1]=r.procedureId==='encounter-roster'?r.id:null;rememberLocation(c);if(!await saveCampaign())return;renderControls();message(`${r.encounter.slot}번 슬롯에 유형을 기록했습니다.`);
     }
     else if(action==='source-info')showDialog('원문 확인',`<p class="about-copy">이 결과의 규칙은 제공하신 Core Rulebook의 p. ${esc(button.dataset.page)}를 사용합니다. 원본 PDF는 앱에 업로드하거나 포함하지 않았습니다.</p>`);
     else if(action==='about')showDialog('규칙·사용 안내',`<div class="about-copy"><p>종이 캐릭터 시트 옆에 펼쳐 두는 <strong>Across a Thousand Dead Worlds</strong> 개인용 오라클 작업대입니다.</p><ul><li>상황을 선택하고 「굴리기」를 누르면 필요한 하위 표까지 한 보고서로 펼칩니다.</li><li>모든 새 결과는 이 브라우저에 자동 보관합니다. 「다시 굴림」은 이전 값을 보존한 새 기록입니다.</li><li>현재 맥락은 결과 생성에 필요한 값만 사용합니다. 화면 위 탐사 막대에서 장소·인원·반전을 확인합니다.</li><li>곁질문은 열린 보고서를 유지한 채 예/아니오를 기록합니다. 그 기록은 질문이 생긴 뒤에만 보고서 옆에 모입니다. 저널에 적을 문장은 보고서 위에 두고, 그 문장만 복사할 수 있습니다. 시간·보급·착륙 칸·부상처럼 시트에 적을 사실은 따로 올립니다. Wounds·Stress·소지품과 시간트랙은 앱이 바꾸지 않습니다. 보고서 위의 지금은 이미 나온 결과에서만 고르고, 금속 구체는 다가간 뒤에만 굴립니다. 헥스에서 찾은 Àrsaidh 시설은 도착표를 다시 굴리지 않고, 용도·규모·위험과 탐사 한도만 이어 굴립니다.</li><li>장면 종료 시 통제를 잃었다면 반전 확률을 올리고, 수기 시간트랙 초기화 때 1/6로 되돌리세요.</li></ul><p>2024 Core Rulebook의 기본 플레이용 ${tableList.length}개 표를 제공합니다. 솔로 GM·탐사지·행성·인물·생물·전투·정신 상태·항해·정거장·캐릭터 생성 표를 한국어로 번역했습니다. 인명·지명·기업명은 원문을 유지하며 생물명은 한글과 원문을 병기합니다. 수록 시나리오 전용 표는 제외했습니다. 원문 범위가 겹치는 감정 하위 표 1개는 직접 선택하도록 남겼고, 잘못 인쇄된 낮·밤 길이 값도 추정하지 않았습니다.</p><p>「반반」은 책의 기준인 D20 10 이상(55%)을 그대로 사용합니다. 돌발사건은 D8 두 개의 행·열 선택입니다. 자동 보안은 D10 표의 이름을 기준으로 본문 효과를 연결했습니다.</p><p>PC와 3440px 화면, 모바일을 지원합니다. ⌘/Ctrl+Enter: 굴리기, ⌘/Ctrl+K: 표 검색. 모든 기록은 브라우저에 저장되며 로그인만으로 기기 간 동기화되지 않습니다.</p><p>비공식 개인용 팬 도구. 원작 © Blackoath Entertainment. <a href="https://blackoathgames.com/across-a-thousand-dead-worlds" target="_blank" rel="noopener noreferrer">공식 게임 소개</a></p></div>`,{type:'about'});
@@ -260,11 +335,11 @@ document.addEventListener('submit',async event=>{
     else if(form.id==='context-form')await saveContext(form);
     else if(form.id==='campaign-form'){
       await flushMemo();await flushOptions();const name=new FormData(form).get('name');
-      const c=state.db?await state.db.createCampaign(String(name)):newCampaign(String(name));state.campaigns.push(c);state.selectedId=c.id;state.currentId=null;state.historyQuery='';$('#history-search').value='';closeDialog();refresh();
+      const c=state.db?await state.db.createCampaign(String(name)):newCampaign(String(name));state.campaigns.push(c);state.selectedId=c.id;state.currentId=null;state.followParentId=null;state.nextActor=null;state.historyQuery='';$('#history-search').value='';closeDialog();refresh();
     }
     else if(form.id==='adopt-form'){
       const r=current(),c=campaign(),name=String(new FormData(form).get('name')).trim();
-      c.context=normalizeContext({...c.context,...r.adopt,siteId:crypto.randomUUID(),siteName:name||'이름 없는 탐사지'});if(!await saveCampaign())return;closeDialog();renderControls();message('새 장소의 맥락과 조우 슬롯을 준비했습니다.');
+      adoptLocation(c,r,name);if(!await saveCampaign())return;closeDialog();renderControls();message('새 장소의 맥락과 조우 슬롯을 준비했습니다.');
     }
   }catch(e){message(e.message,true);}
 });
@@ -284,7 +359,7 @@ document.addEventListener('change',async event=>{
   const t=event.target;
   try{
     if(t.id==='campaign'){
-      await flushMemo();await flushOptions();state.selectedId=t.value;if(state.db)await state.db.selectCampaign(t.value);state.currentId=ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;state.historyQuery='';$('#history-search').value='';refresh();
+      await flushMemo();await flushOptions();state.selectedId=t.value;state.followParentId=null;state.nextActor=null;if(state.db)await state.db.selectCampaign(t.value);state.currentId=ownRecords().find(r=>r.id===campaign().currentRecordId)?.id??ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;state.historyQuery='';$('#history-search').value='';refresh();
     }
     else if(t.id==='backup-file')await previewImport(t.files[0]);
     else if(t.id==='library-category')$('#library-results').innerHTML=libraryView($('#library-search').value,t.value);
@@ -292,11 +367,13 @@ document.addEventListener('change',async event=>{
     else if(t.closest('#roll-form')){
       collectOptions();await saveCampaign();
       if(t.name==='odds')$('#odds-hint').textContent=`${({impossible:16,'very-unlikely':14,unlikely:12,even:10,likely:8,'very-likely':6,certain:4})[t.value]}+ / D20`;
-      if(['week','destination'].includes(t.name)){
-        const o=campaign().options;$('.known-weeks')?.classList.toggle('hidden',o.destination!=='known');
-        if($('.travel-odds'))$('.travel-odds').innerHTML=`<span>사건 <strong>${Math.min(100,o.week*20)}%</strong></span><span>도착 <strong>${o.destination==='unknown'?Math.min(100,40+(o.week-1)*10)+'%':'일정 기준'}</strong></span>`;
+      if(['week','destination','voyage'].includes(t.name)){
+        const o=campaign().options;$('.known-weeks')?.classList.toggle('hidden',o.destination!=='known'&&o.voyage!=='return');
+        if($('.travel-odds'))$('.travel-odds').innerHTML=`<span>사건 <strong>${Math.min(100,o.week*20)}%</strong></span><span>도착 <strong>${o.destination==='unknown'&&o.voyage!=='return'?Math.min(100,40+(o.week-1)*10)+'%':'일정 기준'}</strong></span>`;
       }
     }
+    else if(t.closest('#context-form')&&t.name==='mode'&&t.value==='surface')$('#context-form [name="location"]').value='planet';
+    else if(t.closest('#context-form')&&t.name==='location'&&t.value==='space')$('#context-form [name="mode"]').value='site';
     else if(t.closest('#context-form')&&t.name==='size'){
       const old=[...document.querySelectorAll('#slot-inputs input')].map(i=>i.value),count=SLOT_COUNTS[Number(t.value)-1];
       $('#slot-inputs').innerHTML=Array.from({length:count},(_,i)=>`<label class="slot-input"><span>${i+1}</span><input name="slot-${i}" value="${esc(old[i]??'')}" maxlength="300" placeholder="아직 만나지 않은 유형"></label>`).join('');
@@ -335,13 +412,14 @@ async function askAside(){
   }catch(e){message(e.message,true);}finally{button.disabled=false;}
 }
 async function start(){
+  $('#procedure-picker').open=innerWidth>800;
   try{
     state.db=await openStore();const data=await state.db.load();Object.assign(state,data);state.persisted=new Set(state.records.map(r=>r.id));
     if(!state.campaigns.length){const c=await state.db.createCampaign('첫 번째 탐사');state.campaigns=[c];state.selectedId=c.id;}
     if(!campaign())state.selectedId=state.campaigns[0].id;
-    for(const c of state.campaigns){c.context=normalizeContext(c.context);c.options=normalizeOptions(c.options);}
-    state.currentId=ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
-    const r=current();if(r&&PROCEDURES.some(p=>p.id===r.procedureId))state.procedure=r.procedureId;
+    for(const c of state.campaigns){if(c.context.mode===undefined&&c.context.location==='planet'){const last=state.records.filter(r=>r.campaignId===c.id&&r.context.siteId===c.context.siteId&&['hex','area'].includes(r.procedureId)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0];c.context.mode=last?.procedureId==='hex'||(!last&&!c.context.purpose&&!c.context.hazard)?'surface':'site';}c.context=normalizeContext(c.context);c.options=normalizeOptions(c.options);}
+    state.currentId=ownRecords().find(r=>r.id===campaign().currentRecordId)?.id??ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
+    const r=current();if(r?.procedureId==='encounter-roster')state.procedure='creature';else if(r&&PROCEDURES.some(p=>p.id===r.procedureId))state.procedure=r.procedureId;
   }catch(e){
     state.db=null;if(!state.campaigns.length){const c=newCampaign('첫 번째 탐사');state.campaigns=[c];state.selectedId=c.id;}message('저장 공간을 열지 못했습니다. 굴림은 사용할 수 있으며 결과를 백업으로 보관하세요.',true);
   }
