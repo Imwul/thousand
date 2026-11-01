@@ -46,7 +46,7 @@ export function statEntries(item){
 }
 
 export function statGrid(entries,label='',kind=''){
-  return `<dl class="stat-grid stats-${entries.length} ${esc(kind)}"${label?` aria-label="${esc(label)}"`:''}>${entries.map(entry=>`<div class="stat-cell${String(entry.value).length>15||/^[가-힣]/.test(String(entry.value))?' stat-word':''}"><dt>${esc(entry.label)}</dt><dd>${esc(entry.value)}</dd></div>`).join('')}</dl>`;
+  return `<dl class="stat-grid stats-${entries.length} ${esc(kind)}"${label?` aria-label="${esc(label)}"`:''}>${entries.map(entry=>`<div class="stat-cell${entry.label==='주사위 식'||/^[가-힣]/.test(String(entry.value))?' stat-word':''}"><dt>${esc(entry.label)}</dt><dd>${esc(entry.value)}</dd></div>`).join('')}</dl>`;
 }
 
 export function sourceOriginal(item){return item.sourceText&&item.sourceText.length>32?`<details class="source-original"><summary>영문 원문</summary><p lang="en">${esc(item.sourceText)}</p></details>`:'';}
@@ -82,13 +82,12 @@ function proseValue(item){
 export function resultField(item,{compact=false,full=false}={}){
   const entries=statEntries(item),text=String(item.text??'');
   const attributes=entries?.length===6&&entries[0].label==='STR';
-  const long=!entries&&(text.length>65||!!item.image);
   const die=item.dice?`<span class="dice-value">${item.reused?'기존값':esc(item.dice)} <b>${esc(item.roll)}</b></span>`:'';
   const meta=compact?'':`<div class="field-source">${source(item)}${sourceOriginal(item)}${die}</div>`;
   // Anansi's conditional attack stays one value; the starred condition stays visible.
   const detail=item.detail?ruleValues(item.detail):'';
   const english=item.en&&item.en!==text?`<span class="english-result">${esc(item.en)}</span>`:'';
-  const value=entries?statGrid(entries,item.title,attributes?'attribute-grid':/^(?:기본 )?전투 수치$/.test(item.title)?'combat-grid':item.title==='공격과 피해'?'attack-grid':''): `<dl class="value-pair"><dt>${esc(item.title)}</dt><dd class="field-value${long?' field-prose':''}"><span class="field-copy">${proseValue(item)}</span>${english}</dd>${detail?`<dd class="field-detail"><span class="detail-label">효과·조건</span>${detail}</dd>`:''}</dl>`;
+  const value=entries?statGrid(entries,item.title,attributes?'attribute-grid':/^(?:기본 )?전투 수치$/.test(item.title)?'combat-grid':item.title==='공격과 피해'?'attack-grid':''): `<dl class="value-pair"><dt>${esc(item.title)}</dt><dd class="field-value"><span class="field-copy">${proseValue(item)}</span>${english}</dd>${detail?`<dd class="field-detail"><span class="detail-label">효과·조건</span>${detail}</dd>`:''}</dl>`;
   return `<div class="result-field${entries?' field-matrix':''}${full||item.image?' field-wide':''}${attributes?' field-attributes':''}" data-field="${esc(item.title)}">${entries?`<p class="matrix-label">${esc(item.title)}</p>`:''}${value}${entries?english:''}${diagram(item)}${entries&&detail?`<p class="field-detail stat-note">${detail}</p>`:''}${meta}</div>`;
 }
 
@@ -121,5 +120,5 @@ export function appraisalSheet(run){
     const entries=statEntries(item);
     return `<tr><th scope="row">${index+1}</th>${entries?`<td>${esc(entries[0].value)}</td><td>${esc(entries[1].value.replace(/ DC$/,''))}</td>`:`<td colspan="2">${esc(item.text)}</td>`}<td>${item.dice?`<span class="dice-value">${item.reused?'기존값':esc(item.dice)} <b>${esc(item.roll)}</b></span>`:'—'}</td></tr>`;
   }).join('')}</tbody></table>${source(artifactsRows[0])}</section>`:'';
-  return `<section class="appraisal-sheet result-section"><h3>정산 내역</h3><table class="appraisal-table"><thead><tr><th scope="col">항목</th><th scope="col">수량</th><th scope="col">단가 <small>DC</small></th><th scope="col">금액 <small>DC</small></th></tr></thead><tbody>${rows.map(([label,count,unit,amount])=>`<tr><th scope="row">${esc(label)}</th><td>${esc(count)}</td><td>${esc(unit)}</td><td>${esc(amount)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row" colspan="3">합계</th><td>${esc(total)} <small>DC</small></td></tr></tfoot></table>${source(formula)}</section>${breakdown}`;
+  return `<div class="appraisal-columns"><section class="appraisal-sheet result-section"><h3>정산 내역</h3><table class="appraisal-table"><thead><tr><th scope="col">항목</th><th scope="col">수량</th><th scope="col">단가 <small>DC</small></th><th scope="col">금액 <small>DC</small></th></tr></thead><tbody>${rows.map(([label,count,unit,amount])=>`<tr><th scope="row">${esc(label)}</th><td>${esc(count)}</td><td>${esc(unit)}</td><td>${esc(amount)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row" colspan="2">합계</th><td colspan="2">${esc(total)} <small>DC</small></td></tr></tfoot></table>${source(formula)}</section>${breakdown}</div>`;
 }

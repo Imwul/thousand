@@ -60,7 +60,13 @@ test('every Guardian tier has individually labeled stats, including zero and pri
     assert.equal(root.querySelector('[data-field="공격과 피해"] .stat-cell:last-child dd').textContent,stats.damage);
     assert.equal(root.querySelector('#result-headline').textContent,run.enemy.name);
     assert.equal(root.querySelectorAll('.enemy-card [data-field="기본 능력치"]').length,1);
-    if(model==='anansi')assert.equal(root.querySelector('[data-field="공격 조건"] .field-copy').textContent,run.items.find(item=>item.title==='공격과 피해').detail);
+    assert.ok(root.querySelector('.enemy-stats [data-field="공격과 피해"]'));
+    assert.ok(root.querySelector('.enemy-abilities [data-field="수호자 특성"]'));
+    assert.equal(root.querySelector('.enemy-stats [data-field="수호자 특성"]'),null);
+    if(model==='anansi'){
+      assert.equal(root.querySelector('.enemy-stats [data-field="공격 조건"] .field-copy').textContent,run.items.find(item=>item.title==='공격과 피해').detail);
+      if(run.items.some(item=>/(?:중독|Poisoned)\s+IV/.test(item.text)))assert.ok(root.querySelector('.enemy-abilities .condition-reference'));
+    }
     assert.equal(root.querySelector('.journal-text,[data-action="copy"],[data-action="copy-journal"]'),null);
     assert.deepEqual(run,before);
   }
@@ -70,7 +76,12 @@ test('NPC attributes and fixed companion combat values precede descriptive field
   const root=dom(make('npc-profile'));
   assert.equal(root.querySelectorAll('.attribute-grid .stat-cell').length,6);
   assert.deepEqual(values(root,'.combat-grid .stat-cell'),[{label:'상처',value:'3'},{label:'방어',value:'2'}]);
-  assert.equal(root.querySelector('.report-body>.result-section h3').textContent,'동료 능력치');
+  const columns=root.querySelectorAll('.report-columns>.report-column');
+  assert.equal(columns.length,2);
+  assert.equal(columns[0].querySelector('.result-section h3').textContent,'동료 능력치');
+  assert.ok(columns[0].querySelector('.attribute-grid'));
+  assert.equal(columns[1].querySelector('.attribute-grid'),null);
+  assert.ok(columns[1].querySelector('[data-field="인물 묘사"]'));
   assert.equal(root.querySelectorAll('.report-details [data-field="인물 이름"]').length,1);
 });
 

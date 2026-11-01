@@ -171,7 +171,17 @@ function reportFields(run,items){
   if(!fields.length&&!run.enemy&&!run.cards?.length&&!run.hacking){extra('결과',run.headline);if(run.subline)fields.push({title:'설명',text:run.subline});}
   if(run.procedureId==='dice')return `<section class="result-section"><h3>주사위 결과</h3>${statGrid([{label:'주사위 식',value:run.options.diceExpression},{label:'합계',value:run.headline}],'주사위 결과','dice-total-grid')}<p class="field-detail">${esc(fields[0]?.detail??'')}</p></section>`;
   if(run.procedureId==='appraisal'&&appraisalSheet(run))fields=fields.filter(item=>item.title!=='정산 내역'&&item.tableId!=='artifact-value');
-  return resultSections(fields);
+  let belongsLeft;
+  if(run.procedureId==='npc-profile')belongsLeft=item=>['동료 능력치','동료 재능'].includes(item.group);
+  else if(run.procedureId==='planet')belongsLeft=item=>!['첫인상','탐사 조건'].includes(item.group);
+  else if(run.procedureId==='arrival'||run.siteFromHex)belongsLeft=item=>['arrival','purpose','size','activity','hazard'].includes(item.tableId)||item.title==='Site Report 준비';
+  else {
+    const groups=[...new Set(fields.map(item=>item.group||'결과'))];
+    const leftGroups=new Set(groups.slice(0,Math.ceil(groups.length/2)));
+    belongsLeft=item=>leftGroups.has(item.group||'결과');
+  }
+  const left=fields.filter(belongsLeft),right=fields.filter(item=>!belongsLeft(item));
+  return left.length&&right.length?`<div class="report-columns"><div class="report-column">${resultSections(left)}</div><div class="report-column">${resultSections(right)}</div></div>`:resultSections(fields);
 }
 export function reportView(run,records,{unsaved=false,saving=false}={}){
   run=localizeRecord(run,tables);

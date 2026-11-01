@@ -1,0 +1,80 @@
+/* The sole type scale. Content length and monitor width do not change text roles. */
+:root{
+  --type-title:28px;
+  --type-section:16px;
+  --type-label:12px;
+  --type-body:16px;
+  --type-meta:11px;
+  --type-number:26px;
+  --type-ui:14px;
+  --type-ui-title:20px;
+  font:400 16px/1.7 Hahmlet,serif;
+}
+body{font:400 var(--type-body)/1.7 Hahmlet,serif}
+button,input,select,textarea{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
+h1,h2,h3,h4,p{font-size:inherit}
+small{font-size:inherit}
+strong,b{font-weight:650}
+h2{font-size:var(--type-ui-title);font-weight:600;line-height:1.5}
+h3,h4{font-size:var(--type-section);font-weight:600;line-height:1.6}
+.app-heading h1,.app-heading .brand{font:900 42px/1.1 BarlowCondensed,sans-serif}
+.report,.empty-report{font-family:Hahmlet,serif}
+.report-title h2,.empty-report h2{font:600 var(--type-title)/1.5 Hahmlet,serif}
+.control-heading h2,.dialog-header h2{font:600 var(--type-ui-title)/1.5 Hahmlet,serif}
+.control-heading p{font:600 var(--type-label)/1.5 SUIT,sans-serif}
+.result-section>h3,.enemy-card>h3,.column-heading,.enemy-effects>:is(h3,h4),.desk-card h3,.history-heading h2,.threat-reference h3{font:600 var(--type-section)/1.6 SUIT,sans-serif;letter-spacing:normal}
+.field-value,.field-detail,.report .field-detail,.enemy-card .enemy-description,.enemy-effects .field-value,.enemy-reference .field-value,.enemy-reference .field-detail,.enemy-reference .enemy-effects .field-value,.enemy-reference .enemy-attack-condition .field-value,.enemy-reference .condition-reference .field-value,.threat-reference .field-value,.threat-reference .enemy-effects .field-value,.threat-reference .condition-reference .field-value,.condition-reference .field-value,.enemy-attack-condition .field-value,.rules-notes li,.about-copy,.source-note,.rule-table{
+  font:450 var(--type-body)/1.85 Hahmlet,serif;
+  letter-spacing:normal;
+}
+.enemy-meta dd{font:450 var(--type-body)/1.85 Hahmlet,serif}
+.feature-name{font-size:inherit;font-weight:650;line-height:inherit}
+.feature-effect{font-size:inherit;line-height:inherit}
+.rule-value{font-family:SUIT,sans-serif;font-size:inherit;font-weight:650;line-height:inherit}
+.rule-table thead,.value-pair dt,.matrix-label,.stat-cell dt,.enemy-reference .stat-cell dt,.enemy-meta dt,.field-label,.field-heading,.option-select,.paired-fields label,.known-weeks,.dialog-form label,.detail-label,.history-type{
+  font:600 var(--type-label)/1.6 SUIT,sans-serif;
+  letter-spacing:normal;
+}
+.stat-cell dd,.attack-grid dd,.enemy-reference .stat-cell dd,.enemy-reference .attack-grid dd,.paper-costs .stat-cell dd{
+  font:650 var(--type-number)/1.4 SUIT,sans-serif;
+  font-variant-numeric:tabular-nums;
+}
+.stat-word dd,.enemy-reference .stat-word dd,.hacking-result .stat-cell:first-child dd{
+  font:450 var(--type-body)/1.85 Hahmlet,serif;
+}
+.rule-table td>small,.library-row small,.report-overline,.report-kind,.report-title .subject-label,.report-footer,.record-state,.source-link,.field-source .source-link,.dice-value,.dice-value b,.field-source .dice-value,.field-source .dice-value b,.english-result,.source-original,.source-original summary,.field-source .source-original,.trace-list,.trace-list b,.trace-list small,.table-description,.report-number,.control-source,.procedure small,.procedure-code,.procedure-recent small,.history-card time,.aside-mark,.storage-status,.site-footer,.recent-label,.desk-kicker,kbd{
+  font:500 var(--type-meta)/1.6 SUIT,sans-serif;
+  font-variant-numeric:tabular-nums;
+}
+.source-original p{font:400 var(--type-body)/1.85 SUIT,sans-serif}
+.report-tools,.tool-button,.report-tools .tool-button,.utility-bar,.campaign-picker,.campaign-picker select,.view-nav,.context-trigger,.procedure,.procedure strong,.procedure-recent strong,.next-step strong,.next-step small,.desk-note,.field-help,.option-explainer,.toggle-row,.toggle-row small,.context-summary,.quiet-button,.primary,.secondary,.roll-bottom,.roll-bottom p,.enemy-actions button,.combat-tools button,.approach-choice button,.approach-choice p,.hack-choice p,.hack-choice button,.location-list,.location-list button,.library-row,.history-search,.history-filter,.history-card small,.backup-section,.dialog-search,.library-toolbar select,.empty-report>p{
+  font:400 var(--type-ui)/1.6 SUIT,sans-serif;
+}
+.procedure strong,.next-step strong,.primary,.secondary{font-weight:600}
+.history-card strong,.aside-card strong,.enemy-reference>strong{font:600 var(--type-section)/1.7 Hahmlet,serif}
+.aside-card small,.aside-card button{font:400 var(--type-ui)/1.7 SUIT,sans-serif}
+.expedition-summary>button strong{font:600 var(--type-section)/1.6 SUIT,sans-serif}
+.expedition-summary>button span,.expedition-summary>span,.expedition-details,.quick-disclosure,.expedition-cell strong{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
+.expedition-cell small,.expedition-cell b,.expedition-edit{font:500 var(--type-meta)/1.6 SUIT,sans-serif}
+.options-more>summary,.slot-settings>summary,.rules-notes>summary,.roll-trace>summary,.record-annotation>summary,.report-details>summary,.landing-reference>summary,.combat-tools>summary,#roll-options>summary,#procedure-picker>summary,.procedure-group>summary,.memo-label{
+  font:600 var(--type-ui)/1.6 SUIT,sans-serif;
+}
+.procedure-group>summary small,#procedure-picker>summary span:last-child{font-size:var(--type-meta)}
+.hack-choice b,.die-face b{font:650 var(--type-number)/1.4 SUIT,sans-serif}
+.roll-icon,.icon-button{font:400 20px/1 SUIT,sans-serif}
+.odds-choice span,.odds-choice small,.quick-form label,.quick-form textarea{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
+.landing-map figcaption,.hex-cell{font:400 var(--type-meta)/1.6 SUIT,sans-serif}
+.appraisal-table,.appraisal-values{font:450 var(--type-body)/1.85 Hahmlet,serif}
+.appraisal-table thead,.appraisal-values thead{font:600 var(--type-label)/1.6 SUIT,sans-serif}
+.appraisal-table small,.appraisal-values small{font:500 var(--type-meta)/1.6 SUIT,sans-serif}
+.appraisal-table tfoot th{font:600 var(--type-label)/1.6 SUIT,sans-serif}
+.appraisal-table tfoot td{font:650 var(--type-number)/1.4 SUIT,sans-serif}
+.manual-choice h3,.threat-reference details>summary{font:600 var(--type-section)/1.6 SUIT,sans-serif}
+.manual-choice,.manual-choice button{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
+@media(max-width:720px){
+  :root{--type-title:24px;--type-body:15px;--type-number:24px}
+  .app-heading h1,.app-heading .brand{font-size:30px}
+}
+@media print{
+  :root{--type-title:24px;--type-body:14px;--type-number:24px}
+}
