@@ -6,6 +6,7 @@ import {adoptLocation,restoreLocation,rememberLocation,prepareContinuation} from
 import {continuationOptions,enemyCards} from '../src/domain/continuation.js';
 import {KNOWN_THREATS} from '../src/data/enemies.js';
 import {makeBackup,validateBackup,remapBackup} from '../src/storage/store.js';
+import {reportView} from '../src/components/render.js';
 import {guideNext} from '../src/domain/play.js';
 
 const make=(id,options={},context={},rng=()=>.5)=>runProcedure(id,{campaignId:'test',options,context,rng});
@@ -163,6 +164,9 @@ test('random system difficulty is rolled once and retained for subsequent node r
 });
 
 test('ambiguous printed ranges can be chosen and backed up without inventing a die result',()=>{
+  const emotion=make('emotion',{moodDepth:3},{},sequence([.99,.2]));
+  assert.equal(emotion.manualTableId,'mood-8-2');
+  const html=reportView(emotion,[emotion]);assert.equal((html.match(/data-action="table-select"/g)??[]).length,2);assert.ok(html.includes(`data-parent="${emotion.id}"`));
   const run=runManualTable('mood-8-2',1,{campaignId:'test'});
   assert.equal(run.manual,true);assert.equal(run.trace.length,0);assert.equal(run.items[0].roll,undefined);
   const campaign=newCampaign();campaign.id='test';validateBackup(makeBackup([campaign],[run]));

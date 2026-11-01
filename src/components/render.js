@@ -143,7 +143,7 @@ function playBanner(run,records){
   ].join('');
   const sheet=acts?`<h3><span>Sheet</span>시트에 적을 것</h3><ul class="play-acts">${acts}</ul>`:'';
   const manual=run.manualTableId?manualChoices(run.manualTableId,run.id):'';
-  const choices=lock||hack||approach||found||adopt||manual?`<h3><span>Now</span>지금 할 일</h3>${lock}${hack}${approach}${found}${adopt}`:'';
+  const choices=lock||hack||approach||found||adopt||manual?`<h3><span>Now</span>지금 할 일</h3>${lock}${hack}${approach}${found}${adopt}${manual}`:'';
   const now=sheet||choices?`<section class="play-now" aria-label="${[acts&&'시트에 적을 것',choices&&'지금 할 일'].filter(Boolean).join(' · ')}">${sheet}${choices}</section>`:'';
   const copy=guide.copy?`<p class="copy-line"><span>저널에 적을 문장</span><h2 tabindex="-1" id="result-headline" class="journal-text">${esc(guide.copy)}</h2><button type="button" data-action="copy-journal">이 문장 복사</button></p>`:'';
   return copy+enemyCardsView(run)+now+(guide.landing?landingMap(guide.landing):'');
