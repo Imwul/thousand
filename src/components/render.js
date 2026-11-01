@@ -5,7 +5,8 @@ import {icon,esc} from './icons.js';
 import {localizeRecord} from '../data/localization.js';
 import {localizeTerms} from '../data/glossary.js';
 import {RELATED_PROCEDURES} from '../domain/continuation.js';
-import {enemyCardsView,threatReference} from './play-tools.js';
+import {enemyCardsView,enemyExtraItems,threatReference} from './play-tools.js';
+import {resultSections,statGrid,appraisalSheet,sourceOriginal} from './result-fields.js';
 import {IMAGE_SIZES} from '../data/image-sizes.js';
 const imageSize=path=>{const [width,height]=IMAGE_SIZES[path]??[800,600];return `width="${width}" height="${height}"`;};
 export function pageLabel(page){return `p. ${[page].flat().join(', ')}`;}
@@ -63,13 +64,6 @@ export function asideLog(records,currentId){
   const cards=list.map(r=>{const v=localizeRecord(r,tables);return `<div class="aside-card"><strong>${esc(v.headline)}</strong><small>${esc(r.options?.question||v.subline)}</small><button type="button" data-action="record" data-id="${esc(r.id)}">이 기록 열기</button></div>`;}).join('');
   return `<section class="desk-card"><h3><span class="desk-kicker">Aside</span>이 보고서 곁의 질문</h3>${cards}</section>`;
 }
-function diceRibbon(run){
-  const faces=run.trace.filter(t=>!t.discarded).slice(0,8);
-  if(!faces.length)return '';
-  const more=run.trace.filter(t=>!t.discarded).length-faces.length;
-  return `<div class="dice-ribbon" aria-label="이번 굴림의 주사위">${faces.map(t=>`<span class="die-face" title="${esc(t.title)}"><b>${esc(t.value)}</b><small>${esc(t.notation)}</small></span>`).join('')}${more>0?`<span class="die-more">+${more}</span>`:''}</div>`;
-}
-function sourceOriginal(item){return item.sourceText&&item.sourceText.length>32?`<details class="source-original"><summary>영문 원문</summary><p lang="en">${esc(item.sourceText)}</p></details>`:'';}
 export function optionFields(procedure,o,c){
   const toggle=(key,label,description='')=>`<label class="toggle-row"><input type="checkbox" name="${key}" ${checked(o[key])}><span>${esc(localizeTerms(label))}${description?`<small>${esc(localizeTerms(description))}</small>`:''}</span></label>`;
   const select=(key,label,choices)=>`<label class="option-select">${esc(localizeTerms(label))}<select name="${key}">${choices.map(([value,text])=>`<option value="${value}" ${selected(String(o[key]),String(value))}>${esc(localizeTerms(text))}</option>`).join('')}</select></label>`;
@@ -123,9 +117,14 @@ function landingMap(cell){
   return `<figure class="landing-map"><figcaption>착륙 칸 ${cell} · 10칸씩 열 줄 · 왼쪽 위가 1. 책의 지도가 아니라 D100을 읽기 쉽게 놓은 칸입니다.</figcaption><div class="hex-grid" role="img" aria-label="100칸 중 ${cell}번 착륙">${cells}</div></figure>`;
 }
 function manualChoices(tableId,parentId=''){const t=tables[tableId];return t?.rollable===false?`<section class="manual-choice"><h3>결과 직접 선택</h3><p>원문 범위가 겹칩니다. 주사위 없이 결과를 골라 기록합니다.</p>${t.rows.map((row,index)=>`<button type="button" data-action="table-select" data-table="${tableId}" data-row="${index}" data-parent="${esc(parentId)}">${esc(row.text)}</button>`).join('')}</section>`:'';}
-function playBanner(run,records){
+function playBanner(run,records,placement='before'){
   const guide=playGuide(run,records);
-  const acts=guide.acts.map(act=>`<li>${esc(act.text)}</li>`).join('');
+  const acts=guide.acts.filter(act=>!['landing','injury','trauma','gear'].includes(act.id)).map(act=>{
+    if(act.id==='rations')return statGrid([{label:'산소 탱크 소비',value:'1 / 대원'},{label:'보급품 소비',value:'1 / 대원'}],'소모품','paper-costs');
+    if(act.id==='reset')return statGrid([{label:'배터리 소비',value:'1'},{label:'산소 펠릿 소비',value:'1'},{label:'사격했다면 탄약 소비',value:'1'}],'소모품','paper-costs');
+    if(act.id==='time'){const amount=act.text.match(/\+\d+/)?.[0];if(amount)return statGrid([{label:act.text.includes('시도마다')?'잠금 시도마다 시간트랙':'시간트랙',value:amount}],'시간트랙','paper-costs');}
+    return `<p class="paper-fact">${esc(act.text)}</p>`;
+  }).join('');
   const lock=run.pending?`<section class="lock-choice"><h3>접근 노드는 어디에 있을까요?</h3><p>방화벽 ${run.pending.lo}–${run.pending.hi} · ${run.pending.secure?'보안문 / D10 두 개 중 불리한 결과':'D10 한 개'}</p><div><button type="button" data-action="lock" data-value="inside">안쪽 선택 ${icon('dice',18)}</button><button type="button" data-action="lock" data-value="outside">바깥쪽 선택 ${icon('dice',18)}</button></div></section>`:'';
   const hack=run.hacking?`<section class="hack-choice"><h3>허용된 재굴림 사용</h3><p>판정 성공이나 사이퍼(Cypher)로 얻은 횟수만큼만 사용하세요.</p><div>${run.hacking.values.map((value,index)=>`<button type="button" data-action="hack" data-value="${index}">${index+1}번 D6 <b>${value}</b></button>`).join('')}</div></section>`:'';
   const approach=guide.approach?`<section class="approach-choice"><h3>금속 구체</h3><p>다가가기 전에는 이 표를 굴리지 않습니다. 원래 헥스 기록은 그대로 둡니다.</p>${guide.approach.recordId?`<button type="button" data-action="record" data-id="${esc(guide.approach.recordId)}">${esc(guide.approach.text)}</button>`:`<button type="button" data-action="approach" data-table="toxic-globe">${esc(guide.approach.text)}</button>`}</section>`:'';
@@ -141,20 +140,61 @@ function playBanner(run,records){
     run.adopt?`<button type="button" data-action="adopt" class="adopt-button">${icon('arrival',18)} 이 장소를 현재 탐사 맥락으로 사용</button>`:'',
     run.encounter?`<button type="button" data-action="adopt-encounter" class="adopt-button">${icon('npc',18)} ${run.encounter.slot}번 조우 슬롯에 이 유형 기록</button>`:''
   ].join('');
-  const sheet=acts?`<h3><span>Sheet</span>시트에 적을 것</h3><ul class="play-acts">${acts}</ul>`:'';
+  const sheet=placement==='before'&&acts?`<h3><span>Sheet</span>시트에 적을 것</h3><div class="paper-facts">${acts}</div>`:'';
   const manual=run.manualTableId?manualChoices(run.manualTableId,run.id):'';
-  const choices=lock||hack||approach||found||adopt||manual?`<h3><span>Now</span>지금 할 일</h3>${lock}${hack}${approach}${found}${adopt}${manual}`:'';
+  const actions=placement==='before'?lock+hack:approach+found+adopt+manual;
+  const choices=actions?`<h3><span>Now</span>지금 할 일</h3>${actions}`:'';
   const now=sheet||choices?`<section class="play-now" aria-label="${[acts&&'시트에 적을 것',choices&&'지금 할 일'].filter(Boolean).join(' · ')}">${sheet}${choices}</section>`:'';
-  const copy=guide.copy?`<p class="copy-line"><span>저널에 적을 문장</span><h2 tabindex="-1" id="result-headline" class="journal-text">${esc(guide.copy)}</h2><button type="button" data-action="copy-journal">이 문장 복사</button></p>`:'';
-  return copy+enemyCardsView(run)+now+(guide.landing?landingMap(guide.landing):'');
+  return now;
+}
+function reportFields(run,items){
+  let fields=[...items];
+  const extra=(title,text,group='결과')=>fields.unshift({title,text,group});
+  if(run.procedureId==='question'&&run.options.question)extra('질문',run.options.question,'질문');
+  if(run.procedureId==='npc-profile'){
+    const stats=fields.filter(item=>item.tableId==='npc-attributes');
+    fields=[...stats,{title:'기본 전투 수치',text:'상처 3 / 방어 2',page:359,group:'동료 능력치'},...fields.filter(item=>!stats.includes(item))];
+  }
+  if(run.procedureId==='hex'&&run.context?.biome)extra('현재 생물군계',tables['landing-biome'].rows[run.context.biome-1].text,'지형');
+  if(run.procedureId==='travel')extra('항해 상태',run.headline,'항해');
+  if(run.procedureId==='activity')extra('경과 시간','1시간','시간');
+  if(run.procedureId==='scatter'){
+    const distance=run.trace.find(t=>t.id==='scatter-distance');
+    if(distance)extra('표적에서 벗어난 거리',`${distance.value}헥스`,'산포');
+  }
+  if(run.lockAttempt){
+    const {pending,guess}=run.lockAttempt;
+    extra('방화벽',`${pending.lo} ─ ${pending.hi}`,'접근점');
+    extra('선택',guess==='inside'?'안쪽':'바깥쪽','접근점');
+    extra('접근 노드',run.trace.filter(t=>t.id==='access-node').map(t=>t.value).join(', '),'접근점');
+  }
+  if(!fields.length&&!run.enemy&&!run.cards?.length&&!run.hacking){extra('결과',run.headline);if(run.subline)fields.push({title:'설명',text:run.subline});}
+  if(run.procedureId==='dice')return `<section class="result-section"><h3>주사위 결과</h3>${statGrid([{label:'주사위 식',value:run.options.diceExpression},{label:'합계',value:run.headline}],'주사위 결과','dice-total-grid')}<p class="field-detail">${esc(fields[0]?.detail??'')}</p></section>`;
+  if(run.procedureId==='appraisal'&&appraisalSheet(run))fields=fields.filter(item=>item.title!=='정산 내역');
+  return resultSections(fields);
 }
 export function reportView(run,records,{unsaved=false,saving=false}={}){
   run=localizeRecord(run,tables);
-  const groups=[...new Set(run.items.map(i=>i.group||'결과'))],parent=run.parentId?records.find(r=>r.id===run.parentId):null;
+  const parent=run.parentId?records.find(r=>r.id===run.parentId):null;
   const idx=records.filter(r=>r.campaignId===run.campaignId).sort((a,b)=>a.createdAt.localeCompare(b.createdAt)).findIndex(r=>r.id===run.id)+1;
   const time=new Date(run.createdAt).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-  return `<article class="report tone-${esc(run.tone)}" data-record-id="${esc(run.id)}"><div class="report-overline"><span>${esc(run.title)}<span class="report-number"> / ${String(idx||1).padStart(3,'0')}</span></span><span>${esc(time)}</span></div><header class="report-title">${run.subject?`<p class="subject-label">관련 인물: ${esc(run.subject.name)}</p>`:''}</header>${playBanner(run,records)}${diceRibbon(run)}<div class="report-tools"><span class="record-state ${unsaved?'unsaved':''}">${icon(unsaved?'close':'check',14)}${unsaved?'저장 실패 · 결과는 화면에 유지 중':saving?'저장 중':'브라우저에 저장됨'}</span><div><button data-action="pin" class="tool-button ${run.pinned?'is-pinned':''}" aria-pressed="${run.pinned}">${icon('pin',16)}<span>${run.pinned?'고정됨':'고정'}</span></button><button data-action="copy" class="tool-button">${icon('copy',16)}<span>복사</span></button><button data-action="reroll" class="tool-button">${icon('dice',16)}<span>다시 굴림</span></button></div></div><div class="report-body">${parent?`<button class="parent-link" data-action="record" data-id="${esc(parent.id)}">${icon('history',15)} 이전 굴림에서 이어진 새 기록</button>`:''}<details class="report-details"${run.enemy||run.cards?'':' open'}><summary>세부 표·외형</summary>${groups.map(group=>`<section class="result-section"><h3>${esc(group)}</h3><div class="result-grid">${run.items.filter(i=>(i.group||'결과')===group).map(i=>`<div class="result-item ${i.text.length>90?'long-result':''}"><div class="result-label"><span>${esc(i.title)}</span>${i.dice?`<span class="dice-value">${i.reused?'기존값':esc(i.dice)} <b>${esc(i.roll)}</b></span>`:''}</div><p class="result-text">${esc(i.text)}</p>${i.image?`<img class="source-diagram" ${imageSize(i.image)} src="${esc(assetPath(i.image))}" alt="${esc(i.title)} 원문 도해" loading="lazy">`:''}${i.en?`<span class="english-result">${esc(i.en)}</span>`:''}${i.detail?`<p class="result-detail">${esc(i.detail)}</p>`:''}<button class="source-link" data-action="${i.tableId?'table':'source-info'}" data-id="${esc(i.tableId??'')}" data-page="${esc([i.page].flat().join(', '))}">${pageLabel(i.page)} ${i.tableId?icon('book',12):''}</button>${sourceOriginal(i)}</div>`).join('')}</div></section>`).join('')}</details>${run.notes.length?`<details class="rules-notes"><summary>규칙 메모 ${icon('chevron',16)}</summary><ul>${run.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></details>`:''}<details class="roll-trace"><summary>굴림 근거 <span>${run.trace.reduce((n,t)=>n+t.values.length,0)}개 주사위</span>${icon('chevron',16)}</summary><div class="trace-list">${run.trace.map(t=>`<div class="${t.discarded?'discarded':''}"><span>${esc(t.title)}${t.discarded?' · 조건에 따라 재굴림':''}</span><b>${esc(t.notation)} [${t.values.join(', ')}] = ${t.value}</b><small>${pageLabel(t.page)}</small></div>`).join('')}</div></details><label class="memo-label" for="record-memo">나의 해석·메모 <span id="memo-status"></span></label><textarea id="record-memo" maxlength="10000" rows="3" placeholder="해석이나 추가 상황 기록">${esc(run.memo)}</textarea></div><footer class="report-footer"><span>Across a Thousand Dead Worlds · Core 2024</span><span>개인 탐사 기록</span></footer></article>`;
+  const named=['planet','npc-profile','ship-name','site-name','creature','encounter-roster'].includes(run.procedureId);
+  const title=named?(run.procedureId==='creature'&&run.enemy?run.enemy.name:run.headline):run.title;
+  const display=enemyExtraItems(run),main=[...display.main],extra=[...display.extra];
+  const nameParts=new Set(['planet-name-1','planet-name-2','planet-name-3','given-name','surname','ship-adjective','ship-name','site-name-1','site-name-2','site-name-3']);
+  if(named&&!run.enemy&&!run.cards?.length){for(let i=main.length-1;i>=0;i--)if(nameParts.has(main[i].tableId))extra.unshift(...main.splice(i,1));}
+  const tools=`<div class="report-tools"><span class="record-state ${unsaved?'unsaved':''}">${icon(unsaved?'close':'check',14)}${unsaved?'저장 실패 · 결과는 화면에 유지 중':saving?'저장 중':'브라우저에 저장됨'}</span><div><button type="button" data-action="pin" class="tool-button ${run.pinned?'is-pinned':''}" aria-pressed="${run.pinned}">${icon('pin',16)}<span>${run.pinned?'고정됨':'고정'}</span></button><button type="button" data-action="reroll" class="tool-button">${icon('dice',16)}<span>다시 굴림</span></button></div></div>`;
+  const heading=`<header class="report-title">${named?`<p class="report-kind">${esc(run.title)}</p>`:''}<h2 tabindex="-1" id="result-headline">${esc(title)}</h2>${run.subject&&run.subject.name!==title?`<p class="subject-label">관련 인물: ${esc(run.subject.name)}</p>`:''}</header>`;
+  const hacking=run.hacking?`<section class="result-section hacking-result"><h3>해킹 판정</h3>${statGrid([{label:'판정',value:run.headline},{label:'난도',value:run.options.hackingDifficulty}],'해킹 판정')}</section>`:'';
+  const details=extra.length?`<details class="report-details"><summary>외형·이름·생성 근거 ${icon('chevron',16)}</summary>${resultSections(extra)}</details>`:'';
+  const landing=playGuide(run,records).landing;
+  const landingDetails=landing?`<details class="landing-reference"><summary>착륙 칸 ${landing} · 위치 보기 ${icon('chevron',16)}</summary>${landingMap(landing)}</details>`:'';
+  const notes=run.notes.length?`<details class="rules-notes"><summary>규칙 메모 ${icon('chevron',16)}</summary><ul>${run.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></details>`:'';
+  const trace=`<details class="roll-trace"><summary>굴림 근거 <span>${run.trace.reduce((n,t)=>n+t.values.length,0)}개 주사위</span>${icon('chevron',16)}</summary><div class="trace-list">${run.trace.map(t=>`<div class="${t.discarded?'discarded':''}"><span>${esc(t.title)}${t.discarded?' · 조건에 따라 재굴림':''}</span><b>${esc(t.notation)} [${t.values.join(', ')}] = ${t.value}</b><small>${pageLabel(t.page)}</small></div>`).join('')}</div></details>`;
+  const memo=`<details class="record-annotation"${run.memo?' open':''}><summary>메모 ${icon('chevron',16)}</summary><label class="memo-label" for="record-memo">추가 메모 <span id="memo-status"></span></label><textarea id="record-memo" maxlength="10000" rows="3" placeholder="필요할 때만 메모">${esc(run.memo)}</textarea></details>`;
+  return `<article class="report tone-${esc(run.tone)}" data-record-id="${esc(run.id)}"><div class="report-overline"><span>굴림 기록<span class="report-number"> / ${String(idx||1).padStart(3,'0')}</span></span><span>${esc(time)}</span></div>${heading}${tools}<div class="report-body">${parent?`<button class="parent-link" data-action="record" data-id="${esc(parent.id)}">${icon('history',15)} 이전 굴림에서 이어진 새 기록</button>`:''}${hacking}${playBanner(run,records)}${run.procedureId==='appraisal'?appraisalSheet(run):''}${reportFields(run,main)}${enemyCardsView(run)}${playBanner(run,records,'after')}${landingDetails}${details}${notes}${trace}${memo}</div><footer class="report-footer"><span>Across a Thousand Dead Worlds · Core 2024</span><span>개인 탐사 기록</span></footer></article>`;
 }
+
 export function historyCards(records,currentId,limit=12){
   if(!records.length)return `<div class="history-empty"><p>저장된 굴림이 없습니다.</p></div>`;
   return records.map(r=>localizeRecord(r,tables)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,limit).map(r=>`<button data-action="record" data-id="${esc(r.id)}" class="history-card ${r.id===currentId?'is-current':''}"><span class="history-type">${esc(r.title)}${r.aside?'<em class="aside-mark">곁질문</em>':''}${r.pinned?icon('pin',13):''}</span><strong>${esc(r.headline)}</strong><small>${esc(r.subline.slice(0,100))}</small><time>${new Date(r.createdAt).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}</time></button>`).join('');

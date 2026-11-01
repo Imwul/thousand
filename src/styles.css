@@ -53,7 +53,7 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .expedition-cell b{font-weight:500;font-size:10px;color:#8eaaaa}
 .expedition-cell strong{font-weight:550;font-size:15px;line-height:1.35;word-break:keep-all;overflow-wrap:anywhere}
 .expedition-edit{font-size:12px;color:var(--coral);padding-top:2px}
-.journal-text,.copy-line,.history-card small,.aside-card strong,.aside-card small,.play-acts li,.landing-map figcaption,.next-step strong,.desk-note,.approach-choice p,.approach-choice button{word-break:keep-all;overflow-wrap:anywhere}
+.history-card small,.aside-card strong,.aside-card small,.play-acts li,.landing-map figcaption,.next-step strong,.desk-note,.approach-choice p,.approach-choice button{word-break:keep-all;overflow-wrap:anywhere}
 .quick-form{display:flex;flex-direction:column;gap:8px;min-width:0;padding:12px;border:1px solid #3d5656;border-top:2px solid var(--cyan);background:rgba(8,24,28,.82)}
 .quick-heading{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .quick-heading span{font-family:Hahmlet,serif;font-size:16px}
@@ -110,10 +110,7 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .approach-choice h3{font-size:16px;font-weight:650}
 .approach-choice p{font-family:SUIT,sans-serif;font-size:12px;line-height:1.6;margin:6px 0 10px;max-width:62ch}
 .approach-choice button{padding:10px 14px;background:#1a3330;color:#efe7c2;font-family:SUIT,sans-serif;font-size:13px;white-space:normal;text-align:left}
-.copy-line{display:flex;flex-direction:column;gap:4px;margin:0 0 16px;padding:10px 12px;background:#fff;border-left:3px solid var(--cyan-paper);color:var(--paper-ink);font-size:15px;line-height:1.65;overflow-wrap:anywhere;max-width:70ch}
-.copy-line>span{font-family:SUIT,sans-serif;font-size:11px;letter-spacing:.04em;color:var(--cyan-paper)}
-.journal-text{font-weight:550}
-.copy-line button{align-self:flex-start;min-height:44px;padding:0 2px;font-family:SUIT,sans-serif;font-size:12px;color:var(--cyan-paper)}
+
 .landing-map{margin:0 0 16px}
 .landing-map figcaption{font-family:SUIT,sans-serif;font-size:12px;line-height:1.55;color:#5e6c60;margin-bottom:8px;max-width:70ch}
 .hex-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:2px;max-width:420px}
@@ -121,15 +118,144 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .hex-cell.is-land{background:var(--coral);color:#1a0d0a;font-weight:700}
 @media(max-width:800px){.procedure-list{display:flex;flex-direction:column;gap:8px}.procedure-group .procedure{flex-direction:row;justify-content:flex-start;text-align:left;align-items:center;min-height:44px;padding:8px 10px;gap:10px}.procedure-group .procedure strong{font-size:13px;letter-spacing:0;line-height:1.35}.procedure-group .procedure small{display:block;font-size:10px}.procedure-group .procedure-code{display:grid}.procedure-group .procedure-mark{display:inline}}
 @media(max-width:480px){.procedure-group .procedure{min-height:44px;padding:8px 10px}.procedure-group .procedure strong{font-size:13px}.play-now .lock-choice>div,.play-now .hack-choice>div{flex-direction:column}}
-@media(min-width:2500px){.copy-line,.play-acts{max-width:66ch}}
-@media print{.play-now,.copy-line,.landing-map{color:black;background:white}.play-now{border-color:black}.copy-line button{display:none}.hex-cell{border:1px solid #bbb;background:white;color:black}.hex-cell.is-land{background:#222;color:#fff;print-color-adjust:exact}}
-
+@media(min-width:2500px){.play-acts{max-width:66ch}}
+@media print{.play-now,.landing-map{color:black;background:white}.play-now{border-color:black}.hex-cell{border:1px solid #bbb;background:white;color:black}.hex-cell.is-land{background:#222;color:#fff;print-color-adjust:exact}}
 
 /* Play context, enemy references and short paths back to paper. */
 [hidden]{display:none!important}button,summary,a{touch-action:manipulation}dialog{overscroll-behavior:contain}.source-diagram{height:auto;max-width:100%}.library-row{content-visibility:auto;contain-intrinsic-size:auto 75px}
 .expedition{grid-template-columns:minmax(0,1fr) auto;align-items:start;padding:12px 0;margin-bottom:20px;gap:14px}.expedition-summary{min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:8px 20px}.expedition-summary>button{display:flex;flex-direction:column;gap:3px;text-align:left;min-width:0;max-width:100%;padding:3px 0}.expedition-summary>button strong{font-size:16px;color:var(--white);word-break:keep-all;overflow-wrap:anywhere}.expedition-summary>button span,.expedition-summary>span{font-size:12px;color:#a5bfbd}.expedition-details{margin-left:auto;font-size:12px}.expedition-details>summary{padding:8px;color:var(--cyan)}.expedition-details[open]{width:100%;margin-left:0}.expedition-cells{grid-template-columns:repeat(auto-fit,minmax(135px,1fr));margin:10px 0}.quick-disclosure{font-size:12px;min-width:0}.quick-disclosure>summary{padding:8px 12px;color:var(--coral);border:1px solid var(--line)}.quick-disclosure[open]{width:min(380px,90vw)}.quick-form{margin-top:8px}.quick-heading{display:none}#procedure-picker>summary,.mobile-roll-link{display:none}
-.report-title{padding:0!important;border:0}.subject-label{font-family:SUIT,sans-serif;font-size:13px!important;padding:12px 0;color:var(--cyan-paper)}.copy-line{margin-top:18px;max-width:none}.copy-line h2{font-family:Hahmlet,serif;font-size:20px;line-height:1.8;letter-spacing:-.3px;margin:0;word-break:keep-all;overflow-wrap:anywhere}.report-details{margin:18px 0}.report-details>summary{font-family:SUIT,sans-serif;font-size:13px;color:var(--cyan-paper);padding:10px 0;border-block:1px solid #aab99d}.report-details[open]>summary{margin-bottom:10px}
+.report-title{padding:0!important;border:0}.subject-label{font-family:SUIT,sans-serif;font-size:13px!important;padding:12px 0;color:var(--cyan-paper)}.report-details{margin:18px 0}.report-details>summary{font-family:SUIT,sans-serif;font-size:13px;color:var(--cyan-paper);padding:10px 0;border-block:1px solid #aab99d}.report-details[open]>summary{margin-bottom:10px}
 .enemy-cards{display:grid;gap:14px;margin:18px 0}.enemy-card{background:#f1f1e7;border:1px solid #b5c5bd;border-left:3px solid var(--cyan-paper);padding:16px;min-width:0}.enemy-card h3{font-size:17px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}.enemy-card p,.enemy-reference p{font-size:14px;line-height:1.8;margin:10px 0;word-break:keep-all;overflow-wrap:anywhere}.enemy-card p small,.enemy-reference p small{font-family:SUIT,sans-serif;font-size:11px;display:block;color:var(--cyan-paper)}.enemy-card p span,.enemy-reference p span{display:block;font-size:12px;line-height:1.7}.enemy-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.enemy-actions button,.combat-tools button{font-family:SUIT,sans-serif;font-size:12px;padding:9px 12px;min-height:44px;background:#12373a;color:#d7f7f4;border:1px solid #496d70}.enemy-actions button:first-child{background:var(--coral);color:#12272b;border-color:var(--coral)}.desk-card-heading{display:flex;justify-content:space-between;align-items:start}.desk-card-heading button{min-width:36px;min-height:36px}.enemy-reference>strong{font-size:16px;line-height:1.6;display:block;color:var(--cyan);word-break:keep-all;overflow-wrap:anywhere}.enemy-reference p{font-size:13px}.enemy-reference p small{color:#87b8c4}.combat-tools>summary{font-size:15px;color:var(--cyan);padding:8px 0}.combat-tools>div{display:grid;gap:7px;margin:12px 0}.combat-tools button{text-align:left}.location-list{margin-bottom:20px;font-size:13px}.location-list>summary{padding:10px 0;color:var(--cyan)}.location-list button{display:block;width:100%;text-align:left;min-height:44px;padding:10px;border-bottom:1px solid var(--line);white-space:normal}.threat-reference details{padding:12px 0;border-bottom:1px solid var(--line)}.threat-reference p{font-size:13px;line-height:1.8;margin:9px 0}.threat-reference button{min-height:44px;color:var(--cyan)}
-@media(max-width:800px){.expedition{grid-template-columns:1fr auto;padding:9px 0 12px;margin-bottom:14px}.expedition-summary{gap:3px;flex-direction:column;align-items:flex-start}.expedition-summary>button strong{font-size:14px}.expedition-summary>button span,.expedition-summary>span{font-size:11px}.expedition-details{margin:0}.expedition-cells{grid-template-columns:repeat(2,minmax(0,1fr))}.expedition-cell strong{font-size:12px}.quick-disclosure[open]{grid-column:1/-1;width:100%}#procedure-picker>summary{display:flex;justify-content:space-between;gap:12px;min-height:44px;padding:12px;border:1px solid #3d6268;color:var(--cyan)}#procedure-picker>summary span:last-child{font-size:11px;color:#9ebdbd}.mobile-roll-link{display:block;font-size:12px;color:var(--coral);padding:10px 0;text-align:right}.scenario-rail .rail-heading{display:none}.procedure-list{margin-top:8px}.copy-line h2{font-size:17px}.enemy-card{padding:13px}.enemy-card h3{font-size:16px}.enemy-card p{font-size:13px}.field-desk{display:flex;flex-direction:column}#enemy-desk{order:0}.enemy-reference .enemy-actions{flex-direction:column}}
-@media(min-width:2500px){.expedition{grid-template-columns:minmax(0,1fr) auto;padding:12px 0 16px}.expedition-summary>button strong{font-size:20px}.expedition-summary>button span,.expedition-summary>span{font-size:15px}.expedition-details,.quick-disclosure{font-size:14px}.copy-line h2{font-size:23px}.enemy-card p{font-size:17px}.enemy-reference{max-height:70dvh;overflow:auto;overscroll-behavior:contain}.enemy-reference p{font-size:14px}}
+@media(max-width:800px){.expedition{grid-template-columns:1fr auto;padding:9px 0 12px;margin-bottom:14px}.expedition-summary{gap:3px;flex-direction:column;align-items:flex-start}.expedition-summary>button strong{font-size:14px}.expedition-summary>button span,.expedition-summary>span{font-size:11px}.expedition-details{margin:0}.expedition-cells{grid-template-columns:repeat(2,minmax(0,1fr))}.expedition-cell strong{font-size:12px}.quick-disclosure[open]{grid-column:1/-1;width:100%}#procedure-picker>summary{display:flex;justify-content:space-between;gap:12px;min-height:44px;padding:12px;border:1px solid #3d6268;color:var(--cyan)}#procedure-picker>summary span:last-child{font-size:11px;color:#9ebdbd}.mobile-roll-link{display:block;font-size:12px;color:var(--coral);padding:10px 0;text-align:right}.scenario-rail .rail-heading{display:none}.procedure-list{margin-top:8px}.enemy-card{padding:13px}.enemy-card h3{font-size:16px}.enemy-card p{font-size:13px}.field-desk{display:flex;flex-direction:column}#enemy-desk{order:0}.enemy-reference .enemy-actions{flex-direction:column}}
+@media(min-width:2500px){.expedition{grid-template-columns:minmax(0,1fr) auto;padding:12px 0 16px}.expedition-summary>button strong{font-size:20px}.expedition-summary>button span,.expedition-summary>span{font-size:15px}.expedition-details,.quick-disclosure{font-size:14px}.enemy-card p{font-size:17px}.enemy-reference{max-height:70dvh;overflow:auto;overscroll-behavior:contain}.enemy-reference p{font-size:14px}}
+
+/* Paper transcription: one label per value, aligned numbers, effects below stats. */
+#roll-options>summary{display:flex;justify-content:space-between;align-items:center;font:500 12px/1.6 SUIT,sans-serif;color:var(--cyan);min-height:36px;border-block:1px solid var(--line);padding:6px 0}
+#roll-options[open]>summary{margin-bottom:18px}
+#roll-options[open]>summary span{transform:rotate(45deg)}
+.control-panel:has(#roll-options:not([open])){padding-block:17px}
+.control-panel:has(#roll-options:not([open])) .control-heading{margin-bottom:12px}
+.control-panel:has(#roll-options:not([open])) .control-heading p{display:none}
+.control-panel:has(#roll-options:not([open])) .control-heading h2{font-size:18px}
+.control-panel:has(#roll-options:not([open])) .roll-bottom{margin-top:12px;padding-top:0;border:0}
+.control-panel:has(#roll-options:not([open])) .roll-bottom p{max-width:23ch}
+.report{--field-line:#b9c5bd;--field-wash:#f3f4eb;--field-label:#4d6867;--field-accent:#006d83}
+.report{--value-panel:#f7f8ef;--field-cap:#dfe7df}
+.control-heading>div{flex-basis:100%}
+.control-heading .control-source{width:100%;margin-top:-8px}
+.report .report-title{padding:20px 0 18px!important}
+.report-title h2{font-size:26px;line-height:1.5;letter-spacing:-.6px;max-width:32ch;text-wrap:pretty}
+.report-kind{font:500 11px/1.5 SUIT,sans-serif!important;color:var(--cyan-paper);margin:0 0 5px}
+.report-title .subject-label{padding:7px 0 0}
+.report-tools{padding:6px 0;border-color:var(--field-line)}
+.report-tools .tool-button{min-height:36px;padding-inline:7px}
+.report-body{padding-top:0}
+.report .result-section{margin:24px 0}
+.report .result-section>h3{font:600 12px/1.5 SUIT,sans-serif;color:var(--field-accent);letter-spacing:0;border-color:var(--field-line);margin:0 0 12px;padding-bottom:8px}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px;min-width:0}
+.field-grid:has(>.result-field:only-child){grid-template-columns:minmax(0,1fr)}
+.result-field{min-width:0;padding:12px 14px 8px;background:var(--field-wash);border:1px solid var(--field-line);border-radius:2px}
+.field-wide,.field-matrix{grid-column:1/-1}
+.value-pair,.stat-grid,.enemy-meta{margin:0}
+.value-pair dt,.matrix-label{font:600 11px/1.5 SUIT,sans-serif;color:var(--field-label);margin:0 0 5px;overflow-wrap:anywhere}
+.value-pair dd{margin:0}
+.result-field:not(.field-matrix){border:0;background:none;padding:0}
+.value-pair{border:1px solid var(--field-line);border-radius:2px;overflow:hidden;background:var(--value-panel)}
+.value-pair>dt{padding:8px 12px;margin:0;background:var(--field-cap);border-bottom:1px solid var(--field-line);color:var(--field-accent)}
+.value-pair>dd{padding:12px 14px}
+.field-copy{display:block;max-width:66ch}
+.value-pair>.field-detail{margin:0;padding:10px 14px;border-top:1px solid var(--field-line)}
+.detail-label{font:600 10px/1.6 SUIT,sans-serif;display:block;margin-bottom:4px;color:var(--field-accent)}
+.feature-name{display:block;font-weight:600;font-size:1.12em;line-height:1.7}
+.feature-effect{display:block;margin-top:5px}
+.rule-value{font-family:SUIT,sans-serif;font-weight:650;font-variant-numeric:tabular-nums;color:var(--field-accent);white-space:nowrap}
+.stat-note{padding:9px 12px;background:var(--value-panel);border:1px solid var(--field-line);border-left:3px solid var(--field-accent)}
+.field-value{font:550 19px/1.7 Hahmlet,serif;color:inherit;word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line}
+.field-value.field-prose{font-size:15px;font-weight:450;line-height:1.9}
+.report .field-detail,.field-detail{font:400 12px/1.85 Hahmlet,serif;color:var(--field-label);margin:8px 0 0;word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line}
+.field-source{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin-top:6px;min-width:0}
+.field-source .source-link{font-size:10px;min-height:24px;color:var(--field-label);padding:2px 0}
+.field-source .dice-value{font-size:10px;color:var(--field-label)}
+.field-source .dice-value b{font-size:11px;min-width:21px;border-color:var(--field-line);color:inherit}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:1px;background:var(--field-line);border:1px solid var(--field-line);border-radius:2px;overflow:hidden}
+.stat-cell{min-width:0;background:var(--field-wash);padding:10px 8px 12px;text-align:center}
+.stat-cell dt{font:600 11px/1.5 SUIT,sans-serif;color:var(--field-label);margin:0 0 4px;word-break:keep-all;overflow-wrap:anywhere}
+.stat-cell dd{font:650 25px/1.4 SUIT,sans-serif;font-variant-numeric:tabular-nums;margin:0;overflow-wrap:anywhere;white-space:pre-line}
+.stat-word dd{font-size:15px;line-height:1.7}
+.attribute-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+.combat-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.combat-grid:has(>.stat-cell:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
+.attack-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.attack-grid dd{font-size:23px;color:var(--field-accent)}
+.field-matrix{border:0;padding:0;background:none}
+.field-matrix>.matrix-label{margin-bottom:7px}
+.field-matrix .field-source{margin-top:4px}
+.enemy-cards{margin:22px 0;gap:22px}
+.enemy-card{padding:0;border:0;border-radius:0;background:none}
+.enemy-card>h3{font:600 21px/1.6 Hahmlet,serif;margin:0 0 10px}
+.enemy-card>h3>span{font:600 13px/1.6 SUIT,sans-serif;color:var(--field-accent);display:block;margin-top:3px}
+.enemy-card+.enemy-card{border-top:2px solid var(--field-accent);padding-top:22px}
+.enemy-meta{display:flex;flex-wrap:wrap;gap:8px 22px;border-bottom:1px solid var(--field-line);padding:0 0 12px;margin-bottom:16px}
+.enemy-meta>div{min-width:0;display:flex;gap:6px;align-items:baseline}
+.enemy-meta dt{font:500 10px/1.6 SUIT,sans-serif;color:var(--field-label)}
+.enemy-meta dd{margin:0;font:600 12px/1.6 SUIT,sans-serif;overflow-wrap:anywhere;word-break:keep-all}
+.enemy-card .enemy-description{font:400 13px/1.8 Hahmlet,serif;color:var(--field-label);margin:0 0 16px}
+.enemy-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.enemy-layout,.enemy-abilities{min-width:0}
+.enemy-effects{margin-top:20px}
+.enemy-effects>h4{font:600 12px/1.5 SUIT,sans-serif;letter-spacing:0;color:var(--field-accent);border-bottom:1px solid var(--field-line);padding-bottom:8px;margin:0 0 12px}
+.enemy-effects .result-field{grid-column:1/-1;padding:0;border:0;background:none}
+.enemy-effects .field-value{font-size:14px;font-weight:450;line-height:1.9}
+.enemy-effects .field-grid{gap:12px}
+.condition-reference{margin-top:12px;border-left:3px solid var(--field-accent)}
+.condition-reference .result-field{padding:0;border-left:0}
+.condition-reference .field-value{font-size:13px;font-weight:450}
+.enemy-actions{margin:18px 0 0;gap:8px}
+.enemy-actions button{font-size:12px;min-height:42px}
+.report .report-details{margin:24px 0}
+.report-details>summary,.record-annotation>summary{display:flex;align-items:center;gap:12px;font:500 12px/1.7 SUIT,sans-serif;color:var(--cyan-paper);padding:12px 0;border-block:1px solid var(--field-line)}
+.record-annotation{margin:0 0 20px}
+.record-annotation>summary{border-top:0}
+.record-annotation .memo-label{padding-top:14px}
+.paper-facts{display:grid;gap:10px}
+.paper-costs{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}
+.paper-costs .stat-cell{padding:8px}
+.paper-costs .stat-cell dd{font-size:19px}
+.paper-costs .stat-cell dt{font-size:10px}
+.landing-reference{margin:22px 0}
+.landing-reference>summary{display:flex;align-items:center;gap:12px;font:500 12px/1.7 SUIT,sans-serif;color:var(--cyan-paper);padding:12px 0;border-block:1px solid var(--field-line)}
+.appraisal-table{width:100%;border-collapse:collapse;table-layout:fixed;font:500 13px/1.7 SUIT,sans-serif;font-variant-numeric:tabular-nums}
+.appraisal-table th,.appraisal-table td{border-bottom:1px solid var(--field-line);padding:11px 7px;text-align:right;overflow-wrap:anywhere}
+.appraisal-table th:first-child{width:38%;text-align:left}
+.appraisal-table thead{color:var(--field-label);font-size:10px}
+.appraisal-table tfoot{background:var(--field-wash);color:var(--field-accent);font-size:21px}
+.appraisal-table tfoot th{font-size:13px}
+.appraisal-table tfoot small{font-size:11px}
+.hacking-result .stat-grid{grid-template-columns:2fr 1fr}
+.hacking-result .stat-cell:first-child dd{font:550 18px/1.7 Hahmlet,serif}
+.enemy-reference,.threat-reference{--field-line:#345960;--field-wash:#0d2a30;--field-label:#a4c4c8;--field-accent:var(--cyan);--value-panel:#103039;--field-cap:#0b252c}
+.enemy-reference .enemy-meta{gap:5px 12px;padding-bottom:10px;margin:10px 0 14px}
+.enemy-reference .enemy-meta dd{font-size:11px}
+.enemy-reference .enemy-stats{gap:12px 8px}
+.enemy-reference .attribute-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.enemy-reference .stat-cell{padding:7px 4px}
+.enemy-reference .stat-cell dt{font-size:10px}
+.enemy-reference .stat-cell dd{font-size:19px}
+.enemy-reference .attack-grid dd{font-size:18px}
+.enemy-reference .field-value{font-size:13px}
+.enemy-reference .field-detail{font-size:11px}
+.enemy-reference .enemy-effects .field-value,.threat-reference .enemy-effects .field-value{font:400 12px/1.8 SUIT,sans-serif}
+.enemy-reference .enemy-effects{margin-top:14px}
+.enemy-reference .condition-reference .field-value,.threat-reference .condition-reference .field-value{font:400 12px/1.8 SUIT,sans-serif}
+.enemy-reference .enemy-actions{display:grid;grid-template-columns:1fr}
+.enemy-reference .enemy-actions button{width:100%;font-size:11px}
+.threat-reference details>summary{font-size:15px;min-height:44px;padding:8px 0;color:var(--cyan)}
+.threat-reference .enemy-stats{margin-top:15px}
+.threat-reference .enemy-effects>h4{color:var(--cyan)}
+.threat-reference .field-value{font:500 14px/1.8 SUIT,sans-serif}
+@media(min-width:1900px){.report-title h2{font-size:31px}.field-value{font-size:21px}.field-value.field-prose{font-size:17px}.stat-cell dd{font-size:29px}.stat-word dd{font-size:16px}.field-detail,.report .field-detail{font-size:14px}.enemy-effects .field-value{font-size:16px}.enemy-card .enemy-description{font-size:15px}}
+@media(min-width:2500px){.workbench-content{grid-template-columns:320px minmax(0,1fr) 320px;gap:28px}#report-host{max-width:none}.report{padding-inline:32px}.report-title h2{font-size:32px}.field-value{font-size:22px}.field-value.field-prose{font-size:17px;max-width:70ch}.enemy-card .enemy-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}.enemy-card .enemy-effects{margin-top:0}.enemy-reference .field-detail{font-size:11px}.enemy-reference .stat-cell dd{font-size:19px}}
+@media(max-width:800px){.report-title h2{font-size:23px}.field-grid{gap:12px}.field-value{font-size:18px}.field-value.field-prose{font-size:14px}.enemy-effects .field-value{font-size:13px}.enemy-reference .attribute-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.field-detail,.report .field-detail{font-size:12px}}
+@media(max-width:480px){.report .report-title{padding:16px 0!important}.report-title h2{font-size:21px}.field-grid{grid-template-columns:minmax(0,1fr)}.result-field{padding:11px 12px 7px}.field-matrix{padding:0}.attribute-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stat-cell{padding:8px 5px 10px}.stat-cell dd{font-size:24px}.stat-cell dt{font-size:10px}.stat-word dd{font-size:14px}.attack-grid dd{font-size:21px}.enemy-meta{gap:6px 14px}.enemy-meta dd{font-size:11px}.enemy-stats{gap:12px}.enemy-actions{display:grid;grid-template-columns:1fr}.enemy-actions button{width:100%}.enemy-reference .attribute-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.enemy-reference .attack-grid dd{font-size:18px}.appraisal-table{font-size:11px}.appraisal-table th,.appraisal-table td{padding:10px 5px}.appraisal-table thead{font-size:9px}.appraisal-table tfoot{font-size:18px}.report-footer{padding-top:14px}.hacking-result .stat-cell:first-child dd{font-size:15px}}
+@media print{.report{--field-line:#bbb;--field-wash:#fff;--field-label:#333;--field-accent:#000}.result-field,.stat-cell{break-inside:avoid}.enemy-actions,.record-annotation,.field-source,.report-details>summary{display:none}.report-title h2{font-size:22pt}.stat-cell dd{font-size:20pt}}
 .manual-choice{padding:14px;border:1px solid #869d84;margin:12px 0;font-size:13px;line-height:1.8}.manual-choice h3{font-size:16px}.manual-choice button{display:block;width:100%;text-align:left;min-height:44px;margin-top:8px;padding:10px 12px;border:1px solid #568585;background:#12373a;color:#d7f7f4;white-space:normal}.manual-choice p{margin:6px 0}

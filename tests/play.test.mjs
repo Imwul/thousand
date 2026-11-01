@@ -48,7 +48,7 @@ test('next steps follow the open result and otherwise stay on the static list',(
   assert.equal(nextStepView('hacking',hacking).match(/data-id="([^"]+)"/)[1],'door');
 });
 
-test('the report leads with paper acts, the landing grid, and one copy line',()=>{
+test('the report separates results, paper effects, choices, and optional landing reference',()=>{
   const door=make('door',{},()=>0.2);
   const guide=playGuide(door);
   assert.ok(guide.acts.some(act=>act.id==='time'&&act.text.includes('+1')));
@@ -103,21 +103,22 @@ test('the report leads with paper acts, the landing grid, and one copy line',()=
   assert.ok(copyLine(hazardHex).includes(hazardHex.headline));
   assert.ok(copyLine(hazardHex).endsWith(hazard));
   assert.equal(copyLine(hazardHex).includes('살아 있나?'),false);
-  const journal=reportView(hazardHex,[hazardHex]).match(/class="journal-text">([^<]*)/)[1];
-  assert.equal(journal,copyLine(hazardHex));
-  assert.ok(journal.includes(hazard));
+  const hazardReport=reportView(hazardHex,[hazardHex]);
+  assert.ok(hazardReport.includes(hazard));
+  assert.match(hazardReport,/class="value-pair"/);
+  assert.doesNotMatch(hazardReport,/journal-text|copy-journal/);
   const calmFaces=[[20,1],[10,4]];
   face=0;
   const calmHex=runProcedure('hex',{campaignId:'test',context:defaultContext(),rng:()=>{const [sides,value]=calmFaces[face++];return (value-.5)/sides;}});
   assert.equal(calmHex.items.some(item=>String(item.tableId).startsWith('biome-hazards-')),false);
   assert.equal(copyLine(calmHex),`${calmHex.headline} · ${calmHex.subline}`);
-  assert.match(reportView(asked,[asked]),/저널에 적을 문장/);
-  assert.match(reportView(asked,[asked]),/data-action="copy-journal"/);
+  assert.match(reportView(asked,[asked]),/<dt>질문<\/dt>/);
+  assert.doesNotMatch(reportView(asked,[asked]),/저널에 적을 문장|data-action="copy-journal"/);
   assert.doesNotMatch(reportView(asked,[asked]),/play-now|hex-grid|종이로 옮긴/);
   const hurt=make('injury',{},()=>0);
   assert.equal(copyLine(hurt).includes('종이 시트'),false);
   assert.ok(playGuide(hurt).acts.some(act=>act.id==='injury'));
-  assert.match(reportView(hurt,[hurt]),/시트에 적을 것/);
+  assert.match(reportView(hurt,[hurt]),/data-field="부상"/);
   const hour=make('activity',{},()=>0.9);
   assert.equal(copyLine(hour).includes('갱신하세요'),false);
   assert.match(copyLine(hour),/한 시간이 지났습니다/);

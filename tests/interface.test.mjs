@@ -23,10 +23,14 @@ test('actual app controller preserves drafts, writes records, annotates, filters
   click('[data-action="procedure"][data-id="question"]');await until(()=>q('#question')?.value==='이곳에 생존자가 있을까?');
   q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
   await until(async()=>(await db.load()).records.length===1);
+  assert.equal(q('#roll-options').open,false);
+  assert.equal(q('#roll-button').form.id,'roll-form');
+  assert.equal(q('[data-action="copy-journal"]'),null);
   assert.ok(q('#result-headline'));const first=(await db.load()).records[0];
   assert.equal(q('#paper-desk'),null);
   assert.doesNotMatch(q('#field-desk').textContent,/종이로 옮긴 항목/);
   assert.equal(q('#aside-log').textContent.trim(),'');
+  click('.record-annotation>summary');
   input('#record-memo','환기구 너머의 신호.');
   await until(async()=>(await db.load()).records[0].memo==='환기구 너머의 신호.');
   click('[data-action="pin"]');

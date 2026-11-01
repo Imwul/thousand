@@ -91,7 +91,7 @@ function renderDesk(){
   $('#expedition-readout').innerHTML=expeditionReadout(c.context,ownRecords().length);
   $('#next-steps').innerHTML=nextStepView(state.procedure, current());
   $('#aside-log').innerHTML=asideLog(ownRecords(),state.currentId);
-  $('#enemy-desk').innerHTML=enemyDeskView(activeCard(),state.procedure);
+  $('#enemy-desk').innerHTML=enemyDeskView(activeCard(),state.procedure,{currentId:state.currentId});
   $('#quick-disclosure').hidden=!current()||state.procedure==='question';
   $('#procedure-picker-label').textContent=pName(state.procedure);
   if(innerWidth>800)$('#procedure-picker').open=true;
@@ -106,6 +106,8 @@ function renderControls(){
 }
 function renderReport(animate=false){
   const host=$('#report-host'),r=current();
+  if(host.dataset.recordId!==(r?.id??'')||!r)$('#roll-options').open=!r||innerWidth>=2500;
+  host.dataset.recordId=r?.id??'';
   host.innerHTML=r?reportView(r,state.records,{unsaved:state.unsaved.has(r.id),saving:state.saving.has(r.id)}):emptyReport(state.procedure);
   host.classList.toggle('report-entrance',animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches);
   renderDesk();
@@ -281,17 +283,6 @@ document.addEventListener('click',async event=>{
       r.pinned=!r.pinned;renderReport();renderHistory();
       await enqueue(async()=>{if(!state.db)throw new Error('고정 상태를 저장할 수 없습니다.');if(!state.persisted.has(r.id)){await state.db.saveRecord(r);state.persisted.add(r.id);}else await state.db.annotateRecord(r.id,{pinned:r.pinned,memo:r.memo});state.unsaved.delete(r.id);},()=>state.unsaved.add(r.id));
     }
-    else if(action==='copy-journal'){
-      const text=button.parentElement?.querySelector('.journal-text')?.textContent??'';
-      if(!text)return;
-      try{await navigator.clipboard.writeText(text);message('저널 문장을 복사했습니다.');}
-      catch{showDialog('저널 문장',`<p class="field-help">브라우저가 자동 복사를 허용하지 않았습니다. 아래 문장을 선택해 저널에 적으세요.</p><textarea rows="4" readonly id="copy-text">${esc(text)}</textarea>`);$('#copy-text').select();}
-    }
-    else if(action==='copy'){
-      const r=current(),text=recordsMarkdown(campaign(),[localizeRecord(r,tables)]);
-      try{await navigator.clipboard.writeText(text);message('보고서와 주사위 근거를 복사했습니다.');}
-      catch{showDialog('보고서 복사',`<p class="field-help">브라우저가 자동 복사를 허용하지 않았습니다. 아래 내용을 선택해 복사하세요.</p><textarea rows="12" readonly id="copy-text">${esc(text)}</textarea>`);$('#copy-text').select();}
-    }
     else if(action==='context')contextDialog();
     else if(action==='twist'){campaign().context.twist=Number(button.dataset.value);await saveCampaign();renderControls();}
     else if(action==='library')libraryDialog();
@@ -324,7 +315,7 @@ document.addEventListener('click',async event=>{
       c.context.slots[r.encounter.slot-1]=r.encounter.label;c.context.slotRefs[r.encounter.slot-1]=r.procedureId==='encounter-roster'?r.id:null;rememberLocation(c);if(!await saveCampaign())return;renderControls();message(`${r.encounter.slot}번 슬롯에 유형을 기록했습니다.`);
     }
     else if(action==='source-info')showDialog('원문 확인',`<p class="about-copy">이 결과의 규칙은 제공하신 Core Rulebook의 p. ${esc(button.dataset.page)}를 사용합니다. 원본 PDF는 앱에 업로드하거나 포함하지 않았습니다.</p>`);
-    else if(action==='about')showDialog('규칙·사용 안내',`<div class="about-copy"><p>종이 캐릭터 시트 옆에 펼쳐 두는 <strong>Across a Thousand Dead Worlds</strong> 개인용 오라클 작업대입니다.</p><ul><li>상황을 선택하고 「굴리기」를 누르면 필요한 하위 표까지 한 보고서로 펼칩니다.</li><li>모든 새 결과는 이 브라우저에 자동 보관합니다. 「다시 굴림」은 이전 값을 보존한 새 기록입니다.</li><li>현재 맥락은 결과 생성에 필요한 값만 사용합니다. 화면 위 탐사 막대에서 장소·인원·반전을 확인합니다.</li><li>곁질문은 열린 보고서를 유지한 채 예/아니오를 기록합니다. 그 기록은 질문이 생긴 뒤에만 보고서 옆에 모입니다. 저널에 적을 문장은 보고서 위에 두고, 그 문장만 복사할 수 있습니다. 시간·보급·착륙 칸·부상처럼 시트에 적을 사실은 따로 올립니다. Wounds·Stress·소지품과 시간트랙은 앱이 바꾸지 않습니다. 보고서 위의 지금은 이미 나온 결과에서만 고르고, 금속 구체는 다가간 뒤에만 굴립니다. 헥스에서 찾은 Àrsaidh 시설은 도착표를 다시 굴리지 않고, 용도·규모·위험과 탐사 한도만 이어 굴립니다.</li><li>장면 종료 시 통제를 잃었다면 반전 확률을 올리고, 수기 시간트랙 초기화 때 1/6로 되돌리세요.</li></ul><p>2024 Core Rulebook의 기본 플레이용 ${tableList.length}개 표를 제공합니다. 솔로 GM·탐사지·행성·인물·생물·전투·정신 상태·항해·정거장·캐릭터 생성 표를 한국어로 번역했습니다. 인명·지명·기업명은 원문을 유지하며 생물명은 한글과 원문을 병기합니다. 수록 시나리오 전용 표는 제외했습니다. 원문 범위가 겹치는 감정 하위 표 1개는 직접 선택하도록 남겼고, 잘못 인쇄된 낮·밤 길이 값도 추정하지 않았습니다.</p><p>「반반」은 책의 기준인 D20 10 이상(55%)을 그대로 사용합니다. 돌발사건은 D8 두 개의 행·열 선택입니다. 자동 보안은 D10 표의 이름을 기준으로 본문 효과를 연결했습니다.</p><p>PC와 3440px 화면, 모바일을 지원합니다. ⌘/Ctrl+Enter: 굴리기, ⌘/Ctrl+K: 표 검색. 모든 기록은 브라우저에 저장되며 로그인만으로 기기 간 동기화되지 않습니다.</p><p>비공식 개인용 팬 도구. 원작 © Blackoath Entertainment. <a href="https://blackoathgames.com/across-a-thousand-dead-worlds" target="_blank" rel="noopener noreferrer">공식 게임 소개</a></p></div>`,{type:'about'});
+    else if(action==='about')showDialog('규칙·사용 안내',`<div class="about-copy"><p>종이 캐릭터 시트 옆에 펼쳐 두는 <strong>Across a Thousand Dead Worlds</strong> 개인용 오라클 작업대입니다.</p><ul><li>상황을 선택하고 「굴리기」를 누르면 필요한 하위 표까지 한 보고서로 펼칩니다.</li><li>모든 새 결과는 이 브라우저에 자동 보관합니다. 「다시 굴림」은 이전 값을 보존한 새 기록입니다.</li><li>현재 맥락은 결과 생성에 필요한 값만 사용합니다. 화면 위 탐사 막대에서 장소·인원·반전을 확인합니다.</li><li>곁질문은 열린 보고서를 유지한 채 예/아니오를 기록합니다. 그 기록은 질문이 생긴 뒤에만 보고서 옆에 모입니다. 결과는 항목명과 값을 나누어 보여 줍니다. 능력치·전투 수치·탐사 한도는 칸별로 확인하고 종이에 적으세요. 시간·보급·착륙 칸·부상 효과도 별도로 표시합니다. Wounds·Stress·소지품과 시간트랙은 앱이 바꾸지 않습니다. 보고서 위의 지금은 이미 나온 결과에서만 고르고, 금속 구체는 다가간 뒤에만 굴립니다. 헥스에서 찾은 Àrsaidh 시설은 도착표를 다시 굴리지 않고, 용도·규모·위험과 탐사 한도만 이어 굴립니다.</li><li>장면 종료 시 통제를 잃었다면 반전 확률을 올리고, 수기 시간트랙 초기화 때 1/6로 되돌리세요.</li></ul><p>2024 Core Rulebook의 기본 플레이용 ${tableList.length}개 표를 제공합니다. 솔로 GM·탐사지·행성·인물·생물·전투·정신 상태·항해·정거장·캐릭터 생성 표를 한국어로 번역했습니다. 인명·지명·기업명은 원문을 유지하며 생물명은 한글과 원문을 병기합니다. 수록 시나리오 전용 표는 제외했습니다. 원문 범위가 겹치는 감정 하위 표 1개는 직접 선택하도록 남겼고, 잘못 인쇄된 낮·밤 길이 값도 추정하지 않았습니다.</p><p>「반반」은 책의 기준인 D20 10 이상(55%)을 그대로 사용합니다. 돌발사건은 D8 두 개의 행·열 선택입니다. 자동 보안은 D10 표의 이름을 기준으로 본문 효과를 연결했습니다.</p><p>PC와 3440px 화면, 모바일을 지원합니다. ⌘/Ctrl+Enter: 굴리기, ⌘/Ctrl+K: 표 검색. 모든 기록은 브라우저에 저장되며 로그인만으로 기기 간 동기화되지 않습니다.</p><p>비공식 개인용 팬 도구. 원작 © Blackoath Entertainment. <a href="https://blackoathgames.com/across-a-thousand-dead-worlds" target="_blank" rel="noopener noreferrer">공식 게임 소개</a></p></div>`,{type:'about'});
   }catch(e){message(e.message||'작업을 완료하지 못했습니다.',true);}
 });
 document.addEventListener('submit',async event=>{
