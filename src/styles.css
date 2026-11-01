@@ -200,11 +200,11 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .enemy-meta dt{font:500 10px/1.6 SUIT,sans-serif;color:var(--field-label)}
 .enemy-meta dd{margin:0;font:600 12px/1.6 SUIT,sans-serif;overflow-wrap:anywhere;word-break:keep-all}
 .enemy-card .enemy-description{font:400 13px/1.8 Hahmlet,serif;color:var(--field-label);margin:0 0 16px}
-.enemy-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.enemy-stats{display:flex;flex-direction:column;gap:16px;min-width:0}
 .enemy-layout,.enemy-abilities{min-width:0}
 .enemy-effects{margin-top:20px}
-.enemy-effects>h4{font:600 12px/1.5 SUIT,sans-serif;letter-spacing:0;color:var(--field-accent);border-bottom:1px solid var(--field-line);padding-bottom:8px;margin:0 0 12px}
-.enemy-effects .result-field{grid-column:1/-1;padding:0;border:0;background:none}
+.enemy-effects>:is(h3,h4){font:600 12px/1.5 SUIT,sans-serif;letter-spacing:0;color:var(--field-accent);border-bottom:1px solid var(--field-line);padding-bottom:8px;margin:0 0 12px}
+.enemy-effects .result-field{padding:0;border:0;background:none}
 .enemy-effects .field-value{font-size:14px;font-weight:450;line-height:1.9}
 .enemy-effects .field-grid{gap:12px}
 .condition-reference{margin-top:12px;border-left:3px solid var(--field-accent)}
@@ -251,11 +251,116 @@ button,select,.utility-bar,.view-nav,.procedure,.field-desk,.quick-form,.expedit
 .enemy-reference .enemy-actions button{width:100%;font-size:11px}
 .threat-reference details>summary{font-size:15px;min-height:44px;padding:8px 0;color:var(--cyan)}
 .threat-reference .enemy-stats{margin-top:15px}
-.threat-reference .enemy-effects>h4{color:var(--cyan)}
+.threat-reference .enemy-effects>:is(h3,h4){color:var(--cyan)}
 .threat-reference .field-value{font:500 14px/1.8 SUIT,sans-serif}
 @media(min-width:1900px){.report-title h2{font-size:31px}.field-value{font-size:21px}.field-value.field-prose{font-size:17px}.stat-cell dd{font-size:29px}.stat-word dd{font-size:16px}.field-detail,.report .field-detail{font-size:14px}.enemy-effects .field-value{font-size:16px}.enemy-card .enemy-description{font-size:15px}}
-@media(min-width:2500px){.workbench-content{grid-template-columns:320px minmax(0,1fr) 320px;gap:28px}#report-host{max-width:none}.report{padding-inline:32px}.report-title h2{font-size:32px}.field-value{font-size:22px}.field-value.field-prose{font-size:17px;max-width:70ch}.enemy-card .enemy-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}.enemy-card .enemy-effects{margin-top:0}.enemy-reference .field-detail{font-size:11px}.enemy-reference .stat-cell dd{font-size:19px}}
+@media(min-width:2500px){.workbench-content{grid-template-columns:320px minmax(0,1fr) 320px;gap:28px}#report-host{max-width:none}.report{padding-inline:32px}.report-title h2{font-size:32px}.field-value{font-size:22px}.field-value.field-prose{font-size:17px;max-width:70ch}.enemy-card .enemy-layout{display:block}.enemy-card .enemy-effects{margin-top:24px}.enemy-reference .field-detail{font-size:11px}.enemy-reference .stat-cell dd{font-size:19px}}
 @media(max-width:800px){.report-title h2{font-size:23px}.field-grid{gap:12px}.field-value{font-size:18px}.field-value.field-prose{font-size:14px}.enemy-effects .field-value{font-size:13px}.enemy-reference .attribute-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.field-detail,.report .field-detail{font-size:12px}}
 @media(max-width:480px){.report .report-title{padding:16px 0!important}.report-title h2{font-size:21px}.field-grid{grid-template-columns:minmax(0,1fr)}.result-field{padding:11px 12px 7px}.field-matrix{padding:0}.attribute-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stat-cell{padding:8px 5px 10px}.stat-cell dd{font-size:24px}.stat-cell dt{font-size:10px}.stat-word dd{font-size:14px}.attack-grid dd{font-size:21px}.enemy-meta{gap:6px 14px}.enemy-meta dd{font-size:11px}.enemy-stats{gap:12px}.enemy-actions{display:grid;grid-template-columns:1fr}.enemy-actions button{width:100%}.enemy-reference .attribute-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.enemy-reference .attack-grid dd{font-size:18px}.appraisal-table{font-size:11px}.appraisal-table th,.appraisal-table td{padding:10px 5px}.appraisal-table thead{font-size:9px}.appraisal-table tfoot{font-size:18px}.report-footer{padding-top:14px}.hacking-result .stat-cell:first-child dd{font-size:15px}}
 @media print{.report{--field-line:#bbb;--field-wash:#fff;--field-label:#333;--field-accent:#000}.result-field,.stat-cell{break-inside:avoid}.enemy-actions,.record-annotation,.field-source,.report-details>summary{display:none}.report-title h2{font-size:22pt}.stat-cell dd{font-size:20pt}}
 .manual-choice{padding:14px;border:1px solid #869d84;margin:12px 0;font-size:13px;line-height:1.8}.manual-choice h3{font-size:16px}.manual-choice button{display:block;width:100%;text-align:left;min-height:44px;margin-top:8px;padding:10px 12px;border:1px solid #568585;background:#12373a;color:#d7f7f4;white-space:normal}.manual-choice p{margin:6px 0}
+
+/* Shared row rhythm: pair fields, then start a new complete row. */
+.field-grid{gap:16px;align-items:stretch;grid-auto-flow:row}
+.result-field{display:flex;flex-direction:column}
+.result-field>.value-pair{display:flex;flex-direction:column;flex:1}
+.value-pair>dt,.field-matrix>.matrix-label{min-height:34px;display:flex;align-items:center;line-height:1.5}
+.value-pair>.field-value{flex:1}
+.field-matrix>.matrix-label{padding:8px 12px;margin:0;background:var(--field-cap);border:1px solid var(--field-line);border-bottom:0;color:var(--field-accent);border-radius:2px 2px 0 0}
+.field-matrix>.stat-grid{border-radius:0 0 2px 2px}
+.field-source{min-height:28px;margin-top:4px;gap:4px 10px;align-items:center}
+.field-source .dice-value{margin-left:auto}
+.field-source .source-original{margin:0;font-size:10px}
+.field-source .source-original>summary{padding:2px 0;min-height:24px;display:flex;align-items:center}
+.field-source .source-original[open]{flex-basis:100%;order:3;margin:4px 0 0}
+.field-value>.english-result{margin-top:8px}
+.enemy-layout{container:enemy-values / inline-size}
+.enemy-combat-row{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:stretch;min-width:0}
+.enemy-combat-row>.field-matrix{grid-column:auto}
+.enemy-combat-row .stat-cell{min-height:88px}
+.enemy-combat-row .stat-grid{flex:1}
+.stat-cell{display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+.stat-cell dd{margin-top:auto;width:100%;max-width:100%;min-width:0}
+.stat-cell dt{max-width:100%;min-width:0}
+.stat-grid.stats-1{grid-template-columns:minmax(0,1fr)}
+.stat-grid.stats-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stat-grid.stats-4:not(.combat-grid){grid-template-columns:repeat(4,minmax(0,1fr))}
+.enemy-attack-condition .value-pair{border-left:3px solid var(--field-accent)}
+.enemy-attack-condition .field-value{font-size:13px;font-weight:450}
+.enemy-effects{margin-top:24px}
+.enemy-effects .field-grid{gap:16px}
+.condition-reference{margin-top:16px;border-left:0}
+.condition-reference .value-pair{border-left:3px solid var(--field-accent)}
+.enemy-reference .enemy-combat-row{grid-template-columns:minmax(0,1fr);gap:12px}
+.enemy-reference .enemy-combat-row .stat-cell{min-height:68px}
+.enemy-reference .enemy-attack-condition .field-value{font:400 11px/1.8 SUIT,sans-serif}
+.enemy-reference .enemy-effects .field-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+.enemy-reference .enemy-effects .field-wide{grid-column:auto}
+.enemy-reference .enemy-meta{align-items:baseline}
+.enemy-reference .field-grid{gap:12px}
+.field-desk>:empty{display:none}
+.appraisal-values{width:100%;table-layout:fixed;border-collapse:collapse;font:500 13px/1.8 SUIT,sans-serif;font-variant-numeric:tabular-nums}
+.appraisal-values th,.appraisal-values td{padding:10px 8px;border-bottom:1px solid var(--field-line);text-align:left;overflow-wrap:anywhere}
+.appraisal-values thead{color:var(--field-label);font-size:11px}
+.appraisal-values th:first-child{width:12%}
+.appraisal-values th:nth-child(2){width:40%}
+.appraisal-values td:nth-child(n+3),.appraisal-values th:nth-child(n+3){text-align:right}
+.appraisal-values td:nth-child(3){font-weight:650;color:var(--field-accent)}
+.appraisal-values .dice-value{color:var(--field-label)}
+.paired-fields>label:not(.toggle-row) :is(input,select){margin-top:auto}
+.button-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.button-row>button{width:100%}
+.library-toolbar{align-items:stretch}
+.history-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.history-card strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;line-clamp:3}
+.history-card small{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-clamp:2}
+.history-card time{margin-top:auto;padding-top:4px}
+@container enemy-values (min-width:720px){
+  .enemy-combat-row{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+  .enemy-combat-row .stat-cell dd{font-size:clamp(22px,2.5cqw,29px)}
+}
+@media(min-width:1181px){
+  .workspace{grid-template-columns:clamp(210px,10vw,280px) minmax(0,1fr) clamp(210px,10vw,280px);gap:24px}
+  .masthead{padding:24px 0 20px}
+  .utility-bar{min-height:56px}
+  .view-nav button{padding:16px 0 13px}
+}
+@media(min-width:2500px){
+  .workspace{grid-template-columns:clamp(240px,9.3vw,320px) minmax(0,1fr) clamp(240px,9.3vw,320px);gap:24px}
+  .workbench-content{grid-template-columns:clamp(270px,11vw,380px) minmax(0,1fr) clamp(270px,11vw,380px);gap:24px}
+  .control-panel{padding:24px;max-height:calc(100dvh - 300px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+  .field-desk{gap:16px;max-height:calc(100dvh - 300px);overscroll-behavior:contain;scrollbar-width:thin}
+  .field-desk .enemy-reference{max-height:none;overflow:visible}
+  .field-desk .desk-card{padding:16px}
+  .field-desk .desk-card h3{font-size:16px}
+  .history-heading h2{font-size:18px}
+  .history-card{padding:16px 6px}
+  .history-card strong{font-size:17px;line-height:1.75}
+  .history-card small{font-size:13px}
+}
+@media(max-width:1180px){
+  .workspace{grid-template-columns:minmax(0,1fr);gap:20px}
+  .scenario-rail{position:static;top:auto;max-height:none;min-height:0;overflow:visible;grid-column:1}
+  .scenario-rail .rail-heading{display:none}
+  #procedure-picker>summary{display:flex;justify-content:space-between;gap:12px;min-height:44px;padding:12px;border:1px solid #3d6268;color:var(--cyan);font-family:SUIT,sans-serif}
+  #procedure-picker>summary span:last-child{font-size:11px;color:#9ebdbd}
+  .workbench-content,.history-rail{grid-column:1}
+  .procedure-list{margin-top:8px}
+}
+@media(min-width:801px) and (max-width:1180px){
+  .procedure-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+  .procedure-group{margin:0}
+}
+@media(max-width:480px){
+  .field-grid,.enemy-combat-row{gap:12px}
+  .field-source{min-height:26px}
+  .enemy-effects .field-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+  .enemy-combat-row .stat-cell{min-height:76px}
+  .stat-grid.stats-4:not(.combat-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+  .enemy-attack-condition .field-value{font-size:12px}
+  .appraisal-values{font-size:12px}
+  .appraisal-values th,.appraisal-values td{padding:9px 5px}
+  .appraisal-values thead{font-size:10px}
+  .button-row{grid-template-columns:minmax(0,1fr)}
+}
+@media print{.history-card strong,.history-card small{-webkit-line-clamp:unset;line-clamp:unset}.enemy-layout{container-type:normal}}

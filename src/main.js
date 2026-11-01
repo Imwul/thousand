@@ -10,7 +10,7 @@ import {enemyCards,continuationOptions,RELATED_PROCEDURES} from './domain/contin
 import {enemyDeskView,rosterOptions,locationList} from './components/play-tools.js';
 
 const $=s=>document.querySelector(s);
-const desktopLayout=matchMedia('(min-width: 801px)');
+const desktopLayout=matchMedia('(min-width: 1181px)');
 desktopLayout.addEventListener('change',event=>{$('#procedure-picker').open=event.matches;});
 const state={db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50,followParentId:null,followEncounterIndex:0,nextActor:null};
 let toastTimer,optionTimer,pendingMemo=null;
@@ -60,7 +60,7 @@ function activateEnemy(run){
 }
 async function openFresh(id){
   await flushMemo();await flushOptions();state.followParentId=null;state.nextActor=null;state.currentId=null;state.procedure=id;touchRecent(id);
-  renderControls();renderReport();renderHistory();if(innerWidth<801)$('#procedure-picker').open=false;
+  renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
   $('.control-panel').scrollIntoView({behavior:'instant',block:'start'});
 }
 async function followProcedure(id,parent=current(),index=0,encounterIndex=0){
@@ -80,7 +80,7 @@ async function followProcedure(id,parent=current(),index=0,encounterIndex=0){
   if(id==='creature'&&existingSpecies)Object.assign(campaign().options,{species:existingSpecies.type,...(existingSpecies.guardianModel?{guardianModel:existingSpecies.guardianModel}:{})});
   state.nextActor=['behavior','combat-start','injury','scatter'].includes(id)?card?{recordId:card.sourceId??parent.id,index:card.index??index}:parent.actor??null:null;
   state.followParentId=parent.id;state.currentId=null;state.procedure=id;touchRecent(id);await saveCampaign();
-  renderControls();renderReport();renderHistory();if(innerWidth<801)$('#procedure-picker').open=false;
+  renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
   $('.control-panel').scrollIntoView({behavior:'instant',block:'start'});
 }
 
@@ -91,10 +91,10 @@ function renderDesk(){
   $('#expedition-readout').innerHTML=expeditionReadout(c.context,ownRecords().length);
   $('#next-steps').innerHTML=nextStepView(state.procedure, current());
   $('#aside-log').innerHTML=asideLog(ownRecords(),state.currentId);
-  $('#enemy-desk').innerHTML=enemyDeskView(activeCard(),state.procedure,{currentId:state.currentId});
+  $('#enemy-desk').innerHTML=enemyDeskView(activeCard(),state.procedure,{currentId:state.currentId,related:!!current()?.actor||enemyCards(current()).length>0});
   $('#quick-disclosure').hidden=!current()||state.procedure==='question';
   $('#procedure-picker-label').textContent=pName(state.procedure);
-  if(innerWidth>800)$('#procedure-picker').open=true;
+  if(desktopLayout.matches)$('#procedure-picker').open=true;
 }
 function renderControls(){
   const p=PROCEDURES.find(p=>p.id===state.procedure),c=campaign();
@@ -238,7 +238,7 @@ document.addEventListener('click',async event=>{
     if(action==='procedure'){
       state.followParentId=null;state.nextActor=null;await flushMemo();touchRecent(button.dataset.id);await flushOptions();state.procedure=button.dataset.id;
       state.currentId=ownRecords().filter(r=>r.procedureId===state.procedure).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
-      renderControls();renderReport();renderHistory();if(innerWidth<801)$('#procedure-picker').open=false;
+      renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
       const panel=$('.control-panel'),top=panel.getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight-160)panel.scrollIntoView({behavior:'instant',block:'start'});
     }
@@ -403,7 +403,7 @@ async function askAside(){
   }catch(e){message(e.message,true);}finally{button.disabled=false;}
 }
 async function start(){
-  $('#procedure-picker').open=innerWidth>800;
+  $('#procedure-picker').open=desktopLayout.matches;
   try{
     state.db=await openStore();const data=await state.db.load();Object.assign(state,data);state.persisted=new Set(state.records.map(r=>r.id));
     if(!state.campaigns.length){const c=await state.db.createCampaign('첫 번째 탐사');state.campaigns=[c];state.selectedId=c.id;}

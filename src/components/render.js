@@ -170,7 +170,7 @@ function reportFields(run,items){
   }
   if(!fields.length&&!run.enemy&&!run.cards?.length&&!run.hacking){extra('결과',run.headline);if(run.subline)fields.push({title:'설명',text:run.subline});}
   if(run.procedureId==='dice')return `<section class="result-section"><h3>주사위 결과</h3>${statGrid([{label:'주사위 식',value:run.options.diceExpression},{label:'합계',value:run.headline}],'주사위 결과','dice-total-grid')}<p class="field-detail">${esc(fields[0]?.detail??'')}</p></section>`;
-  if(run.procedureId==='appraisal'&&appraisalSheet(run))fields=fields.filter(item=>item.title!=='정산 내역');
+  if(run.procedureId==='appraisal'&&appraisalSheet(run))fields=fields.filter(item=>item.title!=='정산 내역'&&item.tableId!=='artifact-value');
   return resultSections(fields);
 }
 export function reportView(run,records,{unsaved=false,saving=false}={}){

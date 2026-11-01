@@ -4,7 +4,7 @@ import {Window} from 'happy-dom';
 import {PROCEDURES,defaultContext} from '../src/domain/model.js';
 import {runProcedure,runEncounterRoster,runLockAttempt} from '../src/generators/procedures.js';
 import {reportView} from '../src/components/render.js';
-import {statEntries,resultField} from '../src/components/result-fields.js';
+import {statEntries,resultField,fieldGrid} from '../src/components/result-fields.js';
 import {enemyDeskView,threatReference} from '../src/components/play-tools.js';
 import {GUARDIANS} from '../src/data/guardians.js';
 import {localizeRecord} from '../src/data/localization.js';
@@ -27,6 +27,30 @@ test('prose effects have separate label and value areas; emphasis preserves text
   assert.deepEqual(item,before);
 });
 
+test('short and long fields stay paired; matrices and final odd fields never leave half rows empty',()=>{
+  const items=[{title:'첫 칸',text:'짧은 값'},{title:'긴 칸',text:'긴 설명이어도 같은 행에 유지한다. '.repeat(12)},{title:'행 끝',text:'단독 값'},{title:'전투 수치',text:'상처 1 / 경계 10 / 장갑 — / 방어 2'},{title:'후속 A',text:'A'},{title:'후속 B',text:'B'},{title:'마지막 칸',text:'C'}];
+  const before=structuredClone(items),w=new Window(),root=w.document.createElement('main');root.innerHTML=fieldGrid(items);
+  const fields=[...root.querySelector('.field-grid').children];
+  assert.equal(fields[0].classList.contains('field-wide'),false);
+  assert.equal(fields[1].classList.contains('field-wide'),false);
+  assert.equal(fields[1].querySelector('.field-copy').textContent,items[1].text);
+  assert.equal(fields[2].classList.contains('field-wide'),true);
+  assert.equal(fields[3].classList.contains('field-matrix'),true);
+  assert.equal(fields[4].classList.contains('field-wide'),false);
+  assert.equal(fields[5].classList.contains('field-wide'),false);
+  assert.equal(fields[6].classList.contains('field-wide'),true);
+  assert.deepEqual(items,before);
+});
+
+test('source, original text disclosure and dice share one metadata row below the value',()=>{
+  const item={title:'위험',text:'결과 값',page:193,dice:'d10',roll:6,sourceText:'An original rulebook description that remains available for reference.'};
+  const w=new Window(),root=w.document.createElement('main');root.innerHTML=resultField(item);
+  const footer=root.querySelector('.field-source');
+  assert.equal(footer.querySelectorAll(':scope>.source-link,:scope>.source-original,:scope>.dice-value').length,3);
+  assert.equal(root.querySelector('.value-pair .field-copy').textContent,item.text);
+  assert.equal(footer.querySelector('.source-original p').textContent,item.sourceText);
+});
+
 test('every Guardian tier has individually labeled stats, including zero and printed dashes',()=>{
   for(const [model,guardian] of Object.entries(GUARDIANS))for(const [tier,stats] of Object.entries(guardian.tiers)){
     const run=make('creature',{species:'Guardian',guardianModel:model,tier}),before=structuredClone(run),root=dom(run);
@@ -36,7 +60,7 @@ test('every Guardian tier has individually labeled stats, including zero and pri
     assert.equal(root.querySelector('[data-field="공격과 피해"] .stat-cell:last-child dd').textContent,stats.damage);
     assert.equal(root.querySelector('#result-headline').textContent,run.enemy.name);
     assert.equal(root.querySelectorAll('.enemy-card [data-field="기본 능력치"]').length,1);
-    if(model==='anansi')assert.match(root.querySelector('[data-field="공격과 피해"] .field-detail').textContent,/直接|직접 공격 대상으로/);
+    if(model==='anansi')assert.equal(root.querySelector('[data-field="공격 조건"] .field-copy').textContent,run.items.find(item=>item.title==='공격과 피해').detail);
     assert.equal(root.querySelector('.journal-text,[data-action="copy"],[data-action="copy-journal"]'),null);
     assert.deepEqual(run,before);
   }
@@ -64,6 +88,9 @@ test('mixed rosters retain separate tier stats and counts while sharing the appe
   assert.deepEqual(run,before);
   assert.equal(enemyDeskView({...run.cards[0],sourceId:run.id,index:0},'creature',{currentId:run.id}).includes('enemy-reference'),false);
   assert.equal(enemyDeskView({...run.cards[0],sourceId:run.id,index:0},'behavior',{currentId:'action'}).includes('enemy-reference'),true);
+  for(const procedure of ['planet','npc-profile','station','travel','appraisal'])assert.equal(enemyDeskView({...run.cards[0],sourceId:run.id,index:0},procedure,{currentId:'other'}),'');
+  assert.equal(enemyDeskView({...run.cards[0],sourceId:run.id,index:0},'question',{currentId:'question'}).includes('enemy-reference'),true);
+  assert.equal(enemyDeskView({...run.cards[0],sourceId:run.id,index:0},'table',{currentId:'quick',related:true}).includes('enemy-reference'),true);
 });
 
 test('fixed threat references use the same labeled stats and preserve recovery conditions',()=>{
@@ -84,6 +111,10 @@ test('appraisal reads the saved breakdown, rather than recalculating from change
   assert.equal(rows[1].lastElementChild.textContent,'100');
   assert.equal(root.querySelector('.appraisal-table tfoot td').textContent.trim(),'300 DC');
   assert.equal(root.querySelectorAll('[data-field="정산 내역"]').length,0);
+  const valuesRows=[...root.querySelectorAll('.appraisal-values tbody tr')];
+  assert.equal(valuesRows.length,2);
+  assert.deepEqual(valuesRows.map(row=>row.querySelector('th').textContent),['1','2']);
+  assert.deepEqual(valuesRows.map(row=>row.querySelectorAll('td')[1].textContent),['50','50']);
   assert.deepEqual(run,before);
 });
 
@@ -92,9 +123,15 @@ test('all situation outputs retain their field values without a concatenated jou
     const run=make(procedure.id,{},()=>face),before=structuredClone(run),root=dom(run);
     assert.ok(root.querySelector('#result-headline'));
     assert.equal(root.querySelector('.journal-text,.copy-line,[data-action="copy-journal"],.dice-ribbon'),null);
+    let artifactIndex=0;
     for(const item of localizeRecord(run,tables).items){
       const entries=statEntries(item);
-      if(entries){for(const entry of entries)assert.ok(values(root,'.stat-cell').some(x=>x.label===entry.label&&x.value===entry.value),`${procedure.id}: ${entry.label} ${entry.value}`);}
+      if(item.tableId==='artifact-value'&&root.querySelector('.appraisal-values')){
+        const row=root.querySelectorAll('.appraisal-values tbody tr')[artifactIndex++];
+        if(entries){assert.equal(row.querySelector('td').textContent,entries[0].value);assert.equal(row.querySelectorAll('td')[1].textContent+' DC',entries[1].value);}
+        else assert.ok(row.textContent.includes(item.text));
+      }
+      else if(entries){for(const entry of entries)assert.ok(values(root,'.stat-cell').some(x=>x.label===entry.label&&x.value===entry.value),`${procedure.id}: ${entry.label} ${entry.value}`);}
       else if(item.title==='정산 내역')assert.ok(root.querySelector('.appraisal-table'));
       else if(procedure.id==='dice')assert.equal(root.querySelector('.dice-total-grid .stat-cell:last-child dd').textContent,run.headline);
       else assert.ok(root.textContent.includes(item.text),`${procedure.id}: ${item.title}`);
