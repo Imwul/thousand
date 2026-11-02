@@ -4,6 +4,7 @@ import {COMBAT_TABLES,enemyCards,tierLabel} from '../domain/continuation.js';
 import {creatureLabel} from '../data/glossary.js';
 import {KNOWN_THREATS,knownThreatItems} from '../data/enemies.js';
 import {resultField,statEntries,fieldGrid} from './result-fields.js';
+import {MODIFIED_TABLES} from '../domain/table-modifiers.js';
 
 function effectReferences(items){const tiers=new Set();for(const item of items)for(const match of item.text.matchAll(/(?:Poisoned|Poison|중독|독)\s+(IV|III|II|I)\b/g))tiers.add(match[1]);return [...tiers].map(tier=>{const row=tables.poison.rows[['I','II','III','IV'].indexOf(tier)];return `<div class="condition-reference">${resultField({title:row.text,text:row.detail,page:88},{compact:true})}</div>`;}).join('');}
 const identityItem=item=>['이름','외형','생물 유형'].includes(item.group)||['수호자 모델','생물 역할'].includes(item.title)||item.tableId==='creature-role';
@@ -36,7 +37,7 @@ const combatProcedures=new Set(['creature','combat-start','behavior','injury','s
 export function enemyDeskView(card,procedure,{currentId,related=false}={}){
   const relevant=combatProcedures.has(procedure)||related||!!(card&&['question','resolution'].includes(procedure));
   const reference=card&&relevant&&card.sourceId!==currentId?`<section class="desk-card enemy-reference"><div class="desk-card-heading"><h3>현재 적</h3><button type="button" data-action="enemy-close" aria-label="현재 적 참조 접기">×</button></div><strong>${esc(card.enemy.name)}</strong>${enemyBadges(card)}${enemyValues(card,{compact:true})}${enemyActions(card,card.sourceId,card.index,{desk:true})}</section>`:'';
-  const tools=relevant?`<details class="desk-card combat-tools"><summary>전투 중 판정</summary><p class="desk-note">판정이 필요한 순간에만 굴립니다. 전투 돌발사건은 선택 규칙: 전투당 한 번, Luck 1 소비.</p><div>${COMBAT_TABLES.filter(([id])=>!(card?.enemy.type==='Guardian'&&['morale-creature','recovery-status'].includes(id))&&!(card?.enemy.known&&id==='morale-creature')).map(([id,label])=>`<button type="button" data-action="quick-table" data-id="${id}">${esc(label)}</button>`).join('')}</div><button type="button" data-action="table" data-id="known-threat">추적 위협 6종 참조</button></details>`:'';
+  const tools=relevant?`<details class="desk-card combat-tools"><summary>전투 중 판정</summary><p class="desk-note">판정이 필요한 순간에만 굴립니다. 전투 돌발사건은 선택 규칙: 전투당 한 번, Luck 1 소비.</p><div>${COMBAT_TABLES.filter(([id])=>!(card?.enemy.type==='Guardian'&&['morale-creature','recovery-status'].includes(id))&&!(card?.enemy.known&&id==='morale-creature')).map(([id,label])=>`<div class="combat-tool-row"><button type="button" data-action="quick-table" data-id="${id}">${esc(label)}</button>${MODIFIED_TABLES.has(id)?`<button type="button" data-action="table" data-id="${id}" data-parent="${esc(currentId??'')}" aria-label="${esc(label)} 보정하여 굴리기">보정</button>`:''}</div>`).join('')}</div><button type="button" data-action="table" data-id="known-threat">추적 위협 6종 참조</button></details>`:'';
   return reference+tools;
 }
 

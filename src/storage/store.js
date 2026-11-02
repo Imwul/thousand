@@ -3,6 +3,7 @@ import {PAPER_CHECKS,sanitizePaper,sanitizeRecent} from '../domain/desk.js';
 import {tables} from '../data/tables.js';
 import {lookup} from '../generators/dice.js';
 import {copyLine} from '../domain/play.js';
+import {validateModifier} from '../domain/table-modifiers.js';
 export const DATABASE_NAME='thousand-worlds-logbook';
 const req = request => new Promise((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error??new Error('저장 요청에 실패했습니다.'));});
 function done(tx) {return new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error??new Error('저장 작업이 중단되었습니다.'));tx.onerror=()=>reject(tx.error??new Error('저장 공간에 기록할 수 없습니다.'));});}
@@ -59,6 +60,11 @@ function blueprint(v){
   try{for(const [id,value] of Object.entries(v.tables)){if(!Object.hasOwn(tables,id)||!Number.isInteger(value))return false;lookup(tables[id],value);}
     for(const [id,values] of Object.entries(v.abilities??{})){if(!['enemy-ability','psychic-ability'].includes(id)||!Array.isArray(values)||values.length>4)return false;for(const value of values)lookup(tables[id],value);}
   }catch{return false;}
+  if('defenseVariant' in v&&(!Number.isInteger(v.defenseVariant)||v.defenseVariant<1||v.defenseVariant>6))return false;
+  if(v.recoveryChoices!==undefined){
+    if(!v.recoveryChoices||typeof v.recoveryChoices!=='object'||Array.isArray(v.recoveryChoices))return false;
+    for(const [tier,values] of Object.entries(v.recoveryChoices))if(!['standard','elite','overwhelming'].includes(tier)||!Array.isArray(values)||values.length!==3||values.some(value=>!Number.isInteger(value)||value<1||value>6))return false;
+  }
   return (!v.name||string(v.name,1000))&&(!v.statVariant||Number.isInteger(v.statVariant)&&v.statVariant>=1&&v.statVariant<=6)&&(!v.rangeDie||Number.isInteger(v.rangeDie)&&v.rangeDie>=1&&v.rangeDie<=10)&&(!('intelligence' in v)||Number.isInteger(v.intelligence)&&v.intelligence>=2&&v.intelligence<=20);
 }
 function itemsValid(items){return Array.isArray(items)&&items.length<=200&&items.every(i=>i&&string(i.title,300)&&string(i.text,10000)&&page(i.page)&&(!('reused' in i)||typeof i.reused==='boolean')&&(!i.detail||string(i.detail,10000))&&(!i.en||string(i.en,10000))&&(!i.group||string(i.group,300))&&(!i.sourceText||string(i.sourceText,20000))&&(!i.key||string(i.key,10000))&&(!i.image||/^\/maps\/(cover-\d+|guardian-\d+)\.png$/.test(i.image)));}
@@ -89,6 +95,7 @@ export function validateBackup(input){
     if(r.encounter&&(!Number.isInteger(r.encounter.slot)||r.encounter.slot<1||r.encounter.slot>r.context.slots.length||!string(r.encounter.label,300)))throw new Error('조우 슬롯이 손상되었습니다.');
     if(r.manualTableId&&tables[r.manualTableId]?.rollable!==false)throw new Error('수동 선택 대기 표가 손상되었습니다.');
     if(r.manual&&(tables[r.tableId]?.rollable!==false||!Number.isInteger(r.selectedRow)||!tables[r.tableId].rows[r.selectedRow]||r.trace.length))throw new Error('수동 선택 기록이 손상되었습니다.');
+    if(r.tableModifier!==undefined)validateModifier(r.tableId,r.tableModifier);
     if(r.enemy&&!enemy(r.enemy))throw new Error('적 카드가 손상되었습니다.');
     if(r.blueprint&&!blueprint(r.blueprint))throw new Error('생물 원형이 손상되었습니다.');
     if(r.cards&&(!Array.isArray(r.cards)||r.cards.length<1||r.cards.length>4||r.cards.some(card=>!enemy(card.enemy)||!Number.isInteger(card.count)||card.count<1||card.count>100||!itemsValid(card.items)||!Array.isArray(card.notes)||card.notes.some(n=>!string(n,10000)))))throw new Error('조우 카드가 손상되었습니다.');
@@ -99,7 +106,7 @@ export function validateBackup(input){
     if(r.subject&&(!string(r.subject.name,1000)||!ref(r.subject.recordId)))throw new Error('관련 인물이 손상되었습니다.');
     if(r.parentId!==null&&!string(r.parentId,100))throw new Error('이전 기록 연결이 손상되었습니다.');
     if(r.paper!==undefined)sanitizePaper(r.paper);
-    if('aside' in r&&typeof r.aside!=='boolean')throw new Error('곁질문 표시가 손상되었습니다.');
+    if('aside' in r&&typeof r.aside!=='boolean')throw new Error('곁굴림 표시가 손상되었습니다.');
     rids.add(r.id);
   }
   const recordById=new Map(input.records.map(r=>[r.id,r]));

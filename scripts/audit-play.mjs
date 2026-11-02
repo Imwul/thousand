@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
-import {runProcedure,runLockAttempt,runHackReroll,runEncounterRoster} from '../src/generators/procedures.js';
+import {runProcedure,runLockAttempt,runHackReroll,runEncounterRoster,runFollowup} from '../src/generators/procedures.js';
 import {PROCEDURES,SLOT_COUNTS,defaultContext} from '../src/domain/model.js';
+import {followupChoices,effectDice} from '../src/domain/followups.js';
 
 const seeded=seed=>()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
 const traceIds=new Set(),stats=[];
-let runs=0,locks=0,hacks=0,rosters=0;
+let runs=0,locks=0,hacks=0,rosters=0,followups=0,effects=0;
 for(const p of PROCEDURES){
   let longest=0;
   for(let i=0;i<300;i++){
@@ -18,8 +19,8 @@ for(const p of PROCEDURES){
       randomIntelligence:!!(i%2),aquatic:!!(i%2),moodDepth:1+i%3,
       stationActivity:['carousing','night','locals','news'][i%4],
       behavior:['brute','lurker','ranged','swarm','psychic','spitter','clobber','taker','psybane','bomber','cecaelia'][i%11],
-      artifactCount:i%7,retarget:!!(i%2),cautious:!!(i%3),checkEncounterReaction:!!(i%2),generateCover:!!(i%2),
-      hackingDifficulty:1+i%6,diceExpression:['2d10+5','d100×3','3d12-2','100d100'][i%4],sights:!!(i%2)};
+      artifactCount:i%7,injuryModifier:[0,2,-2][i%3],retarget:!!(i%2),cautious:!!(i%3),checkEncounterReaction:!!(i%2),generateCover:!!(i%2),
+      hackingDifficulty:1+i%6,diceExpression:['2d10+5','d100×3','3d12-2','100d100'][i%4],sights:!!(i%2),stressMode:i%2?'reaction':'breakdown',gearAction:i%2?'availability':'experimental',goldTier:!!(i%3),wellConnected:!!(i%2),bribeSteps:i%15};
     const r=runProcedure(p.id,{campaignId:'audit',context,options,rng:seeded(9001+i*37)});
     for(const item of r.items){
       assert.equal(typeof item.text,'string',`${p.id}/${i}: result must have text`);
@@ -47,8 +48,14 @@ for(const p of PROCEDURES){
       assert.deepEqual(r,before);assert.equal(next.parentId,r.id);assert.equal(new Set(next.cards.map(c=>c.enemy.name)).size,1);
       assert.ok(next.cards.every(c=>c.enemy.type===next.blueprint.type));rosters++;
     }
+    for(const choice of followupChoices(r)){
+      const before=structuredClone(r),next=runFollowup(r,choice.id,{rng:seeded(i+19)});assert.equal(next.parentId,r.id);assert.deepEqual(r,before);followups++;
+    }
+    for(const {expression} of effectDice(r)){
+      const next=runProcedure('dice',{campaignId:'audit',context:r.context,options:{diceExpression:expression},rng:seeded(i+44)});assert.ok(Number.isFinite(Number(next.headline)));effects++;
+    }
     runs++;
   }
   stats.push({procedure:p.id,runs:300,longestResult:longest});
 }
-console.log(JSON.stringify({runs,lockContinuations:locks,hackingContinuations:hacks,rosterContinuations:rosters,distinctTraceIds:traceIds.size,stats},null,2));
+console.log(JSON.stringify({runs,lockContinuations:locks,hackingContinuations:hacks,rosterContinuations:rosters,conditionalContinuations:followups,effectDice:effects,distinctTraceIds:traceIds.size,stats},null,2));

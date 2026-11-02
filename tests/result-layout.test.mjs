@@ -95,7 +95,7 @@ test('mixed rosters retain separate tier stats and counts while sharing the appe
   }
   const appearance=run.cards[0].items.filter(item=>item.group==='외형');
   assert.equal(root.querySelectorAll('.report-details [data-field]').length,run.cards[0].items.filter(item=>['이름','외형','생물 유형'].includes(item.group)||item.title==='생물 역할'||item.tableId==='creature-role').length);
-  assert.ok(appearance.every(item=>root.querySelector('.report-details').textContent.includes(item.text)));
+  assert.ok(appearance.every(item=>root.querySelector('.report-details:not(.effect-dice)').textContent.includes(item.text)));
   assert.deepEqual(run,before);
   assert.equal(enemyDeskView({...run.cards[0],sourceId:run.id,index:0},'creature',{currentId:run.id}).includes('enemy-reference'),false);
   assert.equal(enemyDeskView({...run.cards[0],sourceId:run.id,index:0},'behavior',{currentId:'action'}).includes('enemy-reference'),true);

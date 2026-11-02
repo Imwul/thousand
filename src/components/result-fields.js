@@ -31,6 +31,13 @@ export function statEntries(item){
     const entries=text.split(/\s*\/\s*/).map(part=>part.match(/^([^:]+):\s*(.+)$/));
     if(entries.every(Boolean))return entries.map(([,label,value])=>({label,value}));
   }
+  if(item.title==='표 판정 수치'){
+    return text.split(/\s*\/\s*/).map(part=>{const [label,...value]=part.split(' ');return {label,value:value.join(' ')};});
+  }
+  if(item.title==='입수 수치'){
+    const entries=text.split(/\s*\/\s*/).map(part=>part.match(/^(D20|보정|합계|목표)\s+(.+)$/));
+    if(entries.length===4&&entries.every(Boolean))return entries.map(([,label,value])=>({label,value}));
+  }
   if(item.tableId==='activity'){
     const match=text.match(/^(.+?) · 최대 (\d+)회 매복$/);
     if(match)return [{label:'활동도',value:match[1]},{label:'최대 매복',value:`${match[2]}회`}];
@@ -82,7 +89,7 @@ function proseValue(item){
 export function resultField(item,{compact=false,full=false}={}){
   const entries=statEntries(item),text=String(item.text??'');
   const attributes=entries?.length===6&&entries[0].label==='STR';
-  const die=item.dice?`<span class="dice-value">${item.reused?'기존값':esc(item.dice)} <b>${esc(item.roll)}</b></span>`:'';
+  const die=item.dice?`<span class="dice-value">${item.modifier?'표 적용값':item.reused?'기존값':esc(item.dice)} <b>${esc(item.roll)}</b></span>`:'';
   const meta=compact?'':`<div class="field-source">${source(item)}${sourceOriginal(item)}${die}</div>`;
   // Anansi's conditional attack stays one value; the starred condition stays visible.
   const detail=item.detail?ruleValues(item.detail):'';

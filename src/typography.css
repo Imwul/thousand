@@ -71,9 +71,16 @@ h3,h4{font-size:var(--type-section);font-weight:600;line-height:1.6}
 .appraisal-table tfoot td{font:650 var(--type-number)/1.4 SUIT,sans-serif}
 .manual-choice h3,.threat-reference details>summary{font:600 var(--type-section)/1.6 SUIT,sans-serif}
 .manual-choice,.manual-choice button{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
+.effect-dice-list strong{font:650 var(--type-section)/1.6 SUIT,sans-serif;font-variant-numeric:tabular-nums}
+.effect-dice-list span{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
 @media(max-width:720px){
-  :root{--type-title:24px;--type-body:15px;--type-number:24px}
+  :root{--type-title:24px;--type-number:24px}
   .app-heading h1,.app-heading .brand{font-size:30px}
+}
+@media(max-width:480px){:root{--type-body:15px}}
+@media (pointer:coarse), (max-width:1400px){
+  .shell input:not([type=checkbox]):not([type=radio]),.shell select,.shell textarea,
+  dialog input:not([type=checkbox]):not([type=radio]),dialog select,dialog textarea{font-size:16px}
 }
 @media print{
   :root{--type-title:24px;--type-body:14px;--type-number:24px}

@@ -41,7 +41,10 @@ export const NEXT_STEPS = {
   alternate:['area','activity','door'],
   activity:['surprise','creature','area'],
   'artifact-activate':['question','inspiration'],
-  scatter:['injury','combat-start']
+  scatter:['injury','combat-start'],
+  dread:['stress','trauma','question'],
+  'gear-check':['station','travel','dice'],
+  'time-step':['area','activity','question']
 };
 
 const PROCEDURE_IDS = new Set(PROCEDURES.map(p=>p.id));

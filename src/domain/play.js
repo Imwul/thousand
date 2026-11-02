@@ -4,11 +4,11 @@ import {nextStepIds} from './desk.js';
 export const PROCEDURE_GROUPS = [
   {id:'ask',label:'질문',ids:['question','scene','surprise','inspiration','resolution']},
   {id:'voyage',label:'항해',ids:['travel','ship-name','arrival']},
-  {id:'site',label:'시설',ids:['site-name','area','door','hacking','alternate','activity','artifact-activate']},
+  {id:'site',label:'시설',ids:['site-name','area','door','hacking','alternate','time-step','activity','artifact-activate']},
   {id:'planet',label:'행성',ids:['planet','hex','biome-border']},
   {id:'people',label:'인물',ids:['npc','npc-profile','emotion','information','conversation']},
-  {id:'fight',label:'전투',ids:['creature','combat-start','behavior','injury','stress','trauma','scatter','dice']},
-  {id:'station',label:'정거장',ids:['station','appraisal']}
+  {id:'fight',label:'전투',ids:['creature','combat-start','behavior','injury','stress','trauma','dread','scatter','dice']},
+  {id:'station',label:'정거장',ids:['station','appraisal','gear-check']}
 ];
 
 const PROCEDURE_IDS = new Set(PROCEDURES.map(procedure=>procedure.id));
@@ -61,6 +61,7 @@ export function guideNext(procedureId,run){
   if(run?.procedureId==='encounter-roster')return pick(['combat-start','behavior','injury']);
   if(run?.enemy?.known)return pick(['combat-start','behavior','injury']);
   if(run?.siteFromHex===true) return pick(['area','site-name','door']);
+  if(run?.encounter)return pick(['creature','combat-start','question']);
   const fallback=nextStepIds(procedureId);
   if(!run||run.procedureId!==procedureId) return fallback;
   if(run.pending?.type==='lock') return pick(['hacking','alternate','question']);

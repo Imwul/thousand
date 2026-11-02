@@ -51,8 +51,8 @@ test('fatal or absent arrival stops before site generation; known destinations r
   assert.equal(r.trace.filter(t=>t.id==='level-a').length,0);
 });
 test('area exploration rejects depleted results and keeps the discarded dice',()=>{
-  const r=make('area',{connector:false},{resources:false,artifacts:false,hazard:8},seq([10,3],[10,4],[10,5],[20,11]));
-  assert.equal(r.trace.filter(t=>t.discarded).length,2);assert.match(r.subline,/새 구역/);assert.equal(r.trace.length,4);
+  const r=make('area',{connector:false},{resources:false,artifacts:false,hazard:8},seq([20,12],[10,3],[10,4],[10,5],[20,11]));
+  assert.equal(r.trace.filter(t=>t.discarded).length,2);assert.match(r.subline,/새 구역/);assert.equal(r.trace.length,5);assert.equal(r.trace[0].id,'vertical-climb');
 });
 test('a hallway ambush stops before generating the next area',()=>{
   const r=make('area',{}, {},seq([20,1],[100,10],[4,1],[20,1],[6,1],[20,10]));

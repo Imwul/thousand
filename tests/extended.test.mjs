@@ -51,8 +51,8 @@ test('planet generation records the landing hex on its own d100',()=>{
   assert.match(high.subline,/착륙 칸 100$/);
 });
 test('a negative creature attack modifier has one sign',()=>{
-  let seed=9001+29*37;
-  const rng=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-  const r=make('creature',{species:'Local Fauna',tier:'standard',randomIntelligence:true,aquatic:true},{crew:5},rng);
+  const blueprint=make('creature',{species:'Local Fauna',tier:'standard'},{crew:5}).blueprint;
+  blueprint.statVariant=6;blueprint.tables['creature-role']=4;blueprint.tables['creature-trait']=4;
+  const r=runProcedure('creature',{campaignId:'test',context:{...defaultContext(),crew:5},options:{species:'Local Fauna',tier:'standard'},blueprint,rng:()=>.5});
   assert.match(r.items.find(i=>i.title==='공격과 피해').text,/^공격 -3 \/ /);
 });

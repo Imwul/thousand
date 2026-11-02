@@ -42,7 +42,7 @@ test('paper checks and aside questions survive annotation, backup, and markdown'
   assert.deepEqual(validateBackup(backup).records[0].paper,['copied','sheet']);
   const badPaper=structuredClone(backup);badPaper.records[0].paper=['luck'];assert.throws(()=>validateBackup(badPaper),/종이/);
   const badRecent=structuredClone(backup);badRecent.campaigns[0].recentProcedures=['scenario-oracle'];assert.throws(()=>validateBackup(badRecent),/최근/);
-  const badAside=structuredClone(backup);badAside.records[0].aside='yes';assert.throws(()=>validateBackup(badAside),/곁질문/);
+  const badAside=structuredClone(backup);badAside.records[0].aside='yes';assert.throws(()=>validateBackup(badAside),/곁굴림/);
   const md=recordsMarkdown(c,[saved]);assert.match(md,/곁질문: 소리가 있나/);assert.match(md,/결과 요지를 종이에 옮김/);
   await assert.rejects(db.annotateRecord(r.id,{paper:['luck']}));
   assert.deepEqual((await db.load()).records[0].paper,['copied','sheet']);

@@ -340,3 +340,27 @@ body{background-color:var(--ink);background-image:radial-gradient(900px 420px at
 
 .appraisal-table,.appraisal-values{word-break:keep-all}
 .appraisal-table tfoot td{white-space:nowrap}
+.effect-dice-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:10px;margin-top:14px}
+.effect-dice-list button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;min-height:48px;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.effect-dice-list strong{color:var(--field-accent)}
+.effect-results{margin-top:16px;border-left:3px solid var(--field-accent);padding-left:12px}
+.effect-results>.matrix-label{margin-bottom:6px}
+.combat-tool-row{display:flex;gap:4px;min-width:0}.combat-tool-row>button:first-child{flex:1;min-width:0}.combat-tool-row>button+button{flex:none;color:var(--cyan)}
+.campaign-picker label{white-space:nowrap;flex:none}
+@media(max-width:480px){
+  .utility-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px}
+  .utility-bar .campaign-picker{max-width:none;min-width:0}
+  .campaign-picker select{flex:1;width:0;max-width:none;min-width:0}
+  .utility-bar .context-trigger{max-width:96px}
+  .utility-bar .view-nav{grid-column:1/-1}
+}
+/* Tablet controls stay finger-sized without shrinking the report's type. */
+@media (pointer:coarse), (max-width:1400px){
+  .shell button,.shell summary,dialog button,dialog summary,
+  #roll-options>summary,.procedure-group>summary,.field-source .source-original>summary{min-height:44px}
+  .shell .icon-button,.shell .tool-button,dialog .dialog-close{min-width:44px;min-height:44px}
+  .shell input:not([type=checkbox]):not([type=radio]),.shell select,.shell textarea,
+  dialog input:not([type=checkbox]):not([type=radio]),dialog select,dialog textarea{min-height:44px}
+  .shell .toggle-row{min-height:44px}
+  .report .source-link{display:inline-flex;align-items:center;min-width:44px;min-height:44px}
+}

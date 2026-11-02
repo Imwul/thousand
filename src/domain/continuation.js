@@ -22,6 +22,7 @@ export function continuationOptions(run,target,options,enemy){
   const next={...options};
   if(target==='arrival'&&run.procedureId==='travel')next.known=run.options.destination==='known';
   if(target==='travel'&&run.procedureId==='travel'&&!run.arrived&&run.headline==='항해 계속')next.week=Math.min(52,run.options.week+1);
+  if(target==='travel'&&run.procedureId==='travel'&&run.travelWeeksDelta&&(run.options.destination==='known'||run.options.voyage==='return'))next.knownWeeks=Math.max(1,Math.min(52,run.options.knownWeeks+run.travelWeeksDelta));
   if(target==='creature'&&run.encounter){
     if(run.encounter.type)next.species=run.encounter.type;
     next.tier=run.encounter.composition?.[0]?.tier??'standard';
@@ -37,7 +38,7 @@ export function continuationOptions(run,target,options,enemy){
 }
 
 export const RELATED_PROCEDURES={
-  'artifact-activation':'artifact-activate',injury:'injury',trauma:'trauma',mood:'emotion',
+  'artifact-activation':'artifact-activate',injury:'injury',trauma:'trauma',mood:'emotion',dread:'dread','experimental-malfunction':'gear-check',obsession:'stress','stress-alone':'stress','stress-group':'stress',
   biome:'biome-border','hacking-difficulty':'hacking',
   exploration:'area',planetside:'hex',arrival:'arrival',carousing:'station',
   'combat-surprise':'combat-start','alternate-access':'alternate'

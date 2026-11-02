@@ -1,8 +1,9 @@
-import {PROCEDURES,SLOT_COUNTS,newCampaign,normalizeContext,normalizeOptions,endScene} from './domain/model.js';
+import {PROCEDURES,SLOT_COUNTS,DICE_PRESETS,newCampaign,normalizeContext,normalizeOptions,endScene} from './domain/model.js';
 import {tableList,tables,CATEGORIES} from './data/tables.js';
-import {runProcedure,runLockAttempt,runHackReroll,runFoundSite,runEncounterRoster,runManualTable} from './generators/procedures.js';
+import {runProcedure,runLockAttempt,runHackReroll,runFoundSite,runEncounterRoster,runManualTable,runFollowup} from './generators/procedures.js';
+import {effectDice,followupChoices} from './domain/followups.js';
 import {openStore,makeBackup,validateBackup,recordsMarkdown} from './storage/store.js';
-import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView,expeditionReadout,nextStepView,asideLog} from './components/render.js';
+import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView,expeditionReadout,nextStepView,asideLog,effectResults} from './components/render.js';
 import {icon,esc} from './components/icons.js';
 import {localizeRecord} from './data/localization.js';
 import {adoptLocation,rememberLocation,restoreLocation,prepareContinuation} from './domain/locations.js';
@@ -58,8 +59,8 @@ function activateEnemy(run){
   else if(run.encounter)campaign().activeEnemy=run.encounter.ref?{recordId:run.encounter.ref,index:0}:null;
   else if(run.actor)campaign().activeEnemy=structuredClone(run.actor);
 }
-async function openFresh(id){
-  await flushMemo();await flushOptions();state.followParentId=null;state.nextActor=null;state.currentId=null;state.procedure=id;touchRecent(id);
+async function openFresh(id,overrides={}){
+  await flushMemo();await flushOptions();Object.assign(campaign().options,overrides);state.followParentId=null;state.nextActor=null;state.currentId=null;state.procedure=id;touchRecent(id);await saveCampaign();
   renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
   $('.control-panel').scrollIntoView({behavior:'instant',block:'start'});
 }
@@ -91,6 +92,7 @@ function renderDesk(){
   $('#expedition-readout').innerHTML=expeditionReadout(c.context,ownRecords().length);
   $('#next-steps').innerHTML=nextStepView(state.procedure, current());
   $('#aside-log').innerHTML=asideLog(ownRecords(),state.currentId);
+  if($('#effect-latest'))$('#effect-latest').innerHTML=effectResults(ownRecords(),state.currentId);
   $('#enemy-desk').innerHTML=enemyDeskView(activeCard(),state.procedure,{currentId:state.currentId,related:!!current()?.actor||enemyCards(current()).length>0});
   $('#quick-disclosure').hidden=!current()||state.procedure==='question';
   $('#procedure-picker-label').textContent=pName(state.procedure);
@@ -171,22 +173,23 @@ async function retain(run,{keyboard=false}={}){
   },()=>{state.saving.delete(run.id);state.unsaved.add(run.id);if(current()?.id===run.id)updateRecordStatus();});
   await saveCampaign();
 }
-async function roll({keyboard=false,tableId,parent=null,lockGuess=null,hackIndex=null,foundSite=false}={}){
+async function roll({keyboard=false,tableId,tableModifier=0,parent=null,lockGuess=null,hackIndex=null,foundSite=false}={}){
   const button=$('#roll-button');button.disabled=true;
   try{
     collectOptions();if(!tableId&&!foundSite)touchRecent(parent?.procedureId??state.procedure);await saveCampaign();
     let run;const source=ownRecords().find(r=>r.id===state.followParentId),origin=parent??source;
     const encounterSpec=origin?.encounters?.[state.followEncounterIndex]??origin?.encounter;
-    if(tableId)run=runProcedure('table',{tableId,context:origin?.context??campaign().context,options:campaign().options,campaignId:state.selectedId,parentId:origin?.id});
+    if(tableId)run=runProcedure('table',{tableId,tableModifier,context:origin?.context??campaign().context,options:campaign().options,campaignId:state.selectedId,parentId:origin?.id});
     else if(parent?.procedureId==='encounter-roster'||(!parent&&source?.encounter&&state.procedure==='creature')){
       const base=encounterSpec.ref?state.records.find(r=>r.id===encounterSpec.ref)?.blueprint:origin.blueprint;
       run=runEncounterRoster(origin,{campaignId:state.selectedId,blueprint:base,context:parent?.context??campaign().context,encounterIndex:parent?.encounterIndex??state.followEncounterIndex,options:parent?parent.options:campaign().options});
     }
     else if(Number.isInteger(hackIndex))run=runHackReroll(parent,hackIndex);
-    else if(lockGuess)run=runLockAttempt(parent,lockGuess,{campaignId:state.selectedId});
+    else if(parent?.followupKey)run=runFollowup(parent,parent.followupKey);
+    else if(lockGuess){prepareContinuation(campaign(),parent,'door');run=runLockAttempt(parent,lockGuess,{campaignId:state.selectedId,context:campaign().context});}
     else if(parent?.lockAttempt)run=runLockAttempt({...parent,pending:parent.lockAttempt.pending},parent.lockAttempt.guess,{campaignId:state.selectedId});
     else if(foundSite||parent?.siteFromHex===true)run=runFoundSite(parent,{campaignId:state.selectedId});
-    else run=runProcedure(tableId?'table':parent?.procedureId??state.procedure,{context:parent?.context??campaign().context,options:parent?.options??campaign().options,campaignId:state.selectedId,parentId:origin?.id,tableId:tableId??parent?.tableId});
+    else run=runProcedure(tableId?'table':parent?.procedureId??state.procedure,{context:parent?.context??campaign().context,options:parent?.options??campaign().options,campaignId:state.selectedId,parentId:origin?.id,tableId:tableId??parent?.tableId,tableModifier:parent?.tableModifier??0});
     if(state.nextActor)run.actor=structuredClone(state.nextActor);
     else if(origin?.actor)run.actor=structuredClone(origin.actor);
     if(run.procedureId==='npc-profile')run.subject={name:run.headline,recordId:run.id};
@@ -259,7 +262,17 @@ document.addEventListener('click',async event=>{
     else if(action==='enemy-close'){campaign().activeEnemy=null;await saveCampaign();renderDesk();}
     else if(action==='restore-location'){await flushOptions();restoreLocation(campaign(),button.dataset.id);await saveCampaign();closeDialog();refresh();message('저장한 장소의 맥락을 복원했습니다.');}
     else if(action==='related-procedure'){
-      const id=RELATED_PROCEDURES[button.dataset.table];if(!id)return;closeDialog();await openFresh(id);
+      const table=button.dataset.table,id=RELATED_PROCEDURES[table];if(!id)return;
+      const overrides=id==='stress'?{stressMode:table==='obsession'?'breakdown':'reaction'}:id==='gear-check'?{gearAction:'experimental'}:{};
+      closeDialog();await openFresh(id,overrides);
+    }
+    else if(action==='followup'){
+      const parent=current(),key=button.dataset.key;if(!parent||!followupChoices(parent).some(choice=>choice.id===key)||ownRecords().some(record=>record.parentId===parent.id&&record.followupKey===key))return;
+      button.disabled=true;try{prepareContinuation(campaign(),parent,'area');await retain(runFollowup(parent,key,{context:campaign().context}),{keyboard:event.detail===0});}finally{button.disabled=false;}
+    }
+    else if(action==='effect-dice'){
+      const parent=current(),expression=button.dataset.expression;if(!effectDice(localizeRecord(parent,tables)).some(die=>die.expression===expression))return;
+      button.disabled=true;try{const run=runProcedure('dice',{context:parent.context,options:{...parent.options,diceExpression:expression,dicePreset:'custom',question:''},campaignId:state.selectedId,parentId:parent.id});run.title='효과 주사위';run.aside=true;await fileAside(run);message(`${expression.toUpperCase()} = ${run.headline} · 곁굴림 저장`);}finally{button.disabled=false;}
     }
     else if(action==='quick-table'){await roll({tableId:button.dataset.id,parent:current()});}
     else if(action==='reroll'){const r=current();if(r.manual)showDialog(tables[r.tableId].title,tableView(r.tableId,{parentId:r.id}),{type:'table'});else await roll({parent:r,keyboard:event.detail===0});}
@@ -288,9 +301,9 @@ document.addEventListener('click',async event=>{
     else if(action==='library')libraryDialog();
     else if(action==='table-select'){const parent=ownRecords().find(r=>r.id===button.dataset.parent),run=runManualTable(button.dataset.table,Number(button.dataset.row),{context:parent?.context??campaign().context,options:campaign().options,campaignId:state.selectedId,parentId:parent?.id});if(parent?.subject)run.subject=structuredClone(parent.subject);if($('#dialog').open)closeDialog();state.nextActor=null;await retain(run,{keyboard:event.detail===0});}
     else if(action==='table'){
-      const id=button.dataset.id;if(!tables[id])return;showDialog(tables[id].title,tableView(id),{type:'table'});
+      const id=button.dataset.id;if(!tables[id])return;showDialog(tables[id].title,tableView(id,{parentId:button.dataset.parent??''}),{type:'table'});
     }
-    else if(action==='roll-table'){const id=button.dataset.id;closeDialog();await roll({tableId:id,keyboard:event.detail===0});}
+    else if(action==='roll-table'){const id=button.dataset.id,input=$('#table-modifier');if(input&&!input.reportValidity())return;const tableModifier=Number(input?.value??0),parent=ownRecords().find(r=>r.id===button.dataset.parent);closeDialog();await roll({tableId:id,tableModifier,parent,keyboard:event.detail===0});}
     else if(action==='history')historyDialog();
     else if(action==='more-history'){state.historyLimit+=50;renderHistoryDialog();}
     else if(action==='filter-all'||action==='filter-pinned'){state.filter=action==='filter-all'?'all':'pinned';renderHistory();}
@@ -356,7 +369,10 @@ document.addEventListener('change',async event=>{
     else if(t.id==='library-category')$('#library-results').innerHTML=libraryView($('#library-search').value,t.value);
     else if(t.id==='all-history-pinned')renderHistoryDialog();
     else if(t.closest('#roll-form')){
+      if(t.name==='dicePreset'){const preset=DICE_PRESETS.find(p=>p.id===t.value);if(preset)$('#dice-expression').value=preset.expression;}
+      if(t.name==='diceExpression'&&$('[name="dicePreset"]'))$('[name="dicePreset"]').value='custom';
       collectOptions();await saveCampaign();
+      if(['gearAction','dicePreset'].includes(t.name))renderControls();
       if(t.name==='odds')$('#odds-hint').textContent=`${({impossible:16,'very-unlikely':14,unlikely:12,even:10,likely:8,'very-likely':6,certain:4})[t.value]}+ / D20`;
       if(['week','destination','voyage'].includes(t.name)){
         const o=campaign().options;$('.known-weeks')?.classList.toggle('hidden',o.destination!=='known'&&o.voyage!=='return');
@@ -386,7 +402,7 @@ window.addEventListener('pagehide',()=>{flushMemo();flushOptions();});
 async function fileAside(run){
   await flushMemo();state.records.push(run);state.saving.add(run.id);renderHistory();renderDesk();status();
   await enqueue(async()=>{
-    if(!state.db)throw new Error('저장 공간에 연결하지 못했습니다. 곁질문은 화면에 남아 있습니다. 백업을 내려받으세요.');
+    if(!state.db)throw new Error('저장 공간에 연결하지 못했습니다. 곁굴림은 화면에 남아 있습니다. 백업을 내려받으세요.');
     await state.db.saveRecord(run);state.persisted.add(run.id);state.saving.delete(run.id);state.unsaved.delete(run.id);status();
   },()=>{state.saving.delete(run.id);state.unsaved.add(run.id);status();});
 }

@@ -1,0 +1,2162 @@
+{
+  "rulesVersion": "atdw-core-2024-logbook-ko-4",
+  "scope": "Core 2024, excluding scenarios",
+  "tables": [
+    {
+      "id": "action",
+      "dice": "d100",
+      "page": 256,
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "theme",
+      "dice": "d100",
+      "page": 257,
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "qualifier",
+      "dice": "d6",
+      "page": 229,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "complication",
+      "dice": "d6",
+      "page": 229,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "surprise",
+      "dice": "d8×d8",
+      "page": 232,
+      "rows": 32,
+      "rollable": true
+    },
+    {
+      "id": "resolution",
+      "dice": "d20",
+      "page": 258,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "arrival",
+      "dice": "d100",
+      "page": 125,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "purpose",
+      "dice": "d20",
+      "page": 133,
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "site-story",
+      "dice": "d10",
+      "page": 136,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "site-descriptor",
+      "dice": "d12",
+      "page": 137,
+      "rows": 12,
+      "rollable": true
+    },
+    {
+      "id": "planet-descriptor",
+      "dice": "d10",
+      "page": 137,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "hazard",
+      "dice": "d8",
+      "page": 139,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "size",
+      "dice": "d4",
+      "page": 142,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "activity",
+      "dice": "d6",
+      "page": 138,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "known-threat",
+      "dice": "d6",
+      "page": 138,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "connector",
+      "dice": "d20",
+      "page": 144,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "exploration",
+      "dice": "d10",
+      "page": 144,
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "manifestation",
+      "dice": "d20",
+      "page": 155,
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "artifact",
+      "dice": "d20",
+      "page": [
+        150,
+        151
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "artifact-value",
+      "dice": "d6",
+      "page": 153,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "door",
+      "dice": "d10",
+      "page": 157,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "behind-door",
+      "dice": "d4",
+      "page": 158,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "dread",
+      "dice": "d20",
+      "page": [
+        160,
+        161,
+        162
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "taint",
+      "dice": "d10",
+      "page": [
+        162,
+        163
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "security",
+      "dice": "d10",
+      "page": 164,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "teleport",
+      "dice": "d10",
+      "page": 164,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "fixed-event",
+      "dice": "d20",
+      "page": [
+        166,
+        167,
+        168,
+        169
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "occurrence",
+      "dice": "d4",
+      "page": 171,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "danger",
+      "dice": "d6",
+      "page": 171,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "discovery",
+      "dice": "d20",
+      "page": 170,
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "random-event",
+      "dice": "d10",
+      "page": 171,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "travel-type",
+      "dice": "d4",
+      "page": 119,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "travel-social",
+      "dice": "d10",
+      "page": 119,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "travel-malfunction",
+      "dice": "d10",
+      "page": 120,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "travel-anomaly",
+      "dice": "d10",
+      "page": 121,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "travel-issue",
+      "dice": "d10",
+      "page": 122,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "attitude",
+      "dice": "d6",
+      "page": 236,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "npc-hostile",
+      "dice": "d10",
+      "page": 238,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "npc-neutral",
+      "dice": "d10",
+      "page": 238,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "npc-friendly",
+      "dice": "d10",
+      "page": 238,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "motivation",
+      "dice": "d10",
+      "page": 240,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "reaction",
+      "dice": "d12",
+      "page": 249,
+      "rows": 12,
+      "rollable": true
+    },
+    {
+      "id": "conversation",
+      "dice": "d66",
+      "page": [
+        250,
+        251
+      ],
+      "rows": 36,
+      "rollable": true
+    },
+    {
+      "id": "encounter-difficulty",
+      "dice": "d20",
+      "page": 146,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "creature-space",
+      "dice": "d6",
+      "page": 268,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "creature-planet",
+      "dice": "d6",
+      "page": 268,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "creature-size",
+      "dice": "d20",
+      "page": 269,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "encounter-1.easy",
+      "dice": "d20",
+      "page": 264,
+      "rows": 1,
+      "rollable": true
+    },
+    {
+      "id": "encounter-1.standard",
+      "dice": "d20",
+      "page": 264,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "encounter-1.elite",
+      "dice": "d20",
+      "page": 264,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "encounter-1.overwhelming",
+      "dice": "d20",
+      "page": 264,
+      "rows": 7,
+      "rollable": true
+    },
+    {
+      "id": "encounter-3.easy",
+      "dice": "d20",
+      "page": 265,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "encounter-3.standard",
+      "dice": "d20",
+      "page": 265,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "encounter-3.elite",
+      "dice": "d20",
+      "page": 265,
+      "rows": 7,
+      "rollable": true
+    },
+    {
+      "id": "encounter-3.overwhelming",
+      "dice": "d20",
+      "page": 265,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "encounter-5.easy",
+      "dice": "d20",
+      "page": 266,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "encounter-5.standard",
+      "dice": "d20",
+      "page": 266,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "encounter-5.elite",
+      "dice": "d20",
+      "page": 267,
+      "rows": 15,
+      "rollable": true
+    },
+    {
+      "id": "encounter-5.overwhelming",
+      "dice": "d20",
+      "page": 267,
+      "rows": 14,
+      "rollable": true
+    },
+    {
+      "id": "situation-verb",
+      "dice": "d100",
+      "page": 172,
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "noun-1",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-2",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-4",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-5",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-6",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-7",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-8",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-9",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-10",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-11",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-12",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-13",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-14",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-15",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-16",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-17",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-18",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-19",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "noun-20",
+      "dice": "d20",
+      "page": [
+        173,
+        174,
+        175
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "misjump",
+      "dice": "d6",
+      "page": 123,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "time-dilation",
+      "dice": "d6",
+      "page": 123,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "transit-dilation",
+      "dice": "d6",
+      "page": 123,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "misjump-secondary",
+      "dice": "d6",
+      "page": 123,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "talents",
+      "dice": "d100",
+      "page": [
+        19,
+        20,
+        21
+      ],
+      "rows": 50,
+      "rollable": true
+    },
+    {
+      "id": "background",
+      "dice": "d10",
+      "page": [
+        22,
+        23
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "life-changing",
+      "dice": "d20",
+      "page": [
+        24
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "karum-place",
+      "dice": "d4",
+      "page": [
+        25
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "nervous-tic",
+      "dice": "d20",
+      "page": [
+        29
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "difficulty",
+      "dice": "d8",
+      "page": 37,
+      "rows": 7,
+      "rollable": true
+    },
+    {
+      "id": "placement",
+      "dice": "d4",
+      "page": [
+        52
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "combat-surprise",
+      "dice": "d6",
+      "page": [
+        52
+      ],
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "encounter-activity",
+      "dice": "d8",
+      "page": [
+        53
+      ],
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "target",
+      "dice": "d10",
+      "page": [
+        59
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "critical-melee",
+      "dice": "d10",
+      "page": [
+        66
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "critical-ranged",
+      "dice": "d10",
+      "page": [
+        67
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "combat-event",
+      "dice": "d10",
+      "page": [
+        72
+      ],
+      "rows": 7,
+      "rollable": true
+    },
+    {
+      "id": "injury",
+      "dice": "d20",
+      "page": [
+        76,
+        77
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "critical-injury",
+      "dice": "d10",
+      "page": [
+        78
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "parasite-attack",
+      "dice": "d6",
+      "page": [
+        87
+      ],
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "stress-group",
+      "dice": "d10",
+      "page": [
+        94
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "stress-alone",
+      "dice": "d10",
+      "page": [
+        95
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "obsession",
+      "dice": "d12",
+      "page": [
+        96,
+        97
+      ],
+      "rows": 12,
+      "rollable": true
+    },
+    {
+      "id": "trauma",
+      "dice": "d10",
+      "page": [
+        99
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "negative-trait",
+      "dice": "d20",
+      "page": [
+        100,
+        101
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "ship-name",
+      "dice": "d100",
+      "page": [
+        112
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "ship-adjective",
+      "dice": "d20",
+      "page": [
+        113
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "variable-difficulty",
+      "dice": "d10",
+      "page": [
+        147
+      ],
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "artifact-activation",
+      "dice": "d12",
+      "page": [
+        152
+      ],
+      "rows": 12,
+      "rollable": true
+    },
+    {
+      "id": "planet-diameter",
+      "dice": "d10",
+      "page": [
+        184
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "atmosphere",
+      "dice": "d10",
+      "page": [
+        184
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "climate",
+      "dice": "d10",
+      "page": [
+        184
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "single-biome",
+      "dice": "d10",
+      "page": [
+        185
+      ],
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "biome",
+      "dice": "d12",
+      "page": 185,
+      "rows": 11,
+      "rollable": true
+    },
+    {
+      "id": "sky",
+      "dice": "d20",
+      "page": [
+        188
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "daylight",
+      "dice": "d20",
+      "page": [
+        189
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "planetside",
+      "dice": "d10",
+      "page": [
+        195
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "planet-findings",
+      "dice": "d10",
+      "page": [
+        195
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "planet-encounter",
+      "dice": "d10",
+      "page": [
+        196
+      ],
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "close-encounter",
+      "dice": "d20",
+      "page": [
+        196,
+        197
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-1",
+      "dice": "d10",
+      "page": [
+        198
+      ],
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-1",
+      "dice": "d10",
+      "page": [
+        199
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-2",
+      "dice": "d10",
+      "page": [
+        200
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-2",
+      "dice": "d10",
+      "page": [
+        201
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-3",
+      "dice": "d10",
+      "page": [
+        202
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-3",
+      "dice": "d10",
+      "page": [
+        203
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-4",
+      "dice": "d10",
+      "page": [
+        204
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-4",
+      "dice": "d10",
+      "page": [
+        205
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-5",
+      "dice": "d10",
+      "page": [
+        206
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-5",
+      "dice": "d10",
+      "page": [
+        207
+      ],
+      "rows": 7,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-6",
+      "dice": "d10",
+      "page": [
+        208
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-6",
+      "dice": "d10",
+      "page": [
+        209
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-7",
+      "dice": "d10",
+      "page": [
+        210
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-7",
+      "dice": "d10",
+      "page": [
+        211
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-8",
+      "dice": "d10",
+      "page": [
+        212
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-8",
+      "dice": "d10",
+      "page": [
+        213
+      ],
+      "rows": 9,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-9",
+      "dice": "d10",
+      "page": [
+        214
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-9",
+      "dice": "d10",
+      "page": [
+        215
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "biome-sights-10",
+      "dice": "d10",
+      "page": [
+        216
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "biome-hazards-10",
+      "dice": "d10",
+      "page": [
+        217
+      ],
+      "rows": 7,
+      "rollable": true
+    },
+    {
+      "id": "character-motivation",
+      "dice": "d100",
+      "page": [
+        234,
+        235
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "demoralized",
+      "dice": "d6",
+      "page": [
+        239
+      ],
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "npc-descriptor",
+      "dice": "d100",
+      "page": [
+        241
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "given-name",
+      "dice": "d100",
+      "page": [
+        242
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "surname",
+      "dice": "d100",
+      "page": [
+        243
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "npc-nature",
+      "dice": "d10",
+      "page": [
+        244
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "npc-quirk",
+      "dice": "d20",
+      "page": [
+        245
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "relations",
+      "dice": "d20",
+      "page": [
+        248
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "behavior-brute",
+      "dice": "d10",
+      "page": [
+        275
+      ],
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "behavior-lurker",
+      "dice": "d10",
+      "page": [
+        276
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "behavior-ranged",
+      "dice": "d10",
+      "page": [
+        277
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "behavior-swarm",
+      "dice": "d10",
+      "page": [
+        278
+      ],
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "behavior-psychic",
+      "dice": "d10",
+      "page": [
+        279
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "creature-trait",
+      "dice": "d10",
+      "page": [
+        280
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "enemy-ability",
+      "dice": "d20",
+      "page": [
+        280
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "psychic-ability",
+      "dice": "d10",
+      "page": [
+        284
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "appearance",
+      "dice": "d20",
+      "page": [
+        286
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "covering",
+      "dice": "d8",
+      "page": [
+        286
+      ],
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "unique-feature",
+      "dice": "d10",
+      "page": [
+        286
+      ],
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "limb-count",
+      "dice": "d4",
+      "page": [
+        287
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "aquatic-limbs",
+      "dice": "d6",
+      "page": [
+        287
+      ],
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "behavior-spitter",
+      "dice": "d10",
+      "page": [
+        303
+      ],
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "behavior-clobber",
+      "dice": "d10",
+      "page": [
+        305
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "behavior-taker",
+      "dice": "d10",
+      "page": [
+        307
+      ],
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "behavior-psybane",
+      "dice": "d10",
+      "page": [
+        309
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "behavior-bomber",
+      "dice": "d10",
+      "page": [
+        311
+      ],
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "behavior-cecaelia",
+      "dice": "d10",
+      "page": [
+        313
+      ],
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "morale-creature",
+      "dice": "d6",
+      "page": [
+        317
+      ],
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "morale-humanoid",
+      "dice": "d6",
+      "page": [
+        317
+      ],
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "carousing",
+      "dice": "d66",
+      "page": [
+        334,
+        335
+      ],
+      "rows": 36,
+      "rollable": true
+    },
+    {
+      "id": "last-night",
+      "dice": "d20",
+      "page": [
+        346
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "locals",
+      "dice": "d20",
+      "page": [
+        347
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "npc-talents",
+      "dice": "d20",
+      "page": [
+        360,
+        361
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "experimental-malfunction",
+      "dice": "d6",
+      "page": [
+        366
+      ],
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "site-name-1",
+      "dice": "d100",
+      "page": 131,
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "site-name-2",
+      "dice": "d100",
+      "page": 131,
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "site-name-3",
+      "dice": "d100",
+      "page": 131,
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "planet-name-1",
+      "dice": "d20",
+      "page": 183,
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "planet-name-2",
+      "dice": "d20",
+      "page": 183,
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "planet-name-3",
+      "dice": "d20",
+      "page": 183,
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "creature-name-1",
+      "dice": "d100",
+      "page": [
+        288,
+        289
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "creature-name-2",
+      "dice": "d100",
+      "page": [
+        288,
+        289
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "creature-name-3",
+      "dice": "d100",
+      "page": [
+        288,
+        289
+      ],
+      "rows": 100,
+      "rollable": true
+    },
+    {
+      "id": "encounter-reaction",
+      "dice": "d10",
+      "page": 43,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "scatter-direction",
+      "dice": "d8",
+      "page": 63,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "alternate-access",
+      "dice": "d10",
+      "page": 159,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "hacking-difficulty",
+      "dice": "d6",
+      "page": 102,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "stance",
+      "dice": "d6",
+      "page": 56,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "recovery-status",
+      "dice": "d6",
+      "page": 59,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "hit-humanoid",
+      "dice": "d10",
+      "page": 60,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "hit-quadruped",
+      "dice": "d10",
+      "page": 60,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "hit-serpentine",
+      "dice": "d10",
+      "page": 60,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "poison",
+      "dice": "d4",
+      "page": 88,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "age",
+      "dice": "d6",
+      "page": 240,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "gender",
+      "dice": "d6",
+      "page": 240,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "information-type",
+      "dice": "d20",
+      "page": 237,
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "information-topic",
+      "dice": "d20",
+      "page": 237,
+      "rows": 16,
+      "rollable": true
+    },
+    {
+      "id": "npc-attributes",
+      "dice": "d6",
+      "page": 358,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "creature-drive",
+      "dice": "d4",
+      "page": 270,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "intelligence",
+      "dice": "d10",
+      "page": 271,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "creature-role",
+      "dice": "d10",
+      "page": 274,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "forelimbs",
+      "dice": "d10",
+      "page": 287,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "hindlimbs",
+      "dice": "d6",
+      "page": 287,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "mouth",
+      "dice": "d6",
+      "page": 287,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "eye-type",
+      "dice": "d10",
+      "page": 287,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "eye-count",
+      "dice": "d10",
+      "page": 287,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "name-syllables",
+      "dice": "d10",
+      "page": 288,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "landing-biome",
+      "dice": "d10",
+      "page": 185,
+      "rows": 10,
+      "rollable": true
+    },
+    {
+      "id": "terrain-0",
+      "dice": "d20",
+      "page": 192,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "terrain-1",
+      "dice": "d20",
+      "page": 192,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "terrain-2",
+      "dice": "d20",
+      "page": 192,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "terrain-3",
+      "dice": "d20",
+      "page": 192,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "terrain-4",
+      "dice": "d20",
+      "page": 192,
+      "rows": 5,
+      "rollable": true
+    },
+    {
+      "id": "corporation",
+      "dice": "d20",
+      "page": [
+        348,
+        349
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "corporate-news",
+      "dice": "d20",
+      "page": [
+        348,
+        349
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "cover",
+      "dice": "d20",
+      "page": [
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "rows": 20,
+      "rollable": true
+    },
+    {
+      "id": "toxic-globe",
+      "dice": "d20",
+      "page": 211,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "carousing-jewelry",
+      "dice": "d6",
+      "page": 335,
+      "rows": 3,
+      "rollable": true
+    },
+    {
+      "id": "mood",
+      "dice": "d8",
+      "page": 246,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "mood-2",
+      "dice": "d4",
+      "page": 246,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "mood-2-1",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-2-2",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-2-3",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-2-4",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-3",
+      "dice": "d4",
+      "page": 246,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "mood-3-1",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-3-2",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-3-3",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-3-4",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-4",
+      "dice": "d4",
+      "page": 246,
+      "rows": 4,
+      "rollable": true
+    },
+    {
+      "id": "mood-4-1",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-4-2",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-4-3",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-4-4",
+      "dice": "d4",
+      "page": 246,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-5",
+      "dice": "d6",
+      "page": 247,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "mood-5-1",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-5-2",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-5-3",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-5-4",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-5-5",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-5-6",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-6",
+      "dice": "d6",
+      "page": 247,
+      "rows": 6,
+      "rollable": true
+    },
+    {
+      "id": "mood-6-1",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-6-2",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-6-3",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-6-4",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-6-5",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-6-6",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7",
+      "dice": "d8",
+      "page": 247,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-1",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-2",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-3",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-4",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-5",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-6",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-7",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-7-8",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-8",
+      "dice": "d8",
+      "page": 247,
+      "rows": 8,
+      "rollable": true
+    },
+    {
+      "id": "mood-8-1",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-8-2",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": false
+    },
+    {
+      "id": "mood-8-3",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-8-4",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-8-5",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-8-6",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-8-7",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    },
+    {
+      "id": "mood-8-8",
+      "dice": "d4",
+      "page": 247,
+      "rows": 2,
+      "rollable": true
+    }
+  ]
+}

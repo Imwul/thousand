@@ -3,7 +3,7 @@ import {compoundTables} from './compound-tables.js';
 import {completeTables} from './completions.js';
 import {applyKorean} from './localization.js';
 // Korean summaries and original-language tables from the user's 2024 rulebook.
-export const RULES_VERSION = 'atdw-core-2024-logbook-ko-3';
+export const RULES_VERSION = 'atdw-core-2024-logbook-ko-4';
 export const tables = {};
 function define(id, title, english, dice, page, rows) {
   tables[id] = { id, title, english, dice, page, rows: rows.map((r, i) => ({ id: `${id}.${i + 1}`, ...r })) };
@@ -260,6 +260,9 @@ for(const table of [...sourceTables,...compoundTables]){
 }
 completeTables({list,ranges,define,tables});
 applyKorean(tables);
+// The ability index and its effect descriptions occupy different printed pages.
+for(const row of tables['enemy-ability'].rows)row.page=row.min<=7?281:row.min<=13?282:283;
+for(const row of tables['psychic-ability'].rows)row.page=row.min<=4?284:285;
 for(const t of Object.values(tables)){
   const p=[t.page].flat()[0];
   t.category=p<32?'character':p<92?'combat':p<107?'condition':p<124?'travel':p<182?'site':p<218?'planet':p<234?'gm':p<252?'npc':p<260?'gm':p<318?'creature': 'station';
