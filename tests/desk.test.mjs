@@ -5,6 +5,7 @@ import {NEXT_STEPS,PAPER_CHECKS,nextStepIds,sanitizePaper,sanitizeRecent} from '
 
 test('next steps only open procedures that already exist',()=>{
   const ids=new Set(PROCEDURES.map(p=>p.id));
+  assert.equal(ids.size,36);
   assert.equal(Object.keys(NEXT_STEPS).length,PROCEDURES.length);
   for(const [from,steps] of Object.entries(NEXT_STEPS)){
     assert.ok(ids.has(from),from);

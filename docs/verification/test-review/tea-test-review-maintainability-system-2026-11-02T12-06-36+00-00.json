@@ -1,0 +1,132 @@
+{
+  "dimension": "maintainability",
+  "run_key": "system",
+  "timestamp": "2026-11-02T12-06-36+00-00",
+  "execution_mode": "sequential",
+  "score": 50,
+  "grade": "F",
+  "violations": [
+    {
+      "file": "app/tests/continuity.test.mjs",
+      "line": 16,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "continuity.test.mjs의 14개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('all fixed threats have their own stats, recovery effects and matching behavior',()=>{"
+    },
+    {
+      "file": "app/tests/core-audit.test.mjs",
+      "line": 19,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "core-audit.test.mjs의 19개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('pp.272–273 choose Armor OR Defense, and apply Carapace after the choice',()=>{"
+    },
+    {
+      "file": "app/tests/extended.test.mjs",
+      "line": 7,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "extended.test.mjs의 11개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('water exploration skips terrain and exhausted known threats',()=>{"
+    },
+    {
+      "file": "app/tests/localization.test.mjs",
+      "line": 11,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "localization.test.mjs의 7개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('ability effects match their printed number, despite interleaved source columns',()=>{"
+    },
+    {
+      "file": "app/tests/play.test.mjs",
+      "line": 14,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "play.test.mjs의 6개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('procedure groups list each existing situation once',()=>{"
+    },
+    {
+      "file": "app/tests/result-layout.test.mjs",
+      "line": 18,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "result-layout.test.mjs의 11개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('prose effects have separate label and value areas; emphasis preserves text and escaping',()=>{"
+    },
+    {
+      "file": "app/tests/rules.test.mjs",
+      "line": 13,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "rules.test.mjs의 16개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('all 265 core-play tables are present; all rollable tables partition their dice domains',()=>{"
+    },
+    {
+      "file": "app/tests/storage.test.mjs",
+      "line": 9,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "storage.test.mjs의 8개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('real storage module persists a complete result, annotation and selection across reopen',async(t)=>{"
+    },
+    {
+      "file": "app/tests/interface.test.mjs",
+      "line": 9,
+      "row": "M3",
+      "severity": "MEDIUM",
+      "category": "Multi-concern test",
+      "description": "interface.test.mjs의 한 테스트가 초안 보존·저장·필터·캠페인 변경·조우·장비·주사위 등 세 가지 이상의 독립 관심사를 다뤄 첫 실패 이후의 진단이 가려진다.",
+      "suggestion": "공통 준비 도우미를 유지하면서 독립된 동작별 test 또는 awaited t.test로 분리한다. 통합 여정은 별도의 짧은 smoke 테스트로 남긴다.",
+      "code_snippet": "test('actual app controller preserves drafts, writes records, annotates, filters and changes context', {timeout:15000},async(t)=>{"
+    },
+    {
+      "file": "app/tests/play.test.mjs",
+      "line": 51,
+      "row": "M3",
+      "severity": "MEDIUM",
+      "category": "Multi-concern test",
+      "description": "play.test.mjs의 한 테스트가 보고서 배치·행성 착륙 참조·저널 내보내기·질문 포함 규칙 등 세 가지 이상의 독립 관심사를 다뤄 첫 실패 이후의 진단이 가려진다.",
+      "suggestion": "공통 준비 도우미를 유지하면서 독립된 동작별 test 또는 awaited t.test로 분리한다. 통합 여정은 별도의 짧은 smoke 테스트로 남긴다.",
+      "code_snippet": "test('the report separates results, paper effects, choices, and optional landing reference',()=>{"
+    }
+  ],
+  "recommendations": [
+    "종이 저널 플레이와 PDF 룰북의 요구사항 누락 여부는 별도 제품 감사 및 trace에서 검증한다. 이 품질 점수는 규칙 내용의 완전성 점수가 아니다.",
+    "happy-dom은 실제 CSS 배치 엔진이 아니므로 3440px와 iPad 13인치 정렬은 별도 실제 브라우저 시각 검증이 필요하다."
+  ],
+  "files_reviewed": [
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/continuity.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/core-audit.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/desk.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/extended.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/interface.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/localization.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/play.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/result-layout.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/rules.test.mjs",
+    "/Users/imwul/Desktop/개발한 앱들/Thousand Worlds/app/tests/storage.test.mjs"
+  ],
+  "evidence": [
+    "Eight files have >=3 tests and no describe grouping.",
+    "Two large tests mix at least three independent subjects.",
+    "No test file exceeds 1000 lines; no installed userEvent, Playwright utility or Pact mandate applies.",
+    "DOM selectors intentionally validate rendered structure; the project has no role locator/test-id interface."
+  ]
+}

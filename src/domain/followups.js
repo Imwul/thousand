@@ -16,7 +16,7 @@ export const followupChoices=run=>run?FOLLOWUPS.filter(choice=>choice.when(run))
 // Extract complete arithmetic expressions rather than rolling every die mentioned automatically.
 export function effectDice(run){
   if(!run||run.procedureId==='dice')return [];
-  const pattern=/(?<![\w])\d*[dD](?:100|20|12|10|8|6|4)(?!\d)(?:\s*[+−-]\s*(?:\d*[dD](?:100|20|12|10|8|6|4)(?!\d)|\d+))*(?:\s*[×x*]\s*\d+)?/g;
+  const pattern=/(?<![\w])(?:\d+\s*[+−-]\s*)?\d*[dD](?:100|20|12|10|8|6|4)(?!\d)(?:\s*[+−-]\s*(?:\d*[dD](?:100|20|12|10|8|6|4)(?!\d)|\d+))*(?:\s*[×x*]\s*\d+)?/g;
   const seen=new Set(),out=[];
   for(const item of (run.items??[]).filter(item=>item.effectDice!==false&&item.title!=='역할 참조'))for(const match of `${item.text??''} ${item.detail??''}`.matchAll(pattern)){
     const expression=match[0].replace(/\s/g,'').replace(/−/g,'-').toLowerCase();

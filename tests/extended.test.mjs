@@ -8,7 +8,7 @@ test('water exploration skips terrain and exhausted known threats',()=>{
   const r=make('hex',{}, {biome:10,knownThreats:false},seq([10,3]));assert.equal(r.trace.length,1);assert.equal(r.trace[0].id,'planetside');
 });
 test('easy terrain suppresses combat without revealing a hidden creature',()=>{
-  const r=make('hex',{}, {biome:2,terrain:4},seq([20,1],[10,6],[10,1]));
+  const r=make('hex',{}, {biome:2,terrain:4},seq([20,1],[10,6],[10,1],[10,6]));
   assert.ok(!r.trace.some(t=>t.id==='biome-activity-check'||t.id==='encounter-difficulty'));assert.ok(r.items.some(i=>i.text==='순탄한 길이므로 전투 조우를 적용하지 않음'));
 });
 test('inhabited terrain forces local fauna and does not reuse an incompatible indoor slot',()=>{

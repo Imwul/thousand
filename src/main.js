@@ -11,7 +11,7 @@ import {enemyCards,continuationOptions,RELATED_PROCEDURES} from './domain/contin
 import {enemyDeskView,rosterOptions,locationList} from './components/play-tools.js';
 
 const $=s=>document.querySelector(s);
-const desktopLayout=matchMedia('(min-width: 1181px)');
+const desktopLayout=matchMedia('(min-width: 1401px)');
 desktopLayout.addEventListener('change',event=>{$('#procedure-picker').open=event.matches;});
 const state={db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50,followParentId:null,followEncounterIndex:0,nextActor:null};
 let toastTimer,optionTimer,pendingMemo=null;
@@ -108,7 +108,7 @@ function renderControls(){
 }
 function renderReport(animate=false){
   const host=$('#report-host'),r=current();
-  if(host.dataset.recordId!==(r?.id??'')||!r)$('#roll-options').open=!r||innerWidth>=2500;
+  if(host.dataset.recordId!==(r?.id??'')||!r)$('#roll-options').open=!r;
   host.dataset.recordId=r?.id??'';
   host.innerHTML=r?reportView(r,state.records,{unsaved:state.unsaved.has(r.id),saving:state.saving.has(r.id)}):emptyReport(state.procedure);
   host.classList.toggle('report-entrance',animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -252,6 +252,10 @@ document.addEventListener('click',async event=>{
       if($('#dialog').open)closeDialog();renderControls();renderReport();renderHistory();$('#result-headline')?.focus({preventScroll:true});
       const top=$('#report-host').getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant'});
+    }
+    else if(action==='dice-preset'){
+      const preset=DICE_PRESETS.find(p=>p.id===button.dataset.id);if(!preset)return;
+      await followProcedure('dice');Object.assign(campaign().options,{dicePreset:preset.id,diceExpression:preset.expression});await saveCampaign();renderControls();
     }
     else if(action==='follow'){await followProcedure(button.dataset.id,current(),0,Number(button.dataset.encounter??0));}
     else if(action==='enemy-action'||action==='enemy-combat'){

@@ -171,9 +171,10 @@ test('a hex journal keeps the printed line and appends the artifact or encounter
   const watched=rollHex([[20,17],[10,6],[10,1],[10,7],[20,1]],{...defaultContext(),biome:2,knownThreats:false});
   assert.ok(copyLine(watched).includes('날개가 네 개'));
   assert.equal(copyLine(watched).includes('146쪽'),false);
-  const calmFight=rollHex([[20,1],[10,6],[10,1]],{...defaultContext(),biome:2,knownThreats:false});
+  const calmFight=rollHex([[20,1],[10,6],[10,1],[10,6]],{...defaultContext(),biome:2,knownThreats:false});
   assert.ok(copyLine(calmFight).includes('순탄한 길이므로 전투 조우를 적용하지 않음'));
-  assert.equal(copyLine(calmFight).includes('146쪽'),false);
+  assert.equal(calmFight.trace.some(t=>t.id==='encounter-difficulty'),false);
+  assert.equal(calmFight.encounter,undefined);
 });
 
 test('an Àrsaidh hex rolls the site tables once, without the arrival table',()=>{

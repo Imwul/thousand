@@ -1,0 +1,191 @@
+{
+  "runs": 10800,
+  "lockContinuations": 654,
+  "hackingContinuations": 1050,
+  "rosterContinuations": 300,
+  "conditionalContinuations": 107,
+  "effectDice": 1602,
+  "distinctTraceIds": 264,
+  "stats": [
+    {
+      "procedure": "question",
+      "runs": 300,
+      "longestResult": 15
+    },
+    {
+      "procedure": "scene",
+      "runs": 300,
+      "longestResult": 14
+    },
+    {
+      "procedure": "area",
+      "runs": 300,
+      "longestResult": 71
+    },
+    {
+      "procedure": "arrival",
+      "runs": 300,
+      "longestResult": 36
+    },
+    {
+      "procedure": "npc",
+      "runs": 300,
+      "longestResult": 20
+    },
+    {
+      "procedure": "travel",
+      "runs": 300,
+      "longestResult": 97
+    },
+    {
+      "procedure": "surprise",
+      "runs": 300,
+      "longestResult": 15
+    },
+    {
+      "procedure": "inspiration",
+      "runs": 300,
+      "longestResult": 8
+    },
+    {
+      "procedure": "door",
+      "runs": 300,
+      "longestResult": 7
+    },
+    {
+      "procedure": "resolution",
+      "runs": 300,
+      "longestResult": 8
+    },
+    {
+      "procedure": "planet",
+      "runs": 300,
+      "longestResult": 104
+    },
+    {
+      "procedure": "hex",
+      "runs": 300,
+      "longestResult": 235
+    },
+    {
+      "procedure": "creature",
+      "runs": 300,
+      "longestResult": 131
+    },
+    {
+      "procedure": "npc-profile",
+      "runs": 300,
+      "longestResult": 147
+    },
+    {
+      "procedure": "emotion",
+      "runs": 300,
+      "longestResult": 22
+    },
+    {
+      "procedure": "information",
+      "runs": 300,
+      "longestResult": 23
+    },
+    {
+      "procedure": "conversation",
+      "runs": 300,
+      "longestResult": 17
+    },
+    {
+      "procedure": "combat-start",
+      "runs": 300,
+      "longestResult": 38
+    },
+    {
+      "procedure": "behavior",
+      "runs": 300,
+      "longestResult": 188
+    },
+    {
+      "procedure": "injury",
+      "runs": 300,
+      "longestResult": 89
+    },
+    {
+      "procedure": "stress",
+      "runs": 300,
+      "longestResult": 109
+    },
+    {
+      "procedure": "trauma",
+      "runs": 300,
+      "longestResult": 105
+    },
+    {
+      "procedure": "station",
+      "runs": 300,
+      "longestResult": 85
+    },
+    {
+      "procedure": "ship-name",
+      "runs": 300,
+      "longestResult": 11
+    },
+    {
+      "procedure": "site-name",
+      "runs": 300,
+      "longestResult": 6
+    },
+    {
+      "procedure": "hacking",
+      "runs": 300,
+      "longestResult": 0
+    },
+    {
+      "procedure": "dice",
+      "runs": 300,
+      "longestResult": 14
+    },
+    {
+      "procedure": "alternate",
+      "runs": 300,
+      "longestResult": 18
+    },
+    {
+      "procedure": "activity",
+      "runs": 300,
+      "longestResult": 74
+    },
+    {
+      "procedure": "artifact-activate",
+      "runs": 300,
+      "longestResult": 118
+    },
+    {
+      "procedure": "biome-border",
+      "runs": 300,
+      "longestResult": 104
+    },
+    {
+      "procedure": "appraisal",
+      "runs": 300,
+      "longestResult": 59
+    },
+    {
+      "procedure": "scatter",
+      "runs": 300,
+      "longestResult": 2
+    },
+    {
+      "procedure": "dread",
+      "runs": 300,
+      "longestResult": 18
+    },
+    {
+      "procedure": "gear-check",
+      "runs": 300,
+      "longestResult": 50
+    },
+    {
+      "procedure": "time-step",
+      "runs": 300,
+      "longestResult": 7
+    }
+  ]
+}

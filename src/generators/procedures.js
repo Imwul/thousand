@@ -173,6 +173,15 @@ function misjump(r,run) {
 }
 function travel(r,run) {
   const o=run.options,c=run.context;
+  const pickCrew=(count,title='사건 대상 대원')=>{
+    const pool=Array.from({length:c.presentCrew},(_,i)=>i+1),picked=[];
+    for(let i=0;i<Math.min(count,c.presentCrew);i++){
+      const index=pool.length===1?0:r.raw('travel-target',`${title} ${i+1}`,pool.length,118)-1;
+      picked.push(pool.splice(index,1)[0]);
+    }
+    r.item(title,picked.map(n=>`대원 ${n}`).join(' / '),118,{group:'사건 대상',detail:'현재 동행 중인 대원의 종이 시트 순서 기준. 서로 다른 대상만 선택합니다.'});
+    if(count>c.presentCrew)run.notes.push('이 사건에는 두 대원이 필요하지만 현재 한 명만 남아 있습니다. 사건을 현재 인원에 맞게 해석하거나 다른 사건을 직접 선택하세요.');
+  };
   const chance=Math.min(100,o.week*20),arrival=Math.min(100,40+(o.week-1)*10);
   const event=r.check('travel-check',`${o.week}주차 사건 확인`,chance,118,'항해');
   if(event) {
@@ -181,6 +190,8 @@ function travel(r,run) {
     if(type.value===1&&c.crew===1)r.item('1인선 예외','사회적 사건을 정신·신체 문제로 처리',118,{group:'항해 사건'});
     const ids={1:'travel-social',2:'travel-malfunction',3:'travel-anomaly',4:'travel-issue'};
     const detail=r.table(ids[v],'항해 사건');
+    if(v===1&&detail.value!==10)pickCrew(detail.value<=6||detail.value===8?2:1);
+    if(v===4&&[1,2,5,7,8,9,10].includes(detail.value))pickCrew(1);
     if(v===1&&detail.value<=5){r.table('conversation','대화');r.table('reaction','첫 번째 대원의 반응');r.table('reaction','두 번째 대원의 반응');run.notes.push('항해 중 대화의 긍정 반응(+)은 PC Stress -1, 부정 반응(-)은 +1입니다.');}
     if(v===1&&detail.value===6&&o.details)inspiration(r);
     if((v===3&&detail.value===7)||(v===4&&detail.value===3))misjump(r,run);

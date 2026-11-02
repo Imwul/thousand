@@ -1,4 +1,4 @@
-import {PROCEDURES,ODDS,SLOT_COUNTS,DICE_PRESETS} from '../domain/model.js';
+import {PROCEDURES,ODDS,SLOT_COUNTS,DICE_PRESETS,relatedDicePresets} from '../domain/model.js';
 import {PROCEDURE_GROUPS,guideNext,playGuide} from '../domain/play.js';
 import {tables,tableList,CATEGORIES,RULES_VERSION} from '../data/tables.js';
 import {icon,esc} from './icons.js';
@@ -8,7 +8,7 @@ import {localizeTerms} from '../data/glossary.js';
 import {RELATED_PROCEDURES} from '../domain/continuation.js';
 import {followupChoices,effectDice} from '../domain/followups.js';
 import {enemyCardsView,enemyExtraItems,threatReference} from './play-tools.js';
-import {resultSections,statGrid,appraisalSheet,sourceOriginal} from './result-fields.js';
+import {resultSections,resultField,statGrid,appraisalSheet,sourceOriginal} from './result-fields.js';
 import {IMAGE_SIZES} from '../data/image-sizes.js';
 const imageSize=path=>{const [width,height]=IMAGE_SIZES[path]??[800,600];return `width="${width}" height="${height}"`;};
 export function pageLabel(page){return `p. ${[page].flat().join(', ')}`;}
@@ -22,7 +22,7 @@ function assetPath(path){
 function checked(v){return v?'checked':'';}
 function selected(a,b){return a===b?'selected':'';}
 export function procedureList(current,{recent=[],openGroups=[]}={}){
-  const button=(p,extraClass='')=>`<button type="button" class="procedure${extraClass?` ${extraClass}`:''} ${current===p.id?'is-active':''}" data-action="procedure" data-id="${p.id}" aria-pressed="${current===p.id}"><span class="procedure-code" aria-hidden="true">${String(PROCEDURES.indexOf(p)+1).padStart(2,'0')}</span><span><strong>${p.name}</strong><small>${p.en}</small></span><span class="procedure-mark" aria-hidden="true">${current===p.id?'●':''}</span></button>`;
+  const button=(p,extraClass='')=>`<button type="button" class="procedure${extraClass?` ${extraClass}`:''} ${current===p.id?'is-active':''}" data-action="procedure" data-id="${p.id}" aria-pressed="${current===p.id}"><span><strong>${p.name}</strong><small>${p.en}</small></span><span class="procedure-mark" aria-hidden="true">${current===p.id?'●':''}</span></button>`;
   const chips=recent.map(id=>PROCEDURES.find(p=>p.id===id)).filter(Boolean);
   const recentHtml=chips.length?`<div class="recent-procedures"><span class="recent-label">최근</span>${chips.map(p=>button(p,'procedure-recent')).join('')}</div>`:'';
   const open=new Set(openGroups);
@@ -56,9 +56,10 @@ export function expeditionReadout(c,count=0){
 export function nextStepView(procedureId, run){
   const matched=!!run&&(run.procedureId===procedureId||run.siteFromHex===true||['encounter-roster','followup'].includes(run.procedureId));
   const steps=guideNext(procedureId, matched?run:null).map(id=>PROCEDURES.find(p=>p.id===id)).filter(Boolean);
-  if(!steps.length)return '';
-  const note=matched?'이 굴림에서 이어질 상황입니다. 이미 있는 절차만 엽니다.':'이미 있는 상황만 엽니다.';
-  return `<section class="desk-card"><h3><span class="desk-kicker">Next</span>이어서 굴릴 상황</h3><div class="next-list">${steps.map(p=>`<button type="button" class="next-step" data-action="follow" data-id="${p.id}"><span>${String(PROCEDURES.indexOf(p)+1).padStart(2,'0')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.en)}</small></span></button>`).join('')}</div><p class="desk-note">${note}</p></section>`;
+  const presets=relatedDicePresets(procedureId,run);
+  if(!steps.length&&!presets.length)return '';
+  const note=matched?'상황을 열고 옵션을 확인한 뒤 굴리세요.':'상황을 선택하면 관련 굴림을 열 수 있습니다.';
+  return `<section class="desk-card"><h3><span class="desk-kicker">Next</span>이어서 굴릴 상황</h3><div class="next-list">${steps.map(p=>`<button type="button" class="next-step" data-action="follow" data-id="${p.id}"><span><strong>${esc(p.name)}</strong><small>${esc(p.en)}</small></span></button>`).join('')}</div><p class="desk-note">${note}</p>${presets.length?`<details class="context-dice"><summary>상황별 보조 굴림</summary>${presets.map(p=>`<button type="button" data-action="dice-preset" data-id="${p.id}">${esc(p.name)}<small>p. ${p.page}</small></button>`).join('')}</details>`:''}</section>`;
 }
 export function asideLog(records,currentId){
   const list=records.filter(r=>r.aside&&r.parentId===currentId).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,4);
@@ -102,7 +103,7 @@ export function optionFields(procedure,o,c){
   if(procedure==='station')html=select('stationActivity','정거장에서 할 일',[['carousing','유흥 후 무슨 일이 생겼나'],['night','Red Asteroid의 지난밤'],['locals','눈에 띄는 주민'],['news','기업 소문·뉴스']]);
   if(procedure==='ship-name'||procedure==='site-name')html=`<p class="option-explainer">원문의 이름 구성 열을 각각 따로 굴려 하나의 이름으로 조합합니다.</p>`;
   if(procedure==='hacking')html=toggle('hackingRandom','미정인 시스템 난도도 D6으로 정하기','이미 정해진 시스템·수호자의 난도는 직접 입력')+`<label class="option-select">시스템 난도<input type="number" name="hackingDifficulty" min="1" max="6" value="${o.hackingDifficulty}"></label><p class="option-explainer">해킹(Hacking) 재능이 있어야 합니다. 난도만큼 D6을 굴리고 하나라도 1이면 잠깁니다. 판정·사이퍼(Cypher)로 얻은 재굴림은 결과에서 주사위를 직접 고릅니다.</p>`;
-  if(procedure==='dice')html=`${select('dicePreset','룰북 보조굴림',[['custom','직접 입력'],...DICE_PRESETS.map(p=>[p.id,`${p.name} · p.${p.page}`])])}<label class="field-label" for="dice-expression">주사위 식</label><input id="dice-expression" name="diceExpression" value="${esc(o.diceExpression)}" placeholder="2d10+5" maxlength="100"><p class="field-help" style="margin-top:12px">${esc(DICE_PRESETS.find(p=>p.id===o.dicePreset)?.note??'예: 1d20, 3d12, 2d10+5, d100×3. 피해·수치를 종이 시트에 옮겨 적으세요.')}</p>`;
+  if(procedure==='dice')html=`${select('dicePreset','룰북 보조굴림',[['custom','직접 입력'],...DICE_PRESETS.map(p=>[p.id,`${p.name} · p.${p.page}`])])}${o.dicePreset==='ship-search'?`<label class="option-select">고장 이후 몇 번째 헥스인가요?<input type="number" name="searchHexes" min="1" max="10" value="${o.searchHexes??1}"></label>`:''}<label class="field-label" for="dice-expression">주사위 식</label><input id="dice-expression" name="diceExpression" value="${esc(o.diceExpression)}" placeholder="2d10+5" maxlength="100"><p class="field-help" style="margin-top:12px">${esc(DICE_PRESETS.find(p=>p.id===o.dicePreset)?.note??'예: 1d20, 3d12, 2d10+5, d100×3. 피해·수치를 종이 시트에 옮겨 적으세요.')}</p>`;
   if(procedure==='alternate')html=`<p class="option-explainer">잠긴 접근점을 지나갈 수 없을 때 사용합니다. 시간트랙 +1을 쓰고 조우 또는 보안 장치의 세부사항까지 생성합니다.</p>`;
   if(procedure==='activity')html=`<p class="option-explainer">수기 시간트랙이 한 바퀴 찼을 때 사용합니다. 남은 추적 위협이 있을 때만 활동 확인을 합니다.</p><button class="text-button" type="button" data-action="context">남은 추적 위협 설정 ${icon('arrow',16)}</button>`;
   if(procedure==='artifact-activate')html=`<p class="option-explainer">유물을 활성화하려는 기계공학(Technology) 판정에 성공한 뒤 굴리세요. 임시 재능 결과라면 재능까지 이어 생성합니다.</p>`;
@@ -179,7 +180,7 @@ function reportFields(run,items){
     extra('접근 노드',run.trace.filter(t=>t.id==='access-node').map(t=>t.value).join(', '),'접근점');
   }
   if(!fields.length&&!run.enemy&&!run.cards?.length&&!run.hacking){extra('결과',run.headline);if(run.subline)fields.push({title:'설명',text:run.subline});}
-  if(run.procedureId==='dice'){const preset=DICE_PRESETS.find(p=>p.id===run.options.dicePreset&&p.expression===run.options.diceExpression);return `<section class="result-section"><h3>주사위 결과</h3>${statGrid([{label:'주사위 식',value:run.options.diceExpression},{label:preset?.unit?'결과':'합계',value:run.headline+(preset?.unit??'')}],'주사위 결과','dice-total-grid')}<p class="field-detail">${esc(fields[0]?.detail??'')}</p></section>`;}
+  if(run.procedureId==='dice'){const preset=DICE_PRESETS.find(p=>p.id===run.options.dicePreset&&p.expression===run.options.diceExpression);return `<section class="result-section"><h3>주사위 결과</h3>${statGrid([{label:'주사위 식',value:run.options.diceExpression},{label:preset?.unit?'결과':'합계',value:run.headline+(preset?.unit??'')}],'주사위 결과','dice-total-grid')}<p class="field-detail">${esc(fields[0]?.detail??'')}</p>${fields.filter(item=>item.title==='적용 결과').map(item=>resultField(item)).join('')}</section>`;}
   if(run.procedureId==='appraisal'&&appraisalSheet(run))fields=fields.filter(item=>item.title!=='정산 내역'&&item.tableId!=='artifact-value');
   let belongsLeft;
   if(run.procedureId==='npc-profile')belongsLeft=item=>['동료 능력치','동료 재능'].includes(item.group);
@@ -205,7 +206,7 @@ export function reportView(run,records,{unsaved=false,saving=false}={}){
   if(named&&!run.enemy&&!run.cards?.length){for(let i=main.length-1;i>=0;i--)if(nameParts.has(main[i].tableId))extra.unshift(...main.splice(i,1));}
   const tools=`<div class="report-tools"><span class="record-state ${unsaved?'unsaved':''}">${icon(unsaved?'close':'check',14)}${unsaved?'저장 실패 · 결과는 화면에 유지 중':saving?'저장 중':'브라우저에 저장됨'}</span><div><button type="button" data-action="pin" class="tool-button ${run.pinned?'is-pinned':''}" aria-pressed="${run.pinned}">${icon('pin',16)}<span>${run.pinned?'고정됨':'고정'}</span></button><button type="button" data-action="reroll" class="tool-button">${icon('dice',16)}<span>다시 굴림</span></button></div></div>`;
   const heading=`<header class="report-title">${named?`<p class="report-kind">${esc(run.title)}</p>`:''}<h2 tabindex="-1" id="result-headline">${esc(title)}</h2>${run.subject&&run.subject.name!==title?`<p class="subject-label">관련 인물: ${esc(run.subject.name)}</p>`:''}</header>`;
-  const oldCreature=run.rulesVersion!==RULES_VERSION&&(run.cards??[run]).some(card=>card.enemy&&card.enemy.type!=='Guardian'&&!card.enemy.known);
+  const oldCreature=![RULES_VERSION,'atdw-core-2024-logbook-ko-4'].includes(run.rulesVersion)&&(run.cards??[run]).some(card=>card.enemy&&card.enemy.type!=='Guardian'&&!card.enemy.known);
   const revision=oldCreature?'<p class="source-note">이전 규칙으로 생성한 생물 기록입니다. 저장값은 보존했습니다. 수정된 장갑·방어 선택과 회복 반응은 새로 생성한 생물부터 적용됩니다.</p>':'';
   const hacking=run.hacking?`<section class="result-section hacking-result"><h3>해킹 판정</h3>${statGrid([{label:'판정',value:run.headline},{label:'난도',value:run.options.hackingDifficulty}],'해킹 판정')}</section>`:'';
   const details=extra.length?`<details class="report-details"><summary>외형·이름·생성 근거 ${icon('chevron',16)}</summary>${resultSections(extra)}</details>`:'';

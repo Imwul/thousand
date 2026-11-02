@@ -52,6 +52,8 @@ test('source, original text disclosure and dice share one metadata row below the
 });
 
 test('every Guardian tier has individually labeled stats, including zero and printed dashes',()=>{
+  assert.deepEqual(Object.keys(GUARDIANS),['titan','anansi','arash','brahmari']);
+  assert.deepEqual(Object.values(GUARDIANS).map(guardian=>Object.keys(guardian.tiers)),Array(4).fill(['easy','standard','elite','overwhelming']));
   for(const [model,guardian] of Object.entries(GUARDIANS))for(const [tier,stats] of Object.entries(guardian.tiers)){
     const run=make('creature',{species:'Guardian',guardianModel:model,tier}),before=structuredClone(run),root=dom(run);
     assert.deepEqual(values(root,'.enemy-card .attribute-grid .stat-cell').map(x=>x.value),stats.attributes.map(String));
@@ -63,12 +65,17 @@ test('every Guardian tier has individually labeled stats, including zero and pri
     assert.ok(root.querySelector('.enemy-stats [data-field="공격과 피해"]'));
     assert.ok(root.querySelector('.enemy-abilities [data-field="수호자 특성"]'));
     assert.equal(root.querySelector('.enemy-stats [data-field="수호자 특성"]'),null);
-    if(model==='anansi'){
-      assert.equal(root.querySelector('.enemy-stats [data-field="공격 조건"] .field-copy').textContent,run.items.find(item=>item.title==='공격과 피해').detail);
-      if(run.items.some(item=>/(?:중독|Poisoned)\s+IV/.test(item.text)))assert.ok(root.querySelector('.enemy-abilities .condition-reference'));
-    }
     assert.equal(root.querySelector('.journal-text,[data-action="copy"],[data-action="copy-journal"]'),null);
     assert.deepEqual(run,before);
+  }
+});
+
+test('Anansi shows the starred attack condition and each tier’s poison reference',()=>{
+  for(const [tier,poison] of [['easy',null],['standard','IV'],['elite','III'],['overwhelming','I']]){
+    const root=dom(make('creature',{species:'Guardian',guardianModel:'anansi',tier}));
+    assert.match(root.querySelector('.enemy-stats [data-field="공격 조건"] .field-copy').textContent,/높은 공격 수치를 사용/);
+    const reference=root.querySelector('.enemy-abilities .condition-reference');
+    assert.equal(reference?.querySelector('dt').textContent.match(/(?:독|중독)\s+(IV|III|II|I)/)?.[1]??null,poison);
   }
 });
 
@@ -107,6 +114,7 @@ test('mixed rosters retain separate tier stats and counts while sharing the appe
 test('fixed threat references use the same labeled stats and preserve recovery conditions',()=>{
   const w=new Window(),root=w.document.createElement('main');root.innerHTML=threatReference();
   const threats=[...root.querySelectorAll('.threat-reference>details')];
+  assert.equal(threats.length,6);
   Object.values(KNOWN_THREATS).forEach((threat,index)=>{
     assert.deepEqual(values(threats[index],'.attribute-grid .stat-cell').map(x=>x.value),threat.attributes.map(String));
     assert.deepEqual(values(threats[index],'.combat-grid .stat-cell').map(x=>x.value),threat.combat.map(x=>String(x??'—')));
@@ -129,25 +137,31 @@ test('appraisal reads the saved breakdown, rather than recalculating from change
   assert.deepEqual(run,before);
 });
 
-test('all situation outputs retain their field values without a concatenated journal heading',()=>{
-  for(const procedure of PROCEDURES)for(const face of [.01,.5,.99]){
+test('custom dice display a labeled expression and total without a concatenated journal heading',()=>{
+  const run=make('dice',{dicePreset:'custom',diceExpression:'2d10+5'}),root=dom(run);
+  assert.deepEqual(values(root,'.dice-total-grid .stat-cell'),[{label:'주사위 식',value:'2d10+5'},{label:'합계',value:'17'}]);
+  assert.equal(root.querySelector('#result-headline').textContent,'일반 주사위');
+  assert.equal(root.querySelector('.journal-text'),null);
+});
+
+test('all other situation outputs retain their field values without a concatenated journal heading',()=>{
+  assert.equal(PROCEDURES.length,36);
+  for(const procedure of PROCEDURES.filter(procedure=>procedure.id!=='dice'))for(const face of [.01,.5,.99]){
     const run=make(procedure.id,{},()=>face),before=structuredClone(run),root=dom(run);
     assert.ok(root.querySelector('#result-headline'));
     assert.equal(root.querySelector('.journal-text,.copy-line,[data-action="copy-journal"],.dice-ribbon'),null);
-    let artifactIndex=0;
-    for(const item of localizeRecord(run,tables).items){
-      const entries=statEntries(item);
-      if(item.tableId==='artifact-value'&&root.querySelector('.appraisal-values')){
-        const row=root.querySelectorAll('.appraisal-values tbody tr')[artifactIndex++];
-        if(entries){assert.equal(row.querySelector('td').textContent,entries[0].value);assert.equal(row.querySelectorAll('td')[1].textContent+' DC',entries[1].value);}
-        else assert.ok(row.textContent.includes(item.text));
-      }
-      else if(entries){for(const entry of entries)assert.ok(values(root,'.stat-cell').some(x=>x.label===entry.label&&x.value===entry.value),`${procedure.id}: ${entry.label} ${entry.value}`);}
-      else if(item.title==='정산 내역')assert.ok(root.querySelector('.appraisal-table'));
-      else if(procedure.id==='dice')assert.equal(root.querySelector('.dice-total-grid .stat-cell:last-child dd').textContent,run.headline);
-      else assert.ok(root.textContent.includes(item.text),`${procedure.id}: ${item.title}`);
-    }
-    if(run.hacking)assert.deepEqual([...root.querySelectorAll('.hack-choice b')].map(el=>Number(el.textContent)),run.hacking.values);
+    const items=localizeRecord(run,tables).items;
+    const artifacts=items.filter(item=>item.tableId==='artifact-value');
+    const artifactRows=[...root.querySelectorAll('.appraisal-values tbody tr')];
+    assert.equal(artifactRows.length,artifacts.length,`${procedure.id}: 유물 감정 행 수`);
+    assert.ok(artifacts.every((item,index)=>(statEntries(item)?.map(entry=>entry.value.replace(/ DC$/,''))??[item.text]).every(value=>artifactRows[index].textContent.includes(value))),`${procedure.id}: 유물 감정 값`);
+    const matrixValues=items.filter(item=>item.tableId!=='artifact-value').flatMap(item=>statEntries(item)??[]);
+    const renderedStats=values(root,'.stat-cell');
+    assert.ok(matrixValues.every(entry=>renderedStats.some(x=>x.label===entry.label&&x.value===entry.value)),`${procedure.id}: 수치와 라벨`);
+    const prose=items.filter(item=>!statEntries(item)&&item.tableId!=='artifact-value'&&item.title!=='정산 내역');
+    assert.ok(prose.every(item=>root.textContent.includes(item.text)),`${procedure.id}: 설명 값`);
+    assert.equal(root.querySelectorAll('.appraisal-table').length,items.filter(item=>item.title==='정산 내역').length,`${procedure.id}: 정산 내역`);
+    assert.deepEqual([...root.querySelectorAll('.hack-choice b')].map(el=>Number(el.textContent)),run.hacking?.values??[]);
     assert.deepEqual(run,before);
   }
   const door=make('door',{},()=>.2),attempt=runLockAttempt(door,'outside',{rng:()=>.99}),root=dom(attempt);

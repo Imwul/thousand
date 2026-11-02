@@ -1,0 +1,237 @@
+{
+  "raw_score": 90,
+  "score_cap": 89,
+  "highest_severity": "MEDIUM",
+  "score_override_rule": "Highest severity MEDIUM caps effective score at 89: min(raw deduction score 90, 89) = 89.",
+  "overall_score": 89,
+  "overall_grade": "B",
+  "quality_assessment": "Good",
+  "recommendation": "Approve with Comments",
+  "verdict_rule": "No Critical or High, effective score >= 70, and findings remain => Approve with Comments.",
+  "convention_baseline": {
+    "corpusSize": 0,
+    "sampled": 0,
+    "baselineUnavailable": true,
+    "reason": "Full suite is reviewed; no test files remain outside the review set.",
+    "conventions": {
+      "priorityMarkers": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      },
+      "testIds": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      },
+      "bddNaming": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      },
+      "networkFirst": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      },
+      "playwrightUtils": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      },
+      "dataFactories": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      },
+      "fixtures": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      },
+      "assertionStyle": {
+        "adopted": 0,
+        "sampled": 0,
+        "status": "unknown",
+        "form": ""
+      }
+    },
+    "sampledFiles": []
+  },
+  "dimension_scores": {
+    "determinism": 100,
+    "isolation": 60,
+    "maintainability": 50,
+    "performance": 100
+  },
+  "dimension_grades": {
+    "determinism": "A",
+    "isolation": "D",
+    "maintainability": "F",
+    "performance": "A"
+  },
+  "violations_summary": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 10,
+    "LOW": 0,
+    "total": 10
+  },
+  "all_violations": [
+    {
+      "file": "app/tests/continuity.test.mjs",
+      "line": 16,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "continuity.test.mjs의 14개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('all fixed threats have their own stats, recovery effects and matching behavior',()=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/core-audit.test.mjs",
+      "line": 19,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "core-audit.test.mjs의 19개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('pp.272–273 choose Armor OR Defense, and apply Carapace after the choice',()=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/extended.test.mjs",
+      "line": 7,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "extended.test.mjs의 11개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('water exploration skips terrain and exhausted known threats',()=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/localization.test.mjs",
+      "line": 11,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "localization.test.mjs의 7개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('ability effects match their printed number, despite interleaved source columns',()=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/play.test.mjs",
+      "line": 14,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "play.test.mjs의 6개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('procedure groups list each existing situation once',()=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/result-layout.test.mjs",
+      "line": 18,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "result-layout.test.mjs의 11개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('prose effects have separate label and value areas; emphasis preserves text and escaping',()=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/rules.test.mjs",
+      "line": 13,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "rules.test.mjs의 16개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('all 265 core-play tables are present; all rollable tables partition their dice domains',()=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/storage.test.mjs",
+      "line": 9,
+      "row": "M4",
+      "severity": "MEDIUM",
+      "category": "Ungrouped suite",
+      "description": "storage.test.mjs의 8개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다.",
+      "suggestion": "node:test의 describe로 파일의 공통 주제를 묶고 기존 개별 행동 이름을 유지한다.",
+      "code_snippet": "test('real storage module persists a complete result, annotation and selection across reopen',async(t)=>{",
+      "dimension": "isolation"
+    },
+    {
+      "file": "app/tests/interface.test.mjs",
+      "line": 9,
+      "row": "M3",
+      "severity": "MEDIUM",
+      "category": "Multi-concern test",
+      "description": "interface.test.mjs의 한 테스트가 초안 보존·저장·필터·캠페인 변경·조우·장비·주사위 등 세 가지 이상의 독립 관심사를 다뤄 첫 실패 이후의 진단이 가려진다.",
+      "suggestion": "공통 준비 도우미를 유지하면서 독립된 동작별 test 또는 awaited t.test로 분리한다. 통합 여정은 별도의 짧은 smoke 테스트로 남긴다.",
+      "code_snippet": "test('actual app controller preserves drafts, writes records, annotates, filters and changes context', {timeout:15000},async(t)=>{",
+      "dimension": "maintainability"
+    },
+    {
+      "file": "app/tests/play.test.mjs",
+      "line": 51,
+      "row": "M3",
+      "severity": "MEDIUM",
+      "category": "Multi-concern test",
+      "description": "play.test.mjs의 한 테스트가 보고서 배치·행성 착륙 참조·저널 내보내기·질문 포함 규칙 등 세 가지 이상의 독립 관심사를 다뤄 첫 실패 이후의 진단이 가려진다.",
+      "suggestion": "공통 준비 도우미를 유지하면서 독립된 동작별 test 또는 awaited t.test로 분리한다. 통합 여정은 별도의 짧은 smoke 테스트로 남긴다.",
+      "code_snippet": "test('the report separates results, paper effects, choices, and optional landing reference',()=>{",
+      "dimension": "maintainability"
+    }
+  ],
+  "critical_severity_violations": [],
+  "high_severity_violations": [],
+  "key_weaknesses": [
+    {
+      "row": "M4",
+      "summary": "continuity.test.mjs의 14개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다."
+    },
+    {
+      "row": "M4",
+      "summary": "core-audit.test.mjs의 19개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다."
+    },
+    {
+      "row": "M4",
+      "summary": "extended.test.mjs의 11개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다."
+    },
+    {
+      "row": "M4",
+      "summary": "localization.test.mjs의 7개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다."
+    },
+    {
+      "row": "M4",
+      "summary": "play.test.mjs의 6개 테스트가 describe 그룹 없이 나열되어 실행 결과의 공통 대상이 드러나지 않는다."
+    }
+  ],
+  "advisory_observations": [
+    "종이 저널 플레이와 PDF 룰북의 요구사항 누락 여부는 별도 제품 감사 및 trace에서 검증한다. 이 품질 점수는 규칙 내용의 완전성 점수가 아니다.",
+    "happy-dom은 실제 CSS 배치 엔진이 아니므로 3440px와 iPad 13인치 정렬은 별도 실제 브라우저 시각 검증이 필요하다."
+  ],
+  "execution_mode": "sequential",
+  "bonuses": {
+    "excellentBdd": 5,
+    "comprehensiveFixtures": 0,
+    "dataFactories": 0,
+    "networkFirst": 0,
+    "perfectIsolation": 5,
+    "allTestIds": 0
+  },
+  "deductions": 20
+}

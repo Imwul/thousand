@@ -56,7 +56,7 @@ export function statGrid(entries,label='',kind=''){
   return `<dl class="stat-grid stats-${entries.length} ${esc(kind)}"${label?` aria-label="${esc(label)}"`:''}>${entries.map(entry=>`<div class="stat-cell${entry.label==='주사위 식'||/^[가-힣]/.test(String(entry.value))?' stat-word':''}"><dt>${esc(entry.label)}</dt><dd>${esc(entry.value)}</dd></div>`).join('')}</dl>`;
 }
 
-export function sourceOriginal(item){return item.sourceText&&item.sourceText.length>32?`<details class="source-original"><summary>영문 원문</summary><p lang="en">${esc(item.sourceText)}</p></details>`:'';}
+export function sourceOriginal(item){return item.sourceText&&item.sourceText.length>32&&!/[가-힣]/.test(item.sourceText)?`<details class="source-original"><summary>영문 원문</summary><p lang="en">${esc(item.sourceText)}</p></details>`:'';}
 
 function source(item){
   if(item.page===undefined&& !item.tableId)return '';

@@ -19,9 +19,9 @@ const rowValue=(id,key)=>tables[id].rows.find(row=>row.key===key).min;
 test('pp.272–273 choose Armor OR Defense, and apply Carapace after the choice',()=>{
   const bp=make('creature',{species:'Local Fauna'},{crew:3}).blueprint;
   bp.tables['creature-trait']=6;bp.abilities={'enemy-ability':[3,11,18]};
-  for(const [tier,base] of [['standard',2],['elite',4],['overwhelming',5]])for(const face of [1,3,4,6]){
+  for(const [tier,base] of [['standard',2],['elite',4],['overwhelming',5]])for(const [face,armor,defense] of [[1,base+3,0],[3,base+3,0],[4,3,base],[6,3,base]]){
     const r=make('creature',{species:'Local Fauna',tier},{crew:3},()=>.5,{blueprint:{...bp,defenseVariant:face}});
-    const values=stats(r);assert.equal(values['장갑'],(face<=3?base:0)+3);assert.equal(values['방어'],face<=3?0:base);
+    const values=stats(r);assert.equal(values['장갑'],armor);assert.equal(values['방어'],defense);
     assert.match(get(r,'전투 수치').detail,/Carapace/);
   }
 });
@@ -96,12 +96,12 @@ test('pp.193,211 frozen terrain checks its 10% fall and toxic poisoning determin
 });
 
 test('conditional followups are offered only after their prerequisite, preserve source, and support replay',()=>{
-  const sources=[['fixed-event',15,'stela'],['fixed-event',16,'metal-box'],['security',1,'security-alarm'],['biome-hazards-10',9,'water-predators'],['dread',12,'dread-trauma'],['injury',19,'injury-trauma'],['artifact-activation',11,'artifact-trauma'],['biome-hazards-7',3,'toxic-marsh']];
-  for(const [id,face,key] of sources){
+  const sources=[['fixed-event',15,'stela','door'],['fixed-event',16,'metal-box','door'],['security',1,'security-alarm','creature'],['biome-hazards-10',9,'water-predators','creature'],['dread',12,'dread-trauma','door'],['injury',19,'injury-trauma','door'],['artifact-activation',11,'artifact-trauma','door'],['biome-hazards-7',3,'toxic-marsh','door']];
+  for(const [id,face,key,nextProcedure] of sources){
     const source=make('table',{}, {},faces([Number(tables[id].dice.slice(1)),face]),{tableId:id}),before=structuredClone(source);
     assert.equal(source.trace.length,1);assert.ok(followupChoices(source).some(c=>c.id===key));
     const next=runFollowup(source,key,{rng:()=>.1});assert.equal(next.parentId,source.id);assert.deepEqual(source,before);
-    if(next.encounter)assert.equal(guideNext('area',next)[0],'creature');
+    assert.equal(guideNext('area',next)[0],nextProcedure);
     assert.equal(runFollowup(next,key,{rng:()=>.9}).parentId,next.id);
   }
   assert.throws(()=>runFollowup(make('question'),'metal-box'),/이어 굴릴 수 없는/);
@@ -122,7 +122,7 @@ test('pp.96,98 stress 20 generates obsession, trauma and conditional negative tr
 });
 
 test('pp.365–366 availability bonuses and experimental failure preserve exact boundaries',()=>{
-  for(const face of [14,15])assert.equal(make('gear-check',{}, {},faces([20,face])).headline,face===15?'구매 가능':'이번 임무 후에는 구매 불가');
+  for(const [face,expected] of [[14,'이번 임무 후에는 구매 불가'],[15,'구매 가능']])assert.equal(make('gear-check',{}, {},faces([20,face])).headline,expected);
   assert.equal(make('gear-check',{wellConnected:true}, {},faces([20,12])).headline,'구매 가능');
   assert.equal(make('gear-check',{goldTier:true,bribeSteps:1}, {},faces([20,12])).headline,'구매 가능');
   assert.equal(make('gear-check',{bribeSteps:14}, {},faces([20,1])).headline,'구매 가능');

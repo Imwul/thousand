@@ -71,6 +71,7 @@ test('UI values keep canonical keys while artwork is removed from navigation',()
   const options=optionFields('creature',defaultOptions(),defaultContext());
   assert.match(options,/<option value="Guardian"[^>]*>수호자\(Guardian\)/);
   assert.doesNotMatch(procedureList('creature'),/<svg[^>]*>[\s\S]*?<\/svg><span><strong>/);
-  assert.match(procedureList('creature'),/procedure-code/);
+  assert.match(procedureList('creature'),/생물 상세 생성/);
+  assert.doesNotMatch(procedureList('creature'),/procedure-code/);
   assert.match(tableView('enemy-ability'),/산성.*2D12/);
 });

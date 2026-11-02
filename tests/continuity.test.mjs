@@ -34,12 +34,12 @@ test('a mixed encounter creates versions of one species, without rerolling its i
   const roster=runEncounterRoster(source,{rng:()=>.5});
   assert.deepEqual(roster.cards.map(card=>card.count),[1,2]);
   assert.ok(roster.cards.every(card=>card.enemy.type==='Aberration'&&card.enemy.name===roster.headline));
-  for(const id of ['creature-size','creature-drive','appearance','covering','unique-feature']){
+  for(const [id,rollCount] of [['creature-size',0],['creature-drive',1],['appearance',1],['covering',1],['unique-feature',1]]){
     const values=roster.cards.map(card=>card.items.find(item=>item.tableId===id).roll);
     assert.equal(new Set(values).size,1,id);
-    if(id==='creature-size')assert.ok(roster.cards.every(card=>card.items.find(item=>item.tableId===id).reused));
-    assert.equal(roster.trace.filter(roll=>roll.id===id).length,id==='creature-size'?0:1,id);
+    assert.equal(roster.trace.filter(roll=>roll.id===id).length,rollCount,id);
   }
+  assert.ok(roster.cards.every(card=>card.items.find(item=>item.tableId==='creature-size').reused));
   assert.equal(roster.cards[1].enemy.role,'Brute','solo easy exception still applies');
   assert.equal(roster.parentId,source.id);assert.deepEqual(source,snapshot);
   const revisited=runEncounterRoster(source,{blueprint:roster.blueprint,rng:()=>.99});

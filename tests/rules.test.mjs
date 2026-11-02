@@ -12,16 +12,26 @@ const make=(id,options={},context={},rng=seeded())=>runProcedure(id,{campaignId:
 
 test('all 265 core-play tables are present; all rollable tables partition their dice domains',()=>{
   assert.equal(tableList.length,265);
-  for(const t of tableList){if(t.rollable!==false)for(const n of diceDomain(t.dice))assert.ok(lookup(t,n),`${t.id} ${n}`);assert.ok([t.page].flat().every(p=>p>=1&&p<=408));}
+  const rollable=tableList.filter(t=>t.rollable!==false);
+  assert.equal(rollable.length,264);
+  assert.deepEqual(tableList.filter(t=>t.rollable===false).map(t=>t.id),['mood-8-2']);
+  for(const t of rollable)for(const n of diceDomain(t.dice))assert.ok(lookup(t,n),`${t.id} ${n}`);
+  for(const t of tableList)assert.ok([t.page].flat().every(p=>p>=1&&p<=408));
   assert.equal(tables.action.rows.length,100);assert.equal(tables.theme.rows.length,100);
   assert.equal(tables.action.rows[99].en,'Help');assert.equal(tables.theme.rows[99].en,'Enterprise');
 });
 test('all prediction thresholds, natural 1 and 20, follow the supplied D20 table',()=>{
-  for(const odds of ODDS)for(let value=1;value<=20;value++){
-    const r=make('question',{odds:odds.id,qualifier:false},{},seq([20,value]));
-    assert.equal(r.tone,value>=odds.threshold?'positive':'negative');
-    if(value===1||value===20)assert.match(r.headline,/극단적/);
-    assert.equal(r.trace.length,1);
+  // Independent transcription of p.229; changing production ODDS cannot change the oracle.
+  const printed=[['impossible',16],['very-unlikely',14],['unlikely',12],['even',10],['likely',8],['very-likely',6],['certain',4]];
+  assert.deepEqual(ODDS.map(({id,threshold})=>[id,threshold]),printed);
+  for(const [id,threshold] of printed){
+    const expected=[...Array(threshold-1).fill('negative'),...Array(21-threshold).fill('positive')];
+    for(const [index,tone] of expected.entries()){
+      const r=make('question',{odds:id,qualifier:false},{},seq([20,index+1]));
+      assert.equal(r.tone,tone,`${id}: ${index+1}`);assert.equal(r.trace.length,1);
+    }
+    assert.equal(make('question',{odds:id,qualifier:false},{},seq([20,1])).headline,'극단적인 아니오');
+    assert.equal(make('question',{odds:id,qualifier:false},{},seq([20,20])).headline,'극단적인 예');
   }
   assert.equal(make('question',{qualifier:false},{},seq([20,10])).tone,'positive');
 });
@@ -97,5 +107,6 @@ test('security table numbering follows the table names, not the mismatched prose
 test('all procedure outputs round trip without losing trace, context or original content',()=>{
   const c={id:'test',name:'Test',createdAt:new Date().toISOString(),context:defaultContext(),options:defaultOptions()};
   const records=PROCEDURES.flatMap(p=>Array.from({length:30},(_,i)=>make(p.id,{}, {},seeded(17+i*23))));
+  assert.equal(records.length,1080);
   const backup=makeBackup([c],records);assert.deepEqual(validateBackup(JSON.parse(JSON.stringify(backup))),backup);
 });

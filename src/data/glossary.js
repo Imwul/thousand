@@ -14,7 +14,7 @@ const glossary={
   'Àrsaidh Technology':'Àrsaidh 기계공학(Àrsaidh Technology)',
   'Oxygen Pellet':'산소 펠릿','Oxygen Tank':'산소 탱크','Gear Slot':'장비 칸',
   'Negative Trait':'부정적 특성','Site Report':'탐사지 보고서','Time Track':'시간트랙',
-  'Medical Aid':'응급처치(Medical Aid)','Emotional State':'감정 상태',
+  'Medical Aid':'응급처치(Medical Aid)','Emotional State':'감정 상태','Stress Reaction':'스트레스 반응',
   'Black Cypher':'블랙 사이퍼(Black Cypher)',Cypher:'사이퍼(Cypher)',
   Wounds:'상처',Wound:'상처',Stamina:'기력',Stress:'스트레스',Luck:'행운',
   Awareness:'경계',Armor:'장갑',Defense:'방어',Attack:'공격',Initiative:'주도권',

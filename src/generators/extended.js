@@ -3,7 +3,7 @@ import {creatureLabel,creatureName} from '../data/glossary.js';
 import {GUARDIANS,guardianItems} from '../data/guardians.js';
 import {BIOME_EFFECTS} from '../data/biomes.js';
 import {ROLE_RULES} from '../data/enemies.js';
-import {DICE_PRESETS} from '../domain/model.js';
+import {DICE_PRESETS,dicePresetOutcome} from '../domain/model.js';
 
 const roles=['Brute','Lurker','Ranged','Swarm','Psychic'];
 const tierNames={easy:'쉬움',standard:'보통',elite:'정예',overwhelming:'압도적'};
@@ -32,13 +32,13 @@ export function creature(r,run){
   const size=identity('creature-size','몸과 행동'),drive=identity('creature-drive','몸과 행동');
   const role=o.tier==='easy'&&c.crew===1?'Brute':identity('creature-role','몸과 행동').row.key;
   if(o.tier==='easy'&&c.crew===1)r.item('생물 역할',creatureLabel('Brute'),274,{key:'Brute',group:'몸과 행동',detail:'1인 출발 탐사의 쉬움 난도 적은 항상 돌격형(Brute).'});
-  const stats={...base[o.tier]};let damageBonus=0,meleeBonus=0,rangedBonus=0,attack,damage;
+  const stats={...base[o.tier]},statPage=o.tier==='easy'||o.tier==='standard'?272:273;let damageBonus=0,meleeBonus=0,rangedBonus=0,attack,damage;
   if(o.tier==='easy'){attack=2;damage='1d10+5';}
   else {
-    const variant=bp.statVariant??r.raw('stat-variant','공격·피해 변형',6,273);bp.statVariant=variant;const branch=variant<=3;
+    const variant=bp.statVariant??r.raw('stat-variant','공격·피해 변형',6,statPage);bp.statVariant=variant;const branch=variant<=3;
     const variants={standard:[[5,'1d10+5'],[2,'2d12']],elite:[[8,'2d12'],[4,'2d10+5']],overwhelming:[[10,'3d12'],[5,'3d10+5']]};
     [attack,damage]=variants[o.tier][branch?0:1];
-    const defenseVariant=bp.defenseVariant??r.raw('defense-variant','장갑·방어 선택',6,273);bp.defenseVariant=defenseVariant;
+    const defenseVariant=bp.defenseVariant??r.raw('defense-variant','장갑·방어 선택',6,statPage);bp.defenseVariant=defenseVariant;
     stats[defenseVariant<=3?'Defense':'Armor']=0;
   }
   if(role==='Brute'){stats.STR++;stats.DEX--;stats.CON++;damageBonus+=2;attack-=2;stats.Awareness-=2;}
@@ -55,7 +55,6 @@ export function creature(r,run){
   }
   if(o.randomIntelligence){if(bp.intelligence===undefined){const n=identity('intelligence','지능').value;bp.intelligence=n<=7?6-r.raw('animal-int','동물 지능 D4',4,271):n<=9?6+r.raw('human-int','인간 지능 D8',8,271):12+r.raw('advanced-int','고등 지능 D8',8,271);}stats.INT=bp.intelligence;}
   const small=size.value<=3?-2:size.value<=8?-1:size.value<=16?0:size.value<=18?1:2;
-  const statPage=o.tier==='easy'||o.tier==='standard'?272:273;
   r.item('기본 능력치',`STR ${stats.STR} / DEX ${stats.DEX} / CON ${stats.CON} / WIL ${stats.WIL} / INT ${stats.INT} / CHA ${stats.CHA}`,statPage,{group:'능력치',detail:'원문 난도 블록에 역할·고유 특성·선택한 지능 보정을 적용한 값.'});
   const combatStats=r.item('전투 수치',`상처 ${stats.Wounds} / 경계 ${stats.Awareness} / 장갑 ${stats.Armor} / 방어 ${stats.Defense}`,statPage,{group:'능력치',detail:o.tier==='easy'?'쉬움 난도의 기본 장갑·방어는 없음.':`기본 블록의 장갑 또는 방어 중 ${bp.defenseVariant<=3?'장갑':'방어'}를 선택한 뒤 고유 특성을 적용. 선택 확률은 각각 50%.`});
   const extra=damageBonus?`${damageBonus>0?'+':''}${damageBonus}`:'';
@@ -100,10 +99,10 @@ function planet(r,run){
   run.notes.push('최초 착륙 생물군계는 D10, 인접 생물군계는 D12입니다. 단일 생물군계 행성에서는 경계에서 바꾸지 않습니다. 대기 밀도가 적당해도 마스크 없이 호흡할 수 있다는 뜻은 아닙니다.');
 }
 function hex(r,run,hooks){
-  const c=run.context,environment=BIOME_EFFECTS[c.biome];r.item('생물군계 환경',environment.text,environment.page,{group:'탐사 조건'});let terrain=c.terrain;
+  const c=run.context,environment=BIOME_EFFECTS[c.biome];r.item('생물군계 환경',environment.text,environment.page,{group:'탐사 조건'});let terrain=c.biome===10?null:c.terrain;
   if(c.biome!==10){const t=r.table(`terrain-${c.terrain}`,'지형');terrain=['위험 지형','복잡 지형','생물 서식지','생물군계 의존','순탄한 길'].indexOf(t.row.key);}
   else r.item('수역 생물군계','지형 난도 굴림 생략',194,{group:'지형',detail:'수중 탐사에는 full vacc suit 이상의 장비가 필요합니다.'});
-  run.terrain=terrain;
+  if(terrain!==null)run.terrain=terrain;
   if(terrain===3){const effects=['분화구로 통과 시간트랙 +1.','용융 금속·메탄 등의 강을 우회하면 +3.','빙하 통과에 시간트랙 +1. 틈 추락 확률 10%.','피난처를 찾지 못하면 모두 200 rads.','각자 Oxygen Pellet 1개 추가 소모, 시간트랙 +1.','활화산 우회에 +3.','달려서 통과하며 각자 Oxygen Pellet 1개 추가 소모.','추가 효과 없음.','용암호 우회에 +3.','지형 난도 사용 안 함.'];r.item('생물군계별 지형 효과',effects[c.biome-1],193,{group:'지형'});
     if(c.biome===3&&r.check('glacier-fall','빙하 틈 추락',10,193,'지형'))r.item('추락 피해','무작위 대원 한 명이 상처 1과 장비 1개 손실.',193,{group:'지형'});
   }
@@ -118,11 +117,15 @@ function hex(r,run,hooks){
   if(e.value<=2){const find=r.table('planet-findings','발견');if(find.value===10)r.table('artifact','발견한 유물');}
   else if(e.value>=6&&e.value<=9){
     const hazard=r.table(`biome-hazards-${c.biome}`,'위험·장애물');
+    if((c.biome===8&&hazard.value===3)||(c.biome===9&&[3,4].includes(hazard.value))){
+      const page=c.biome===8?213:215,face=r.raw('falling-rubble','낙하물 확인',6,page);
+      r.item('낙하물',face===1?'낙하물 발생':'낙하물 없음',page,{group:'위험·장애물',roll:face,dice:'d6',values:[face],detail:face===1?'각 대원은 DEX 판정. 실패하면 상처 D4.':'D6 1에서만 발생. 낙하물의 DEX 판정과 상처는 적용하지 않습니다.'});
+    }
     if(c.biome===7&&hazard.value===6)r.table('poison','무작위 독 강도');
     if(/^Encounter\./.test(hazard.row.key)){
-      if(terrain===4&&c.biome!==10)r.item('전투 제한','순탄한 길이므로 전투 조우를 적용하지 않음',193,{group:'조우'});
-      else if(c.biome===1)hooks.encounter(r,run,{forcedType:'Guardian',ignoreHazard:true,location:'planet'});
-      else {const type=r.table('planet-encounter','조우');if(type.value<=6)hooks.encounter(r,run,{ignoreHazard:true,location:'planet'});else r.table('close-encounter','가까운 목격');}
+      const blocked=()=>r.item('전투 제한','순탄한 길이므로 전투 조우를 적용하지 않음',193,{group:'조우'});
+      if(c.biome===1){if(terrain===4)blocked();else hooks.encounter(r,run,{forcedType:'Guardian',ignoreHazard:true,location:'planet'});}
+      else {const type=r.table('planet-encounter','조우');if(type.value<=6){if(terrain===4)blocked();else hooks.encounter(r,run,{ignoreHazard:true,location:'planet'});}else r.table('close-encounter','가까운 목격');}
     }
     if(c.biome===7&&hazard.value===7)run.notes.push('금속 구체는 다가간다고 선택한 뒤에만 굴립니다. 보고서 위의 버튼이 그 표입니다.');
   }else if(e.value===10)run.notes.push('Àrsaidh 탐사지를 발견했습니다. 도착표는 다시 굴리지 않습니다. 위의 버튼이 용도·규모·위험과 탐사 한도를 굴립니다.');
@@ -224,7 +227,9 @@ export function runExtended(id,r,run,hooks){
   }
   else if(id==='dice'){const n=rollExpression(r,o.diceExpression),preset=DICE_PRESETS.find(p=>p.id===o.dicePreset&&p.expression===o.diceExpression);run.headline=String(n);run.subline=o.diceExpression;
     if(preset){run.title=preset.name;run.subline=`${o.diceExpression} · ${n}${preset.unit}`;for(const trace of run.trace)trace.page=preset.page;}
-    r.item(preset?.name??'직접 입력한 주사위 식',`${o.diceExpression} = ${n}${preset?.unit??''}`,preset?.page??34,{detail:preset?.note??'앱의 일반 주사위 편의 기능. 특정 판정의 성공 조건이나 시트 수치를 자동 적용하지 않습니다.'});}
+    r.item(preset?.name??'직접 입력한 주사위 식',`${o.diceExpression} = ${n}${preset?.unit??''}`,preset?.page??34,{detail:preset?.note??'앱의 일반 주사위 편의 기능. 특정 판정의 성공 조건이나 시트 수치를 자동 적용하지 않습니다.'});
+    const outcome=preset&&dicePresetOutcome(preset.id,n,o);
+    if(outcome)r.item('적용 결과',outcome,preset.page,{group:'보조굴림',detail:preset.id==='ship-search'?`${o.searchHexes}번째 헥스 · 발견 확률 ${o.searchHexes*10}%`:''});}
   else if(id==='alternate'){const a=r.table('alternate-access','우회 경로');run.headline=a.row.text;if(a.value<=5)hooks.encounter(r,run);else hooks.security(r,run);run.subline='우회 경로 탐색 · 시간트랙 +1';}
   else if(id==='activity'){
     run.headline='한 시간이 지났습니다';run.subline='소모품과 지속 효과를 종이 시트에서 갱신하세요.';

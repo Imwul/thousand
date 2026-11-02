@@ -54,8 +54,40 @@ export const DICE_PRESETS=[
   {id:'surgery',name:'재건 수술 회복 기간',expression:'d6',page:356,unit:'주',note:'치명적 부상 하나를 제거하는 수술. 비용 10,000 DC.'},
   {id:'therapy',name:'심리 치료 기간',expression:'d20',page:356,unit:'주',note:'강박 또는 트라우마 하나 제거에 8,000 DC. 부정적 특성은 이 치료로 제거할 수 없습니다.'},
   {id:'augmentation',name:'생체기계 증강 회복 기간',expression:'d6',page:400,unit:'주',note:'수술 후 숙소에서 쉬는 기간. 이 기간의 일반 비용도 지불합니다.'},
-  {id:'burst',name:'점사(Burst) 탄약 소비',expression:'d4',page:368,unit:'',note:'점사로 피해를 다시 굴렸을 때 1이면 탄약 1개 소비. 2–4는 추가 소비 없음.'}
+  {id:'burst',name:'점사(Burst) 탄약 소비',expression:'d4',page:368,unit:'',note:'점사로 피해를 다시 굴렸을 때 1이면 탄약 1개 소비. 2–4는 추가 소비 없음.'},
+  {id:'turret-ammo',name:'자동 포탑 탄약 확인',expression:'d6',page:397,unit:'',note:'Deployable Auto Turret의 매 전투 후 확인. 1이면 탄약이 고갈되어 이번 임무 동안 사용할 수 없습니다.'},
+  {id:'friendly-fire',name:'근접전 중인 대상에게 사격',expression:'d6',page:58,unit:'',note:'엉뚱한 대상을 맞힐 확률 50%. D6 1–3은 다른 대상, 4–6은 의도한 대상. 누가 맞는지는 전장에 맞춰 정합니다.'},
+  {id:'zone-cover',name:'구역 전투의 완전 엄폐 위치',expression:'d4',page:81,unit:'번 구역',note:'선택 규칙인 구역 전투에서 사용합니다. 이 구역에는 완전 엄폐가 있어 들어오는 원거리 공격에 −5.'},
+  {id:'parasite-gestation',name:'기생체 잠복 기간',expression:'d20',page:86,unit:' 시간트랙',note:'이 기간이 지나면 숙주에게서 튀어나옵니다. 목격한 모든 인물은 스트레스 +20. 이후 기생체 공격 표(p.87)를 사용합니다.'},
+  {id:'parasite-maturation',name:'도망친 기생체의 성숙 기간',expression:'d10',page:87,unit:' 시간트랙',note:'기생체 공격의 도주 결과일 때. 숨은 기생체가 성체가 되어 대원들을 추적하기 시작하기까지의 기간입니다.'},
+  {id:'gas-duration',name:'가스 무기의 지속 시간',expression:'d4',page:369,unit:'라운드',note:'Gas 특성의 무기는 폭발 범위에 독 III 가스를 만듭니다.'},
+  {id:'radiation-death',name:'치명적 방사선 노출의 잔여 시간',expression:'d10',page:89,unit:'시간',note:'501–700 rads 구간에 제시된 사망까지의 시간입니다. 노출량과 상태는 종이 시트에서 확인하세요.'},
+  {id:'ship-search',name:'GPS 고장 후 함선 수색',expression:'d100',page:199,unit:'',note:'황무지 위험 4 이후 진입한 헥스마다 발견 확률 +10%. 탐사했던 헥스도 포함합니다.'},
+  {id:'nerve-seizure',name:'신경 손상으로 행동 가능한지',expression:'d6',page:77,unit:'',note:'부상 17번의 매 턴 확인. D6 1이면 이번 턴 행동 불가.'},
+  {id:'acid-gear',name:'산성 능력의 장비 파괴',expression:'d6',page:281,unit:'',note:'Acid Blood의 피해 또는 Acid Spray의 명중 조건을 먼저 적용합니다. 영향을 받은 대상의 장비 하나가 파괴될 확률 50%. D6 1–3 파괴, 4–6 보존.'},
+  {id:'adjacent-hex',name:'수중 해류에 휩쓸린 방향',expression:'d6',page:217,unit:'번 방향',note:'DEX 실패 후 사용. 종이 헥스 지도에서 인접한 여섯 방향에 1–6을 정한 뒤 굴리세요. 원문은 방향 번호를 지정하지 않습니다.'}
 ];
+export function dicePresetOutcome(id,value,options={}){
+  if(id==='burst')return value===1?'탄약 1개 소비':'추가 탄약 소비 없음';
+  if(id==='turret-ammo')return value===1?'탄약 고갈 · 이번 임무 사용 불가':'탄약 남음';
+  if(id==='friendly-fire')return value<=3?'다른 대상을 맞힘':'의도한 대상을 맞힘';
+  if(id==='nerve-seizure')return value===1?'이번 턴 행동 불가':'이번 턴 행동 가능';
+  if(id==='acid-gear')return value<=3?'착용 장비 하나 파괴':'착용 장비 보존';
+  if(id==='ship-search')return value<=Math.min(100,(options.searchHexes??1)*10)?'함선 발견':'아직 찾지 못함';
+  return '';
+}
+export function relatedDicePresets(procedureId,run){
+  const ids={travel:['other-crew-voyage'],station:['study','surgery','therapy','augmentation'],'combat-start':['initiative','zone-cover'],behavior:['friendly-fire','burst','turret-ammo','gas-duration'],'gear-check':['turret-ammo','burst']}[procedureId]??[];
+  const has=(id,value)=>run?.items?.some(item=>item.tableId===id&&(value===undefined||item.roll===value));
+  if(has('biome-hazards-1',4))ids.push('ship-search');
+  if(has('parasite-attack',1)||has('parasite-attack',2)||has('parasite-attack',3))ids.push('parasite-maturation');
+  if(has('creature-drive',4))ids.push('parasite-gestation');
+  if(has('discovery',11))ids.push('salvage');
+  if(has('injury',17))ids.push('nerve-seizure');
+  if(has('enemy-ability',1)||has('enemy-ability',2))ids.push('acid-gear');
+  if(has('biome-hazards-10',10))ids.push('adjacent-hex');
+  return DICE_PRESETS.filter(p=>ids.includes(p.id));
+}
 export function defaultContext() {
   return {siteId:'unassigned',siteName:'',crew:1,presentCrew:1,location:'space',mode:'site',purpose:0,hazard:0,size:1,twist:1,resources:true,artifacts:true,knownThreats:true,slots:Array(4).fill(''),slotRefs:Array(4).fill(null),biome:1,terrain:4,singleBiome:false};
 }
@@ -83,6 +115,8 @@ export function normalizeContext(value={}) {
 }
 export function normalizeOptions(value={}) {
   const o={...defaultOptions(),...value};
+  o.searchHexes??=1;
+  if(!Number.isInteger(o.searchHexes)||o.searchHexes<1||o.searchHexes>10)throw new Error('함선 수색은 1–10번째 헥스를 입력하세요. 10번째부터 발견 확률 100%입니다.');
   if(typeof o.question!=='string'||o.question.length>2000||!ODDS.some(v=>v.id===o.odds)) throw new Error('질문 또는 가능성 값이 잘못되었습니다.');
   for(const key of ['qualifier','complication','details','connector','known','history','randomIntelligence','aquatic','retarget','cautious','generateCover','checkEncounterReaction','sights','combatAmbush','hackingRandom','goldTier','wellConnected']) if(typeof o[key]!=='boolean') throw new Error('굴림 옵션이 잘못되었습니다.');
   if(!['reaction','breakdown'].includes(o.stressMode)||!['availability','experimental'].includes(o.gearAction)||!Number.isInteger(o.bribeSteps)||o.bribeSteps<0||o.bribeSteps>14)throw new Error('스트레스 또는 장비 판정 설정을 확인하세요.');

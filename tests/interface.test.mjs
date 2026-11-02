@@ -6,18 +6,26 @@ import 'fake-indexeddb/auto';
 import {openStore} from '../src/storage/store.js';
 
 async function until(check){for(let i=0;i<300;i++){if(await check())return;await new Promise(r=>setTimeout(r,10));}throw new Error('Expected UI state did not appear');}
-test('actual app controller preserves drafts, writes records, annotates, filters and changes context', {timeout:15000},async()=>{
+test('actual app controller preserves drafts, writes records, annotates, filters and changes context', {timeout:15000},async(t)=>{
   const w=new Window({url:'http://localhost/',settings:{disableJavaScriptFileLoading:true,disableCSSFileLoading:true}});
+  const globalKeys=['window','document','innerWidth','innerHeight','matchMedia','FormData','navigator','setTimeout','clearTimeout'];
+  const originals=new Map(globalKeys.map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
+  t.after(async()=>{
+    try{await w.happyDOM.abort();}
+    finally{for(const [key,descriptor] of originals){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else delete globalThis[key];}}
+  });
   const html=await readFile(new URL('../src/index.html',import.meta.url),'utf8');
   w.document.body.innerHTML=html.match(/<body>([\s\S]*)<\/body>/)[1];
   globalThis.window=w;globalThis.document=w.document;globalThis.innerWidth=1440;globalThis.innerHeight=1100;
   globalThis.matchMedia=w.matchMedia.bind(w);globalThis.FormData=w.FormData;
+  globalThis.setTimeout=w.setTimeout.bind(w);globalThis.clearTimeout=w.clearTimeout.bind(w);
   Object.defineProperty(globalThis,'navigator',{value:w.navigator,configurable:true});
   const q=s=>w.document.querySelector(s),click=s=>{assert.ok(q(s),s);q(s).click();};
   const input=(s,value)=>{q(s).value=value;q(s).dispatchEvent(new w.Event('input',{bubbles:true}));};
   await import('../src/main.js?interface-test=1');
   await until(()=>q('#campaign option'));
   const db=await openStore();
+  t.after(()=>db.close());
   input('#question','이곳에 생존자가 있을까?');
   click('[data-action="procedure"][data-id="scene"]');await until(()=>q('#procedure-title').textContent==='새 장면');
   click('[data-action="procedure"][data-id="question"]');await until(()=>q('#question')?.value==='이곳에 생존자가 있을까?');
@@ -117,5 +125,25 @@ test('actual app controller preserves drafts, writes records, annotates, filters
   const modified=(await db.load()).records.find(r=>r.tableId==='hit-humanoid');assert.equal(modified.tableModifier,1);assert.ok(modified.parentId);
   click('[data-action="reroll"]');await until(async()=>(await db.load()).records.length===17);
   assert.equal((await db.load()).records.find(r=>r.parentId===modified.id).tableModifier,1);
-  db.close();await w.happyDOM.abort();
+  click('[data-action="procedure"][data-id="gear-check"]');await until(()=>q('[name="gearAction"]'));
+  const gearParent=q('#report-host [data-record-id]').dataset.recordId;
+  click('[data-action="dice-preset"][data-id="turret-ammo"]');
+  await until(()=>q('[name="dicePreset"] option[selected]')?.value==='turret-ammo');
+  // happy-dom 21.0.4 parses a later selected option as the second option.
+  // The emitted selection is asserted above; Chromium's actual selection is
+  // separately verified in the browser journey. Match that DOM value for submit.
+  q('[name="dicePreset"]').value=q('[name="dicePreset"] option[selected]').value;
+  assert.equal(q('#dice-expression').value,'d6');
+  q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(async()=>(await db.load()).records.length===18);
+  const turret=(await db.load()).records.find(r=>r.options.dicePreset==='turret-ammo');
+  assert.equal(turret.parentId,gearParent);assert.equal(turret.trace[0].page,397);
+  assert.match(q('#report-host').textContent,/탄약 (남음|고갈)/);
+  q('[name="dicePreset"]').value='ship-search';q('[name="dicePreset"]').dispatchEvent(new w.Event('change',{bubbles:true}));
+  await until(()=>q('[name="searchHexes"]'));
+  assert.equal(q('[name="dicePreset"] option[selected]').value,'ship-search');
+  q('[name="dicePreset"]').value=q('[name="dicePreset"] option[selected]').value;
+  q('[name="searchHexes"]').value='10';q('#roll-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(async()=>(await db.load()).records.length===19);
+  assert.match(q('#report-host').textContent,/함선 발견/);assert.match(q('#report-host').textContent,/100%/);
 });
