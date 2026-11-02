@@ -5,7 +5,7 @@ import {effectDice,followupChoices} from './domain/followups.js';
 import {openStore,makeBackup,validateBackup,recordsMarkdown} from './storage/store.js';
 import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView,expeditionReadout,nextStepView,asideLog,effectResults} from './components/render.js';
 import {icon,esc} from './components/icons.js';
-import {homeView} from './components/home.js';
+import {homeView,homeCatalog} from './components/home.js';
 import {localizeRecord} from './data/localization.js';
 import {adoptLocation,rememberLocation,restoreLocation,prepareContinuation} from './domain/locations.js';
 import {enemyCards,continuationOptions,RELATED_PROCEDURES} from './domain/continuation.js';
@@ -15,7 +15,7 @@ const $=s=>document.querySelector(s);
 const desktopLayout=matchMedia('(min-width: 1401px)');
 desktopLayout.addEventListener('change',event=>{$('#procedure-picker').open=event.matches;});
 const state={view:'home',db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50,followParentId:null,followEncounterIndex:0,nextActor:null};
-let toastTimer,optionTimer,pendingMemo=null;
+let toastTimer,optionTimer,pendingMemo=null,homeQuery='';
 const campaign=()=>state.campaigns.find(c=>c.id===state.selectedId);
 const current=()=>state.records.find(r=>r.id===state.currentId);
 const ownRecords=()=>state.records.filter(r=>r.campaignId===state.selectedId);
@@ -52,7 +52,16 @@ function restoreCampaignWorkbench(){
   const r=current();state.procedure=r?.procedureId==='encounter-roster'?'creature':PROCEDURES.some(p=>p.id===r?.procedureId)?r.procedureId:'question';
 }
 function renderHome(){
-  $('#home').innerHTML=homeView({procedureId:state.procedure,record:current()?localizeRecord(current(),tables):null,recent:recentIds()});
+  $('#home').innerHTML=homeView({procedureId:state.procedure,record:current()?localizeRecord(current(),tables):null,recent:recentIds(),query:homeQuery});
+}
+function filterHome(){
+  homeQuery=$('#home-search').value;
+  const catalog=homeCatalog(homeQuery);
+  $('#home-catalog').innerHTML=catalog.html;
+  $('#home-search-status').textContent=catalog.status;
+  $('.home-index').hidden=!!homeQuery.trim();
+  $('.home-shortcuts').hidden=!!homeQuery.trim();
+  $('[data-action="home-clear"]').hidden=!homeQuery;
 }
 function showView(view){
   state.view=view;
@@ -218,7 +227,7 @@ async function roll({keyboard=false,tableId,tableModifier=0,parent=null,lockGues
   }catch(e){message(e.message,true);}finally{button.disabled=false;}
 }
 function contextDialog(){showDialog('현재 탐사 맥락',locationList(campaign())+contextFields(campaign().context),{type:'context'});}
-function libraryDialog(){showDialog(`표 찾아보기 · ${tableList.length}개`,`<div class="library-toolbar"><input class="dialog-search" id="library-search" type="search" aria-label="표 검색" placeholder="한글 또는 영문으로 표 찾기"><select id="library-category" aria-label="표 분류">${Object.entries(CATEGORIES).map(([id,label])=>`<option value="${id}">${label}</option>`).join('')}</select></div><div id="library-results">${libraryView()}</div>`,{type:'library'});$('#library-search').focus();}
+function libraryDialog(query=''){showDialog(`표 찾아보기 · ${tableList.length}개`,`<div class="library-toolbar"><input class="dialog-search" id="library-search" name="table-search" type="search" aria-label="표 검색" autocomplete="off" placeholder="한글 또는 영문으로 표 찾기…" value="${esc(query)}"><select id="library-category" aria-label="표 분류">${Object.entries(CATEGORIES).map(([id,label])=>`<option value="${id}">${label}</option>`).join('')}</select></div><div id="library-results">${libraryView(query)}</div>`,{type:'library'});$('#library-search').focus();}
 function historyDialog(){
   state.historyLimit=50;
   showDialog('탐사 기록',`<div class="history-dialog-tools"><input class="dialog-search" type="search" id="all-history-search" aria-label="모든 기록 검색" placeholder="질문·결과·메모에서 찾기"><label><input type="checkbox" id="all-history-pinned">고정한 기록만</label></div><div id="all-history-list" class="history-dialog-list"></div><div id="history-more"></div>`,{wide:true,type:'history'});renderHistoryDialog();
@@ -264,6 +273,12 @@ document.addEventListener('click',async event=>{
     else if(action==='home-procedure'){
       if(!PROCEDURES.some(p=>p.id===button.dataset.id))return;
       await openFresh(button.dataset.id);$('#procedure-title').focus({preventScroll:true});
+    }
+    else if(action==='home-clear'){$('#home-search').value='';filterHome();$('#home-search').focus();}
+    else if(action==='home-library')libraryDialog(homeQuery.trim());
+    else if(action==='home-dice'){
+      const preset=DICE_PRESETS.find(p=>p.id===button.dataset.id);if(!preset)return;
+      await openFresh('dice',{dicePreset:preset.id,diceExpression:preset.expression});$('#procedure-title').focus({preventScroll:true});
     }
     else if(action==='procedure'){
       state.followParentId=null;state.nextActor=null;await flushMemo();touchRecent(button.dataset.id);await flushOptions();state.procedure=button.dataset.id;
@@ -380,7 +395,8 @@ document.addEventListener('submit',async event=>{
 });
 document.addEventListener('input',event=>{
   const target=event.target;
-  if(target.id==='record-memo'){
+  if(target.id==='home-search'){if(!event.isComposing)filterHome();}
+  else if(target.id==='record-memo'){
     const r=current();if(!r)return;r.memo=target.value;pendingMemo={id:r.id,memo:target.value};$('#memo-status').textContent='저장 중';flushMemo();
   }
   else if(target.id==='history-search'){state.historyQuery=target.value;renderHistory();}
@@ -390,6 +406,7 @@ document.addEventListener('input',event=>{
     try{collectOptions();clearTimeout(optionTimer);optionTimer=setTimeout(saveCampaign,350);}catch{/* number fields can be temporarily empty while typing */}
   }
 });
+document.addEventListener('compositionend',event=>{if(event.target.id==='home-search')filterHome();});
 document.addEventListener('change',async event=>{
   const t=event.target;
   try{
@@ -419,6 +436,10 @@ document.addEventListener('change',async event=>{
   }catch(e){message(e.message,true);}
 });
 document.addEventListener('keydown',event=>{
+  if(event.target.id==='home-search'&&!event.isComposing){
+    if(event.key==='Escape'){event.preventDefault();event.target.value='';filterHome();return;}
+    if(event.key==='Enter'&&!event.metaKey&&!event.ctrlKey){event.preventDefault();$('#home-catalog button')?.focus();return;}
+  }
   if(!(event.metaKey||event.ctrlKey)||event.isComposing)return;
   if(event.key.toLowerCase()==='k'){event.preventDefault();libraryDialog();}
   if(event.key==='Enter'&&state.view==='workbench'&&!$('#dialog').open){
@@ -450,6 +471,7 @@ async function askAside(){
   }catch(e){message(e.message,true);}finally{button.disabled=false;}
 }
 async function start(){
+  $('.roll-icon').innerHTML=icon('dice',20);
   $('#procedure-picker').open=desktopLayout.matches;
   try{
     state.db=await openStore();const data=await state.db.load();Object.assign(state,data);state.persisted=new Set(state.records.map(r=>r.id));

@@ -89,10 +89,9 @@ h3,h4{font-size:var(--type-section);font-weight:600;line-height:1.6}
 /* Home uses the same type roles as the workbench. */
 .oracle-home{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
 .home-heading h2{font:600 var(--type-title)/1.5 Hahmlet,serif}
-.home-quick strong,.home-resume strong{font:600 var(--type-section)/1.6 SUIT,sans-serif}
-.home-quick small,.home-procedure>span{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
-.home-procedure>span{font-weight:600}
-.home-procedure>small,.home-resume>span{font:500 var(--type-label)/1.6 SUIT,sans-serif}
-.home-resume>small{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
-.home-frequent>h3,.home-recent>h3{font:500 var(--type-label)/1.6 SUIT,sans-serif}
-.home-group>h3{font:600 var(--type-section)/1.6 SUIT,sans-serif}
+.home-quick strong,.home-resume strong,.home-frequent>h3,.home-directory>h3,.home-group>h4{font:600 var(--type-section)/1.6 SUIT,sans-serif}
+.home-quick small,.home-procedure>small,.home-resume>small,.home-heading p,#home-search-status{font:400 var(--type-ui)/1.6 SUIT,sans-serif}
+.home-procedure>span{font:600 var(--type-ui)/1.6 SUIT,sans-serif}
+.home-resume>span,.home-recent>h3,.home-search label{font:500 var(--type-label)/1.6 SUIT,sans-serif}
+.home-helpers>h4,.home-helper strong{font:600 var(--type-ui)/1.6 SUIT,sans-serif}
+.home-helper small{font:400 var(--type-ui)/1.6 SUIT,sans-serif}

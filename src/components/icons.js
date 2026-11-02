@@ -16,12 +16,19 @@ const paths={
   close:'M5 5l14 14M19 5 5 19',
   pin:'M8 3h8l-1 6 4 4H5l4-4z M12 13v9',
   arrow:'M4 12h16M14 6l6 6-6 6',
-  dice:'M5 3h14l2 9-9 9-9-9z M5 3l7 9 7-9M3 12h18M12 12v9',
+  dice:'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z',
+  hex:'m12 2 8.7 5v10L12 22l-8.7-5V7z M8 15l3-6 2 4 2-2 2 4z',
+  combat:'m4 3 3 1 13 13-3 3L4 7z M14 17l6-6 M14 3l-3 3 M7 14l-4 4 3 3 4-4 M4 11l6 6',
+  stress:'M9 21v-4H6v-5H3l3-5a7 7 0 0 1 14 2c0 3-1 5-3 7v5 M9 10h2l1-3 2 6 1-3h2',
   copy:'M8 8h13v13H8z M16 8V3H3v13h5',
   download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',
   chevron:'M5 9l7 7 7-7',
   plus:'M12 4v16M4 12h16',
   check:'M4 12l5 5L20 6'
 };
-export function icon(name,size=20){return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]??paths.dice}"/></svg>`;}
+export function icon(name,size=20){
+  const key=Object.hasOwn(paths,name)?name:'dice';
+  const pips=key==='dice'?'<g fill="currentColor" stroke="none"><circle cx="7.5" cy="7.5" r="1.35"/><circle cx="16.5" cy="7.5" r="1.35"/><circle cx="12" cy="12" r="1.35"/><circle cx="7.5" cy="16.5" r="1.35"/><circle cx="16.5" cy="16.5" r="1.35"/></g>':'';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[key]}"/>${pips}</svg>`;
+}
 export function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
