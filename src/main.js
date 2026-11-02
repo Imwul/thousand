@@ -5,6 +5,7 @@ import {effectDice,followupChoices} from './domain/followups.js';
 import {openStore,makeBackup,validateBackup,recordsMarkdown} from './storage/store.js';
 import {procedureList,optionFields,emptyReport,reportView,historyCards,contextFields,libraryView,tableView,expeditionReadout,nextStepView,asideLog,effectResults} from './components/render.js';
 import {icon,esc} from './components/icons.js';
+import {homeView} from './components/home.js';
 import {localizeRecord} from './data/localization.js';
 import {adoptLocation,rememberLocation,restoreLocation,prepareContinuation} from './domain/locations.js';
 import {enemyCards,continuationOptions,RELATED_PROCEDURES} from './domain/continuation.js';
@@ -13,7 +14,7 @@ import {enemyDeskView,rosterOptions,locationList} from './components/play-tools.
 const $=s=>document.querySelector(s);
 const desktopLayout=matchMedia('(min-width: 1401px)');
 desktopLayout.addEventListener('change',event=>{$('#procedure-picker').open=event.matches;});
-const state={db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50,followParentId:null,followEncounterIndex:0,nextActor:null};
+const state={view:'home',db:null,campaigns:[],records:[],persisted:new Set(),selectedId:null,procedure:'question',currentId:null,filter:'all',historyQuery:'',unsaved:new Set(),saving:new Set(),queue:Promise.resolve(),modal:null,backup:null,historyLimit:50,followParentId:null,followEncounterIndex:0,nextActor:null};
 let toastTimer,optionTimer,pendingMemo=null;
 const campaign=()=>state.campaigns.find(c=>c.id===state.selectedId);
 const current=()=>state.records.find(r=>r.id===state.currentId);
@@ -46,6 +47,23 @@ function touchRecent(id){
   c.recentProcedures=[id,...(Array.isArray(c.recentProcedures)?c.recentProcedures:[]).filter(v=>v!==id&&PROCEDURES.some(p=>p.id===v))].slice(0,5);
 }
 
+function restoreCampaignWorkbench(){
+  state.currentId=ownRecords().find(r=>r.id===campaign().currentRecordId)?.id??ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
+  const r=current();state.procedure=r?.procedureId==='encounter-roster'?'creature':PROCEDURES.some(p=>p.id===r?.procedureId)?r.procedureId:'question';
+}
+function renderHome(){
+  $('#home').innerHTML=homeView({procedureId:state.procedure,record:current()?localizeRecord(current(),tables):null,recent:recentIds()});
+}
+function showView(view){
+  state.view=view;
+  $('#home').hidden=view!=='home';$('#workbench').hidden=view!=='workbench';
+  for(const button of document.querySelectorAll('.view-nav [data-action="home"],.view-nav [data-action="workbench"]')){
+    const selected=button.dataset.action===view;button.classList.toggle('selected',selected);
+    if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+  }
+  const skip=$('.skip-link');skip.href=view==='home'?'#home':'#workbench';skip.textContent=view==='home'?'오라클 바로가기로 건너뛰기':'작업대로 건너뛰기';
+  $('#quick-disclosure').hidden=view==='home'||!current()||state.procedure==='question';
+}
 function pName(id){return PROCEDURES.find(p=>p.id===id)?.name??'상황 선택';}
 function activeCard(){
   const ref=campaign()?.activeEnemy;if(!ref)return null;
@@ -61,7 +79,7 @@ function activateEnemy(run){
 }
 async function openFresh(id,overrides={}){
   await flushMemo();await flushOptions();Object.assign(campaign().options,overrides);state.followParentId=null;state.nextActor=null;state.currentId=null;state.procedure=id;touchRecent(id);await saveCampaign();
-  renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
+  showView('workbench');renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
   $('.control-panel').scrollIntoView({behavior:'instant',block:'start'});
 }
 async function followProcedure(id,parent=current(),index=0,encounterIndex=0){
@@ -81,7 +99,7 @@ async function followProcedure(id,parent=current(),index=0,encounterIndex=0){
   if(id==='creature'&&existingSpecies)Object.assign(campaign().options,{species:existingSpecies.type,...(existingSpecies.guardianModel?{guardianModel:existingSpecies.guardianModel}:{})});
   state.nextActor=['behavior','combat-start','injury','scatter'].includes(id)?card?{recordId:card.sourceId??parent.id,index:card.index??index}:parent.actor??null:null;
   state.followParentId=parent.id;state.currentId=null;state.procedure=id;touchRecent(id);await saveCampaign();
-  renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
+  showView('workbench');renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
   $('.control-panel').scrollIntoView({behavior:'instant',block:'start'});
 }
 
@@ -94,9 +112,10 @@ function renderDesk(){
   $('#aside-log').innerHTML=asideLog(ownRecords(),state.currentId);
   if($('#effect-latest'))$('#effect-latest').innerHTML=effectResults(ownRecords(),state.currentId);
   $('#enemy-desk').innerHTML=enemyDeskView(activeCard(),state.procedure,{currentId:state.currentId,related:!!current()?.actor||enemyCards(current()).length>0});
-  $('#quick-disclosure').hidden=!current()||state.procedure==='question';
+  $('#quick-disclosure').hidden=state.view==='home'||!current()||state.procedure==='question';
   $('#procedure-picker-label').textContent=pName(state.procedure);
   if(desktopLayout.matches)$('#procedure-picker').open=true;
+  if(state.view==='home')renderHome();
 }
 function renderControls(){
   const p=PROCEDURES.find(p=>p.id===state.procedure),c=campaign();
@@ -132,7 +151,7 @@ function renderCampaigns(){
   $('#campaign').innerHTML=state.campaigns.map(c=>`<option value="${esc(c.id)}" ${c.id===state.selectedId?'selected':''}>${esc(c.name)}</option>`).join('');
 }
 function recordHaystack(r){const v=localizeRecord(r,tables);return `${v.title} ${v.headline} ${v.subline} ${v.memo} ${r.headline} ${r.subline} ${r.options?.question??''} ${v.subject?.name??''} ${v.items.map(i=>`${i.text} ${i.detail??''}`).join(' ')} ${r.items.map(i=>i.text).join(' ')}`.toLowerCase();}
-function refresh(){renderCampaigns();renderControls();renderReport();renderHistory();status();}
+function refresh(){showView(state.view);renderCampaigns();renderControls();renderReport();renderHistory();status();}
 function collectOptions(){
   const form=$('#roll-form'),c=campaign(),next={...c.options};
   for(const input of form.querySelectorAll('input,textarea,select')){
@@ -162,7 +181,7 @@ function showDialog(title,html,{wide=false,type=null}={}){
 }
 function closeDialog(){state.modal=null;state.backup=null;$('#dialog').close();}
 async function retain(run,{keyboard=false}={}){
-  await flushMemo();state.records.push(run);state.currentId=run.id;state.followParentId=null;campaign().currentRecordId=run.id;activateEnemy(run);state.saving.add(run.id);renderControls();renderReport(!keyboard);renderHistory();status();
+  showView('workbench');await flushMemo();state.records.push(run);state.currentId=run.id;state.followParentId=null;campaign().currentRecordId=run.id;activateEnemy(run);state.saving.add(run.id);renderControls();renderReport(!keyboard);renderHistory();status();
   const heading=$('#result-headline');if(keyboard)heading?.focus({preventScroll:true});
   const reportTop=$('#report-host').getBoundingClientRect().top;
   if(innerWidth<801||reportTop<0||reportTop>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant',block:'start'});
@@ -238,18 +257,26 @@ document.addEventListener('click',async event=>{
   const button=event.target.closest('[data-action]');if(!button||button.disabled||!campaign())return;
   const action=button.dataset.action;
   try{
-    if(action==='procedure'){
+    if(action==='home'){
+      event.preventDefault();await flushMemo();await flushOptions();closeDialog();renderHome();showView('home');
+      $('#home').scrollIntoView({behavior:'instant',block:'start'});$('#home-title').focus({preventScroll:true});
+    }
+    else if(action==='home-procedure'){
+      if(!PROCEDURES.some(p=>p.id===button.dataset.id))return;
+      await openFresh(button.dataset.id);$('#procedure-title').focus({preventScroll:true});
+    }
+    else if(action==='procedure'){
       state.followParentId=null;state.nextActor=null;await flushMemo();touchRecent(button.dataset.id);await flushOptions();state.procedure=button.dataset.id;
       state.currentId=ownRecords().filter(r=>r.procedureId===state.procedure).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
-      renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
+      showView('workbench');renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
       const panel=$('.control-panel'),top=panel.getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight-160)panel.scrollIntoView({behavior:'instant',block:'start'});
     }
-    else if(action==='workbench'){await flushMemo();closeDialog();$('#workbench').scrollIntoView({behavior:'instant'});}
+    else if(action==='workbench'){await flushMemo();closeDialog();showView('workbench');$('#workbench').scrollIntoView({behavior:'instant'});$('#procedure-title').focus({preventScroll:true});}
     else if(action==='record'){
       await flushMemo();const record=ownRecords().find(r=>r.id===button.dataset.id);if(!record)return;
       state.followParentId=null;state.nextActor=null;state.currentId=record.id;campaign().currentRecordId=record.id;activateEnemy(record);await saveCampaign();if(record.procedureId==='encounter-roster')state.procedure='creature';else if(PROCEDURES.some(p=>p.id===record.procedureId))state.procedure=record.procedureId;
-      if($('#dialog').open)closeDialog();renderControls();renderReport();renderHistory();$('#result-headline')?.focus({preventScroll:true});
+      if($('#dialog').open)closeDialog();showView('workbench');renderControls();renderReport();renderHistory();$('#result-headline')?.focus({preventScroll:true});
       const top=$('#report-host').getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant'});
     }
@@ -322,7 +349,7 @@ document.addEventListener('click',async event=>{
     }
     else if(action==='import-json'){
       if(!state.backup||!state.db)return;button.disabled=true;
-      const result=await state.db.importBackup(state.backup);state.campaigns.push(...result.campaigns);state.records.push(...result.records);for(const r of result.records)state.persisted.add(r.id);state.selectedId=result.campaigns[0].id;state.currentId=null;state.followParentId=null;state.nextActor=null;closeDialog();refresh();message('기존 기록을 보존하고 새 캠페인으로 가져왔습니다.');
+      const result=await state.db.importBackup(state.backup);state.campaigns.push(...result.campaigns);state.records.push(...result.records);for(const r of result.records)state.persisted.add(r.id);state.selectedId=result.campaigns[0].id;state.currentId=null;state.followParentId=null;state.nextActor=null;restoreCampaignWorkbench();closeDialog();refresh();message('기존 기록을 보존하고 새 캠페인으로 가져왔습니다.');
     }
     else if(action==='adopt')await adoptSite();
     else if(action==='adopt-terrain'){const r=current();if(r.context.siteId!==campaign().context.siteId)throw new Error('현재 장소가 기록 당시와 다릅니다. 탐사 맥락에서 지형을 직접 선택하세요.');campaign().context.terrain=r.terrain;if(await saveCampaign()){renderControls();message('다음 헥스의 이전 지형으로 사용합니다.');}}
@@ -343,7 +370,7 @@ document.addEventListener('submit',async event=>{
     else if(form.id==='context-form')await saveContext(form);
     else if(form.id==='campaign-form'){
       await flushMemo();await flushOptions();const name=new FormData(form).get('name');
-      const c=state.db?await state.db.createCampaign(String(name)):newCampaign(String(name));state.campaigns.push(c);state.selectedId=c.id;state.currentId=null;state.followParentId=null;state.nextActor=null;state.historyQuery='';$('#history-search').value='';closeDialog();refresh();
+      const c=state.db?await state.db.createCampaign(String(name)):newCampaign(String(name));state.campaigns.push(c);state.selectedId=c.id;state.currentId=null;state.followParentId=null;state.nextActor=null;state.historyQuery='';$('#history-search').value='';restoreCampaignWorkbench();closeDialog();refresh();
     }
     else if(form.id==='adopt-form'){
       const r=current(),c=campaign(),name=String(new FormData(form).get('name')).trim();
@@ -367,7 +394,7 @@ document.addEventListener('change',async event=>{
   const t=event.target;
   try{
     if(t.id==='campaign'){
-      await flushMemo();await flushOptions();state.selectedId=t.value;state.followParentId=null;state.nextActor=null;if(state.db)await state.db.selectCampaign(t.value);state.currentId=ownRecords().find(r=>r.id===campaign().currentRecordId)?.id??ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;state.historyQuery='';$('#history-search').value='';refresh();
+      await flushMemo();await flushOptions();state.selectedId=t.value;state.followParentId=null;state.nextActor=null;if(state.db)await state.db.selectCampaign(t.value);restoreCampaignWorkbench();state.historyQuery='';$('#history-search').value='';refresh();
     }
     else if(t.id==='backup-file')await previewImport(t.files[0]);
     else if(t.id==='library-category')$('#library-results').innerHTML=libraryView($('#library-search').value,t.value);
@@ -394,7 +421,7 @@ document.addEventListener('change',async event=>{
 document.addEventListener('keydown',event=>{
   if(!(event.metaKey||event.ctrlKey)||event.isComposing)return;
   if(event.key.toLowerCase()==='k'){event.preventDefault();libraryDialog();}
-  if(event.key==='Enter'&&!$('#dialog').open){
+  if(event.key==='Enter'&&state.view==='workbench'&&!$('#dialog').open){
     if(event.target.closest('#quick-form')){event.preventDefault();askAside();return;}
     if(!$('#roll-button').disabled){event.preventDefault();roll({keyboard:true});}
   }
@@ -429,8 +456,7 @@ async function start(){
     if(!state.campaigns.length){const c=await state.db.createCampaign('첫 번째 탐사');state.campaigns=[c];state.selectedId=c.id;}
     if(!campaign())state.selectedId=state.campaigns[0].id;
     for(const c of state.campaigns){if(c.context.mode===undefined&&c.context.location==='planet'){const last=state.records.filter(r=>r.campaignId===c.id&&r.context.siteId===c.context.siteId&&['hex','area'].includes(r.procedureId)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0];c.context.mode=last?.procedureId==='hex'||(!last&&!c.context.purpose&&!c.context.hazard)?'surface':'site';}c.context=normalizeContext(c.context);c.options=normalizeOptions(c.options);}
-    state.currentId=ownRecords().find(r=>r.id===campaign().currentRecordId)?.id??ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
-    const r=current();if(r?.procedureId==='encounter-roster')state.procedure='creature';else if(r&&PROCEDURES.some(p=>p.id===r.procedureId))state.procedure=r.procedureId;
+    restoreCampaignWorkbench();
   }catch(e){
     state.db=null;if(!state.campaigns.length){const c=newCampaign('첫 번째 탐사');state.campaigns=[c];state.selectedId=c.id;}message('저장 공간을 열지 못했습니다. 굴림은 사용할 수 있으며 결과를 백업으로 보관하세요.',true);
   }

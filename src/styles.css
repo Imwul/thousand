@@ -408,3 +408,59 @@ html{scrollbar-gutter:stable both-edges}
 .context-dice summary{padding:8px 0;color:var(--cyan)}
 .context-dice button{display:flex;justify-content:space-between;gap:12px;min-height:44px;width:100%;padding:10px 0;text-align:left;border-bottom:1px solid var(--line)}
 .context-dice small{flex:none;color:var(--muted)}
+
+/* Oracle home: immediate rolls above a two-column index of play situations. */
+.view-nav [data-action="home"]{min-width:44px;justify-content:center}
+.oracle-home{min-width:0;max-width:1800px;margin:0 auto 40px}
+.home-heading{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:8px 0 28px}
+.home-heading h2{margin:0;min-width:0;word-break:keep-all}
+.home-resume{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 20px;align-items:center;width:min(460px,48%);min-width:0;min-height:88px;padding:14px 20px;text-align:left;background:var(--deep);border:1px solid var(--line);border-left:2px solid var(--coral)}
+.home-resume>:not(svg){grid-column:1;min-width:0;overflow-wrap:anywhere}
+.home-resume>span,.home-resume>svg{color:var(--coral)}
+.home-resume>svg{grid-column:2;grid-row:1/4}
+.home-resume>small{color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-clamp:2}
+.home-frequent{margin-bottom:24px}
+.home-frequent>h3{margin-bottom:12px;color:var(--muted)}
+.home-quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.home-quick{display:flex;align-items:center;gap:16px;min-width:0;min-height:88px;padding:16px 20px;text-align:left;border:1px solid var(--line);border-left:2px solid var(--cyan);background:rgba(7,25,29,.7)}
+.home-quick>svg{color:var(--cyan)}
+.home-quick>span{min-width:0}
+.home-quick strong,.home-quick small{display:block;word-break:keep-all;overflow-wrap:anywhere}
+.home-quick small{color:var(--muted);margin-top:3px}
+.home-recent{display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap;margin:24px 0}
+.home-recent>h3{color:var(--muted)}
+.home-recent>div{display:flex;flex-wrap:wrap;gap:8px}
+.home-recent .home-procedure{padding:8px 12px;min-height:44px;border:1px solid var(--line)}
+.home-recent .home-procedure small{display:none}
+.home-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch}
+.home-group{min-width:0;border:1px solid var(--line);background:rgba(7,25,29,.65);padding:20px 24px}
+.home-group>h3{color:var(--cyan);padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.home-procedures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;align-content:start}
+.home-procedure{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-width:0;min-height:60px;padding:10px 0;text-align:left;border-bottom:1px solid #233e42;word-break:keep-all;overflow-wrap:anywhere}
+.home-procedure>small{color:var(--muted)}
+.home-group-wide{grid-column:1/-1}
+.home-group-wide .home-procedures{grid-template-columns:repeat(3,minmax(0,1fr))}
+.home-library{display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 0;margin-top:24px;border-bottom:1px solid var(--cyan);color:var(--cyan)}
+@media(hover:hover) and (pointer:fine){
+  .home-quick:hover,.home-resume:hover{background:#143b43;border-color:var(--cyan)}
+  .home-resume:hover{border-left-color:var(--coral)}
+  .home-procedure:hover{color:var(--cyan);border-bottom-color:var(--cyan)}
+}
+@media(max-width:800px){
+  .home-heading{align-items:stretch;flex-direction:column;gap:16px;margin-bottom:24px}
+  .home-resume{width:100%}
+  .home-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .home-quick{padding:14px;gap:12px}
+  .home-groups{grid-template-columns:minmax(0,1fr);gap:16px}
+  .home-group{padding:16px 20px}
+  .home-group-wide .home-procedures{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){
+  .view-nav{justify-content:space-between;gap:12px}
+  .view-nav button{gap:4px}
+  .home-quick{align-items:flex-start;min-height:112px;padding:12px;gap:10px;flex-direction:column}
+  .home-quick>svg{width:22px;height:22px}
+  .home-quick small{margin-top:4px}
+  .home-procedures,.home-group-wide .home-procedures{grid-template-columns:minmax(0,1fr)}
+}
+@media print{.oracle-home{display:none}}
