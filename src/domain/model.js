@@ -62,6 +62,7 @@ export const DICE_PRESETS=[
   {id:'parasite-maturation',name:'도망친 기생체의 성숙 기간',expression:'d10',page:87,unit:' 시간트랙',note:'기생체 공격의 도주 결과일 때. 숨은 기생체가 성체가 되어 대원들을 추적하기 시작하기까지의 기간입니다.'},
   {id:'gas-duration',name:'가스 무기의 지속 시간',expression:'d4',page:369,unit:'라운드',note:'Gas 특성의 무기는 폭발 범위에 독 III 가스를 만듭니다.'},
   {id:'radiation-death',name:'치명적 방사선 노출의 잔여 시간',expression:'d10',page:89,unit:'시간',note:'501–700 rads 구간에 제시된 사망까지의 시간입니다. 노출량과 상태는 종이 시트에서 확인하세요.'},
+  {id:'vacuum-death',name:'진공 노출로 의식을 잃은 뒤 남은 시간',expression:'d4',page:90,unit:'분',note:'진공복 없이 노출되면 1라운드 후 의식을 잃습니다. 가압되고 산소가 있는 곳으로 돌아오지 못하면 이 시간이 지난 뒤 사망합니다. 진공에 직접 노출되는 동안 분당 50 rads.'},
   {id:'ship-search',name:'GPS 고장 후 함선 수색',expression:'d100',page:199,unit:'',note:'황무지 위험 4 이후 진입한 헥스마다 발견 확률 +10%. 탐사했던 헥스도 포함합니다.'},
   {id:'nerve-seizure',name:'신경 손상으로 행동 가능한지',expression:'d6',page:77,unit:'',note:'부상 17번의 매 턴 확인. D6 1이면 이번 턴 행동 불가.'},
   {id:'acid-gear',name:'산성 능력의 장비 파괴',expression:'d6',page:281,unit:'',note:'Acid Blood의 피해 또는 Acid Spray의 명중 조건을 먼저 적용합니다. 영향을 받은 대상의 장비 하나가 파괴될 확률 50%. D6 1–3 파괴, 4–6 보존.'},
@@ -86,13 +87,14 @@ export function relatedDicePresets(procedureId,run){
   if(has('injury',17))ids.push('nerve-seizure');
   if(has('enemy-ability',1)||has('enemy-ability',2))ids.push('acid-gear');
   if(has('biome-hazards-10',10))ids.push('adjacent-hex');
+  if(run?.context?.location==='space'&&(has('behind-door',1)||has('teleport',10)))ids.push('vacuum-death');
   return DICE_PRESETS.filter(p=>ids.includes(p.id));
 }
 export function defaultContext() {
   return {siteId:'unassigned',siteName:'',crew:1,presentCrew:1,location:'space',mode:'site',purpose:0,hazard:0,size:1,twist:1,resources:true,artifacts:true,knownThreats:true,slots:Array(4).fill(''),slotRefs:Array(4).fill(null),biome:1,terrain:4,singleBiome:false};
 }
 export function defaultOptions() {
-  return {question:'',odds:'even',qualifier:true,complication:true,details:true,connector:true,known:false,history:true,week:1,destination:'unknown',knownWeeks:3,tier:'standard',species:'random',guardianModel:'titan',randomIntelligence:false,aquatic:false,moodDepth:3,stationActivity:'carousing',behavior:'brute',retarget:false,cautious:false,generateCover:true,checkEncounterReaction:true,hackingDifficulty:1,diceExpression:'1d20',sights:false,hackingRandom:false,voyage:'outbound',artifactCount:1,crystalCount:0,alloyCount:0,findCount:0,encounterCount:0,combatAmbush:false,stressMode:'reaction',gearAction:'availability',goldTier:false,wellConnected:false,bribeSteps:0};
+  return {question:'',odds:'even',qualifier:true,complication:true,details:true,surpriseDescriptor:0,connector:true,known:false,history:true,week:1,destination:'unknown',knownWeeks:3,tier:'standard',species:'random',guardianModel:'titan',randomIntelligence:false,aquatic:false,moodStart:0,moodDepth:3,stationActivity:'carousing',behavior:'brute',retarget:false,cautious:false,generateCover:true,checkEncounterReaction:true,hackingDifficulty:1,diceExpression:'1d20',sights:false,hackingRandom:false,voyage:'outbound',artifactCount:1,crystalCount:0,alloyCount:0,findCount:0,encounterCount:0,combatAmbush:false,stressMode:'reaction',gearAction:'availability',goldTier:false,wellConnected:false,bribeSteps:0};
 }
 export function newCampaign(name='첫 번째 탐사') {
   return {id:crypto.randomUUID(),name:name.trim()||'새 탐사',createdAt:new Date().toISOString(),context:defaultContext(),options:defaultOptions()};
@@ -118,6 +120,8 @@ export function normalizeOptions(value={}) {
   o.searchHexes??=1;
   if(!Number.isInteger(o.searchHexes)||o.searchHexes<1||o.searchHexes>10)throw new Error('함선 수색은 1–10번째 헥스를 입력하세요. 10번째부터 발견 확률 100%입니다.');
   if(typeof o.question!=='string'||o.question.length>2000||!ODDS.some(v=>v.id===o.odds)) throw new Error('질문 또는 가능성 값이 잘못되었습니다.');
+  if(!Number.isInteger(o.surpriseDescriptor)||o.surpriseDescriptor<0||o.surpriseDescriptor>8)throw new Error('돌발사건 분류를 확인하세요.');
+  if(![0,2,3,4,5,6,7,8].includes(o.moodStart))throw new Error('NPC의 전반적 감정을 확인하세요.');
   for(const key of ['qualifier','complication','details','connector','known','history','randomIntelligence','aquatic','retarget','cautious','generateCover','checkEncounterReaction','sights','combatAmbush','hackingRandom','goldTier','wellConnected']) if(typeof o[key]!=='boolean') throw new Error('굴림 옵션이 잘못되었습니다.');
   if(!['reaction','breakdown'].includes(o.stressMode)||!['availability','experimental'].includes(o.gearAction)||!Number.isInteger(o.bribeSteps)||o.bribeSteps<0||o.bribeSteps>14)throw new Error('스트레스 또는 장비 판정 설정을 확인하세요.');
   if(o.dicePreset!==undefined&&!['custom',...DICE_PRESETS.map(p=>p.id)].includes(o.dicePreset))throw new Error('보조 주사위 종류를 확인하세요.');
@@ -131,3 +135,18 @@ export function normalizeOptions(value={}) {
   return structuredClone(o);
 }
 export function endScene(context,controlled) {return {...context,twist:controlled?context.twist:Math.min(3,context.twist+1)};}
+
+export function npcCrewCombatStats(talentRoll){
+  const wounds=talentRoll===12?4:3;
+  const defense=talentRoll===6?3:2;
+  const item={title:'기본 전투 수치',text:`상처 ${wounds} / 방어 ${defense}`,page:359,group:'동료 능력치'};
+  if(talentRoll===6){
+    item.page=[359,360];
+    item.detail='방어적 태세(Defensive)의 방어 +1을 반영했습니다.';
+  }
+  if(talentRoll===12){
+    item.page=[359,361];
+    item.detail='끈질긴 생명력(Hard to Kill)의 최대 상처 +1을 반영했습니다.';
+  }
+  return item;
+}

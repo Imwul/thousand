@@ -95,13 +95,40 @@ test('new auxiliary rolls retain their source, unit and saved outcome through ba
   assert.deepEqual(backup.records.map(r=>r.headline),records.map(r=>r.headline));
 });
 
-test('pp.213,215 rubble only requests DEX and D4 wounds on the 1-in-6 trigger',()=>{
-  for(const [biome,hazard,page] of [[8,3,213],[9,3,215],[9,4,215]])for(const face of [1,2,6]){
+test('pp.209,213,215 falling rocks and rubble request DEX and D4 wounds only on the 1-in-6 trigger',()=>{
+  for(const [biome,hazard,page] of [[6,5,209],[8,3,213],[9,3,215],[9,4,215]])for(const face of [1,2,6]){
     const r=make('hex',{context:{...surface,biome,terrain:4},faces:[[20,1],[10,6],[10,hazard],[6,face]]});
     const item=r.items.find(i=>i.title==='낙하물');assert.equal(item.page,page);
     assert.equal(item.text,face===1?'낙하물 발생':'낙하물 없음');
     assert.equal(r.trace.some(t=>t.notation==='d4'),false,'Do not roll wounds before the paper DEX check');
+    assert.deepEqual(effectDice(r).map(d=>d.expression),face===1?['d4']:[]);
   }
+});
+
+test('p.203 frozen ice selects a suit only on 1 and defers to its armor status',()=>{
+  const context={...surface,biome:3,terrain:4,crew:5,presentCrew:2};
+  const unhurt=make('hex',{context,faces:[[20,1],[10,6],[10,5],[6,2]]});
+  assert.equal(unhurt.items.find(item=>item.title==='보호복 손상 확인').text,'손상 없음');
+  assert.equal(unhurt.trace.some(step=>step.id==='ice-suit-target'),false);
+  const check=make('hex',{context,faces:[[20,1],[10,6],[10,5],[6,1],[2,2]]});
+  assert.equal(check.items.find(item=>item.title==='보호복 손상 대상').text,'대원 2');
+  assert.match(check.items.find(item=>item.title==='보호복 손상 확인').detail,/장갑 처리된 보호복은 손상되지 않습니다/);
+});
+
+test('p.164 stasis selects two distinct present crew and p.140 collapse selects one',()=>{
+  const context={crew:5,presentCrew:3};
+  const stasis=make('area',{context,options:{connector:false},faces:[[10,8],[10,8],[3,2],[2,2]]});
+  assert.equal(stasis.items.find(item=>item.title==='정지장 대상').text,'대원 2 / 대원 3');
+  const collapse=make('activity',{context:{...context,hazard:3,knownThreats:false},faces:[[3,3]]});
+  assert.equal(collapse.items.find(item=>item.title==='시설 붕괴 대상').text,'대원 3');
+  assert.match(collapse.notes.join(' '),/쉴 수 없으면 공포 사건 표/);
+  assert.deepEqual(effectDice(collapse).map(d=>d.expression),['3d10']);
+});
+
+test('p.119 pair conversation never generates a second reaction for a lone survivor',()=>{
+  const run=make('travel',{context:{crew:3,presentCrew:1},faces:[[100,1],[4,1],[10,1],[100,100]]});
+  assert.equal(run.items.some(item=>item.tableId==='conversation'||item.tableId==='reaction'),false);
+  assert.match(run.notes.join(' '),/두 대원.*한 명/);
 });
 
 test('repeatable injury and acid checks retain exact boundary outcomes and conditional shortcuts',()=>{

@@ -1,4 +1,4 @@
-import {newCampaign,normalizeContext,normalizeOptions} from '../domain/model.js';
+import {newCampaign,normalizeContext,normalizeOptions,PROCEDURES} from '../domain/model.js';
 import {PAPER_CHECKS,sanitizePaper,sanitizeRecent} from '../domain/desk.js';
 import {tables} from '../data/tables.js';
 import {lookup} from '../generators/dice.js';
@@ -53,6 +53,11 @@ class LogStore {
 function string(v,max=10000){return typeof v==='string'&&v.length<=max;}
 function ref(v){return v===null||string(v,100)&&!!v;}
 function actor(v){return v&&ref(v.recordId)&&v.recordId!==null&&Number.isInteger(v.index)&&v.index>=0&&v.index<4;}
+function workbench(v){
+  return v&&PROCEDURES.some(p=>p.id===v.procedure)&&ref(v.recordId)&&ref(v.parentId)&&
+    !(v.recordId&&v.parentId)&&Number.isInteger(v.encounterIndex)&&v.encounterIndex>=0&&v.encounterIndex<4&&
+    (v.actor===null||v.parentId&&actor(v.actor));
+}
 function enemy(v){return v&&string(v.name,1000)&&['Guardian','Aberration','Synthetic','Local Fauna'].includes(v.type)&&['Brute','Lurker','Ranged','Swarm','Psychic','spitter','clobber','taker','psybane','bomber','cecaelia'].includes(v.role)&&['easy','standard','elite','overwhelming'].includes(v.tier)&&(!('known' in v)||typeof v.known==='boolean')&&(!('ambush' in v)||typeof v.ambush==='boolean');}
 function blueprint(v){
   if(!v||!string(v.id,100)||!['Guardian','Aberration','Synthetic','Local Fauna'].includes(v.type)||!v.tables||typeof v.tables!=='object'||Array.isArray(v.tables)||Object.keys(v.tables).length>50)return false;
@@ -79,6 +84,7 @@ export function validateBackup(input){
     normalizeContext(c.context);normalizeOptions(c.options);if(c.recentProcedures!==undefined)sanitizeRecent(c.recentProcedures);
     if(c.locations!==undefined){if(!Array.isArray(c.locations)||c.locations.length>1000)throw new Error('저장된 장소 목록이 손상되었습니다.');const places=new Set();for(const place of c.locations){if(!place||!string(place.id,100)||places.has(place.id)||!string(place.name,200)||!ref(place.sourceId))throw new Error('저장된 장소가 손상되었습니다.');normalizeContext(place.context);if(place.context.siteId!==place.id)throw new Error('장소의 맥락 연결이 다릅니다.');places.add(place.id);}}
     if(c.activeEnemy&&!actor(c.activeEnemy))throw new Error('현재 적 연결이 손상되었습니다.');
+    if(c.workbench!==undefined&&!workbench(c.workbench))throw new Error('작업대 이어가기 정보가 손상되었습니다.');
     if(c.currentRecordId!==undefined&&!ref(c.currentRecordId))throw new Error('현재 기록 연결이 손상되었습니다.');ids.add(c.id);
   }
   for(const r of input.records){
@@ -112,7 +118,12 @@ export function validateBackup(input){
   const recordById=new Map(input.records.map(r=>[r.id,r]));
   const checkRef=(id,campaignId)=>{if(id&&recordById.get(id)?.campaignId!==campaignId)throw new Error('연결된 기록이 없거나 다른 캠페인의 기록입니다.');};
   const checkContext=(context,campaignId)=>{for(const id of context.slotRefs??[])checkRef(id,campaignId);};
-  for(const c of input.campaigns){checkRef(c.currentRecordId,c.id);checkRef(c.activeEnemy?.recordId,c.id);checkContext(c.context,c.id);for(const place of c.locations??[]){checkRef(place.sourceId,c.id);checkContext(place.context,c.id);}}
+  for(const c of input.campaigns){
+    checkRef(c.currentRecordId,c.id);checkRef(c.activeEnemy?.recordId,c.id);
+    checkRef(c.workbench?.recordId,c.id);checkRef(c.workbench?.parentId,c.id);checkRef(c.workbench?.actor?.recordId,c.id);
+    checkContext(c.context,c.id);
+    for(const place of c.locations??[]){checkRef(place.sourceId,c.id);checkContext(place.context,c.id);}
+  }
   for(const r of input.records){if(r.parentId&&!rids.has(r.parentId))throw new Error('연결된 이전 굴림 기록이 백업에 없습니다.');checkRef(r.parentId,r.campaignId);checkRef(r.encounter?.ref,r.campaignId);for(const e of r.encounters??[])checkRef(e.ref,r.campaignId);checkRef(r.actor?.recordId,r.campaignId);checkRef(r.subject?.recordId,r.campaignId);checkContext(r.context,r.campaignId);}
 
   return structuredClone(input);
@@ -123,7 +134,7 @@ export function remapBackup(backup){
   const context=c=>({...c,...(c.slotRefs?{slotRefs:c.slotRefs.map(mapId)}:{})});
   const mapActor=a=>a?{...a,recordId:mapId(a.recordId)}:a;
   return {
-    campaigns:backup.campaigns.map(c=>({...c,id:cmap.get(c.id),name:`${c.name.slice(0,190)} (가져옴)`,context:context(c.context),...(c.currentRecordId?{currentRecordId:mapId(c.currentRecordId)}:{}),...(c.activeEnemy?{activeEnemy:mapActor(c.activeEnemy)}:{}),...(c.locations?{locations:c.locations.map(place=>({...place,sourceId:mapId(place.sourceId),context:context(place.context)}))}:{})})),
+    campaigns:backup.campaigns.map(c=>({...c,id:cmap.get(c.id),name:`${c.name.slice(0,190)} (가져옴)`,context:context(c.context),...(c.currentRecordId?{currentRecordId:mapId(c.currentRecordId)}:{}),...(c.activeEnemy?{activeEnemy:mapActor(c.activeEnemy)}:{}),...(c.workbench?{workbench:{...c.workbench,recordId:mapId(c.workbench.recordId),parentId:mapId(c.workbench.parentId),actor:mapActor(c.workbench.actor)}}:{}),...(c.locations?{locations:c.locations.map(place=>({...place,sourceId:mapId(place.sourceId),context:context(place.context)}))}:{})})),
     records:backup.records.map(r=>({...r,id:rmap.get(r.id),campaignId:cmap.get(r.campaignId),parentId:mapId(r.parentId),context:context(r.context),...(r.encounter?{encounter:{...r.encounter,...(r.encounter.ref?{ref:mapId(r.encounter.ref)}:{})}}:{}),...(r.encounters?{encounters:r.encounters.map(e=>({...e,ref:mapId(e.ref)}))}:{}),...(r.actor?{actor:mapActor(r.actor)}:{}),...(r.subject?{subject:{...r.subject,recordId:mapId(r.subject.recordId)}}:{})}))
   };
 }

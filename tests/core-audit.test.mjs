@@ -49,7 +49,8 @@ test('p.122 anxiety selects a present crew member and immediately rolls the matc
 });
 
 test('p.123 instantaneous transit wins over destination checks; every present crew gets a Negative Trait',()=>{
-  const r=make('travel',{}, {crew:3,presentCrew:2},faces([100,1],[4,4],[10,3],[6,6],[6,1],[6,6],[20,2],[20,18]));
+  const r=make('travel',{}, {crew:3,presentCrew:2},faces([100,1],[4,4],[10,3],[2,2],[6,6],[6,1],[6,6],[20,2],[20,18]));
+  assert.equal(get(r,'사건 대상 대원').text,'대원 2');
   assert.equal(r.arrived,true);assert.equal(r.trace.some(t=>t.id==='destination-check'),false);
   assert.deepEqual(r.items.filter(i=>i.tableId==='negative-trait').map(i=>i.group),['대원 1의 부정적 특성','대원 2의 부정적 특성']);
 });

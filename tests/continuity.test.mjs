@@ -103,10 +103,11 @@ test('outbound known destinations and next travel week carry forward explicitly'
   assert.equal(continuationOptions(continuing,'travel',defaultOptions()).week,3);
 });
 
-test('backup import remaps enemy, location, subject and slot references together',()=>{
+test('backup import remaps enemy, workbench, location, subject and slot references together',()=>{
   const campaign=newCampaign();campaign.id='test';const source=mixed(),roster=runEncounterRoster(source,{rng:()=>.5});
   campaign.context=normalizeContext({...campaign.context,siteId:'place',slotRefs:[roster.id,null,null,null]});
   campaign.activeEnemy={recordId:roster.id,index:1};campaign.currentRecordId=roster.id;rememberLocation(campaign);
+  campaign.workbench={procedure:'behavior',recordId:null,parentId:roster.id,encounterIndex:0,actor:campaign.activeEnemy};
   const action=make('behavior');action.actor={recordId:roster.id,index:1};action.parentId=roster.id;
   const npc=make('npc-profile');npc.subject={name:npc.headline,recordId:npc.id};
   const backup=makeBackup([campaign],[source,roster,action,npc]);validateBackup(backup);
@@ -114,9 +115,13 @@ test('backup import remaps enemy, location, subject and slot references together
   assert.notEqual(newRoster.id,roster.id);assert.equal(imported.campaigns[0].context.slotRefs[0],newRoster.id);
   assert.equal(imported.campaigns[0].locations[0].context.slotRefs[0],newRoster.id);
   assert.equal(imported.campaigns[0].activeEnemy.recordId,newRoster.id);
+  assert.deepEqual(imported.campaigns[0].workbench,{...campaign.workbench,parentId:newRoster.id,actor:{recordId:newRoster.id,index:1}});
   assert.equal(imported.records.find(r=>r.procedureId==='behavior').actor.recordId,newRoster.id);
   assert.equal(imported.records.find(r=>r.procedureId==='npc-profile').subject.recordId,imported.records.find(r=>r.procedureId==='npc-profile').id);
   validateBackup({...backup,...imported});
+  const missingDraftParent=structuredClone(backup);
+  missingDraftParent.campaigns[0].workbench.parentId='missing-record';
+  assert.throws(()=>validateBackup(missingDraftParent),/연결된 기록/);
   const broken=structuredClone(backup);broken.records[1].blueprint.tables['creature-size']=1000;
   assert.throws(()=>validateBackup(broken),/원형/);
 });

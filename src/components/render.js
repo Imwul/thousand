@@ -1,6 +1,6 @@
-import {PROCEDURES,ODDS,SLOT_COUNTS,DICE_PRESETS,relatedDicePresets} from '../domain/model.js';
+import {PROCEDURES,ODDS,SLOT_COUNTS,DICE_PRESETS,relatedDicePresets,npcCrewCombatStats} from '../domain/model.js';
 import {PROCEDURE_GROUPS,guideNext,playGuide} from '../domain/play.js';
-import {tables,tableList,CATEGORIES,RULES_VERSION} from '../data/tables.js';
+import {tables,tableList,CATEGORIES,RULES_VERSION,surpriseRows} from '../data/tables.js';
 import {icon,esc} from './icons.js';
 import {localizeRecord} from '../data/localization.js';
 import {MODIFIED_TABLES,modifierNote} from '../domain/table-modifiers.js';
@@ -81,7 +81,11 @@ export function optionFields(procedure,o,c){
   if(procedure==='arrival')html=`<p class="option-explainer">탐사할 장소가 있다면 용도·과거·첫인상·규모·위험까지 한 번에 펼칩니다.</p>${toggle('known','알려진 목적지','도착표의 16 미만 결과를 제외')}${toggle('history','장소의 과거도 생성')}`;
   if(procedure==='npc')html=`<p class="option-explainer">NPC의 첫 태도에 맞는 행동을 고르고, 지금 상황에 대한 의욕을 함께 알아봅니다.</p>${toggle('details','행동·주제로 속사정 보충')}`;
   if(procedure==='travel')html=select('voyage','항해 방향',[['outbound','목적지로 출발'],['return','Karum Station으로 귀환']])+`<div class="paired-fields"><label>이번 주차<input type="number" name="week" min="1" max="52" value="${o.week}"></label><label>목적지<select name="destination"><option value="unknown" ${selected(o.destination,'unknown')}>미지의 목적지</option><option value="known" ${selected(o.destination,'known')}>알려진 목적지</option></select></label></div><label class="known-weeks ${o.destination==='known'||o.voyage==='return'?'':'hidden'}">알려진 항해 기간 (주)<input type="number" name="knownWeeks" min="1" max="52" value="${o.knownWeeks}"></label><div class="travel-odds"><span>사건 <strong>${Math.min(100,o.week*20)}%</strong></span><span>도착 <strong>${o.destination==='unknown'&&o.voyage!=='return'?Math.min(100,40+(o.week-1)*10)+'%':'일정 기준'}</strong></span></div><p class="option-explainer">출발 정원 ${c.crew}명. 1인선의 사회적 사건은 정신·신체 문제로 처리합니다.</p>`;
-  if(procedure==='surprise')html=`<p class="option-explainer">행과 열을 각각 D8로 정합니다. 두 주사위의 합계를 쓰지 않습니다.</p>${toggle('details','행동·주제도 함께 굴리기')}`;
+  if(procedure==='surprise')html=`<p class="option-explainer">분류도 무작위로 정하면 D8을 두 번, 분류를 선택하면 세부 결과만 D8로 굴립니다.</p>${toggle('details','행동·주제도 함께 굴리기')}`;
+  if(['scene','surprise'].includes(procedure)){
+    const label=procedure==='scene'?'반전이 생기면 사용할 사건 분류':'사건 분류';
+    html+=select('surpriseDescriptor',label,[[0,'무작위'],...surpriseRows.map(([name],index)=>[index+1,name])]);
+  }
   if(procedure==='inspiration')html=`<p class="option-explainer">행동과 주제를 각각 D100으로 굴립니다. 두 단어를 현재 장면에 연결해 보세요.</p><div class="word-pair-preview"><span>행동</span><b>+</b><span>주제</span></div>`;
   if(procedure==='door')html=`<p class="option-explainer">문 유형과 방화벽 수 두 개를 먼저 확인합니다. 안/밖을 선택한 다음 접근 노드를 굴립니다.</p><div class="rule-callout">문이 열리기 전에는<br>문 너머 결과를 공개하지 않습니다.</div>`;
   if(procedure==='resolution')html=`<p class="option-explainer">기술·능력치 판정 없이 행동의 결과를 정해야 할 때 사용합니다. D20 한 번으로 성공의 정도를 확인합니다.</p>`;
@@ -90,7 +94,12 @@ export function optionFields(procedure,o,c){
   if(procedure==='hex')html=`<p class="option-explainer">지형 변화, 추적 위협, 탐사 결과와 생물군계별 하위 표를 함께 확인합니다.</p><div class="context-summary"><span>${tables['landing-biome'].rows[c.biome-1].text}</span><span>이전 지형: ${['위험 지형','복잡 지형','생물 서식지','생물군계 의존','순탄한 길'][c.terrain]}</span></div><button class="text-button" type="button" data-action="context">생물군계·이전 지형 설정 ${icon('arrow',16)}</button>${toggle('sights','풍경도 생성','이동 5헥스마다 사용')}`;
   if(procedure==='creature')html=select('species','생물 유형',[['random','장소에 맞춰 굴리기'],['Guardian','Guardian'],['Aberration','Aberration'],['Synthetic','Synthetic'],['Local Fauna','Local Fauna']])+select('tier','생물 난도',[['easy','쉬움'],['standard','보통'],['elite','정예'],['overwhelming','압도적']])+select('guardianModel','Guardian일 때 사용할 모델',[['titan','Titan · Brute'],['anansi','Anansi · Lurker'],['arash','Arash · Ranged'],['brahmari','Brahmari · Swarm']])+toggle('randomIntelligence','지능도 무작위로','선택 규칙 · Guardian에는 적용하지 않음')+toggle('aquatic','수생 생물의 사지 사용');
   if(procedure==='npc-profile')html=`<p class="option-explainer">이름·성·연령·외형·성향·버릇·동기를 만들고, 수기 시트에 옮길 간소화한 NPC 대원 능력치와 재능도 생성합니다.</p>`;
-  if(procedure==='emotion')html=select('moodDepth','얼마나 깊이 알아볼까요?',[[1,'전반적 감정만'],[2,'세부 감정까지'],[3,'감정의 뿌리까지']])+`<p class="option-explainer">결과가 「알기 어려움」이면 거기서 멈춥니다.</p>`;
+  if(procedure==='emotion'){
+    const moods=tables.mood.rows.filter(row=>row.min>1).map(row=>[row.min,row.text]);
+    html=select('moodStart','현재 전반적 감정',[[0,'아직 모름 · D8 굴리기'],...moods])
+      +select('moodDepth','얼마나 깊이 알아볼까요?',[[1,'전반적 감정만'],[2,'세부 감정까지'],[3,'감정의 뿌리까지']])
+      +`<p class="option-explainer">이미 아는 감정을 선택하면 첫 D8을 건너뜁니다. 굴림 결과가 「알기 어려움」이면 거기서 멈춥니다.</p>`;
+  }
   if(procedure==='information'||procedure==='conversation')html=`<p class="option-explainer">${procedure==='information'?'정보의 성격과 대상을 독립적으로 굴립니다.':'대화 주제와 두 인물의 반응을 각각 굴립니다.'}</p>${toggle('details','행동·주제로 보충')}`;
   if(procedure==='combat-start')html=(o.combatAmbush?'<p class="rule-callout">확정된 적의 매복 · 우선권 +2<br>조우 반응과 기습은 다시 굴리지 않습니다.</p>':toggle('checkEncounterReaction','먼저 상대의 조우 반응 확인','이미 전투가 확정됐다면 끄기')+toggle('cautious','대원들이 Cautious 상태','기습 굴림 생략'))+toggle('generateCover','엄폐 배치도 생성','원문 D20 배치도 사용');
   if(procedure==='behavior')html=select('behavior','적의 유형',[['brute','Brute'],['lurker','Lurker'],['ranged','Ranged'],['swarm','Swarm'],['psychic','Psychic'],['spitter','Spitter'],['clobber','Clobber'],['taker','Taker'],['psybane','Psybane'],['bomber','Bomber'],['cecaelia','Cecaelia']])+toggle('retarget','새 공격 대상도 굴리기','처음 공격하거나 표적을 잃었을 때');
@@ -163,8 +172,11 @@ function reportFields(run,items){
   const extra=(title,text,group='결과')=>fields.unshift({title,text,group});
   if(run.procedureId==='question'&&run.options.question)extra('질문',run.options.question,'질문');
   if(run.procedureId==='npc-profile'){
-    const stats=fields.filter(item=>item.tableId==='npc-attributes');
-    fields=[...stats,{title:'기본 전투 수치',text:'상처 3 / 방어 2',page:359,group:'동료 능력치'},...fields.filter(item=>!stats.includes(item))];
+    const stats=fields.filter(item=>item.tableId==='npc-attributes'||item.title==='기본 전투 수치');
+    if(!stats.some(item=>item.title==='기본 전투 수치')){
+      stats.push(npcCrewCombatStats(fields.find(item=>item.tableId==='npc-talents')?.roll));
+    }
+    fields=[...stats,...fields.filter(item=>!stats.includes(item))];
   }
   if(run.procedureId==='hex'&&run.context?.biome)extra('현재 생물군계',tables['landing-biome'].rows[run.context.biome-1].text,'지형');
   if(run.procedureId==='travel')extra('항해 상태',run.headline,'항해');
@@ -206,7 +218,7 @@ export function reportView(run,records,{unsaved=false,saving=false}={}){
   if(named&&!run.enemy&&!run.cards?.length){for(let i=main.length-1;i>=0;i--)if(nameParts.has(main[i].tableId))extra.unshift(...main.splice(i,1));}
   const tools=`<div class="report-tools"><span class="record-state ${unsaved?'unsaved':''}">${icon(unsaved?'close':'check',14)}${unsaved?'저장 실패 · 결과는 화면에 유지 중':saving?'저장 중':'브라우저에 저장됨'}</span><div><button type="button" data-action="pin" class="tool-button ${run.pinned?'is-pinned':''}" aria-pressed="${run.pinned}">${icon('pin',16)}<span>${run.pinned?'고정됨':'고정'}</span></button><button type="button" data-action="reroll" class="tool-button">${icon('dice',16)}<span>다시 굴림</span></button></div></div>`;
   const heading=`<header class="report-title">${named?`<p class="report-kind">${esc(run.title)}</p>`:''}<h2 tabindex="-1" id="result-headline">${esc(title)}</h2>${run.subject&&run.subject.name!==title?`<p class="subject-label">관련 인물: ${esc(run.subject.name)}</p>`:''}</header>`;
-  const oldCreature=![RULES_VERSION,'atdw-core-2024-logbook-ko-4'].includes(run.rulesVersion)&&(run.cards??[run]).some(card=>card.enemy&&card.enemy.type!=='Guardian'&&!card.enemy.known);
+  const oldCreature=![RULES_VERSION,'atdw-core-2024-logbook-ko-5','atdw-core-2024-logbook-ko-4'].includes(run.rulesVersion)&&(run.cards??[run]).some(card=>card.enemy&&card.enemy.type!=='Guardian'&&!card.enemy.known);
   const revision=oldCreature?'<p class="source-note">이전 규칙으로 생성한 생물 기록입니다. 저장값은 보존했습니다. 수정된 장갑·방어 선택과 회복 반응은 새로 생성한 생물부터 적용됩니다.</p>':'';
   const hacking=run.hacking?`<section class="result-section hacking-result"><h3>해킹 판정</h3>${statGrid([{label:'판정',value:run.headline},{label:'난도',value:run.options.hackingDifficulty}],'해킹 판정')}</section>`:'';
   const details=extra.length?`<details class="report-details"><summary>외형·이름·생성 근거 ${icon('chevron',16)}</summary>${resultSections(extra)}</details>`:'';
@@ -224,9 +236,10 @@ export function historyCards(records,currentId,limit=12){
   return records.map(r=>localizeRecord(r,tables)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,limit).map(r=>`<button data-action="record" data-id="${esc(r.id)}" class="history-card ${r.id===currentId?'is-current':''}"><span class="history-type">${esc(r.title)}${r.aside?'<em class="aside-mark">곁굴림</em>':''}${r.pinned?icon('pin',13):''}</span><strong>${esc(r.headline)}</strong><small>${esc(r.subline.slice(0,100))}</small><time>${new Date(r.createdAt).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}</time></button>`).join('');
 }
 const searchAliases={'critical-melee':'펌블 fumble','critical-ranged':'펌블 fumble','morale-creature':'사기 도주','morale-humanoid':'사기 도주'};
-const tableSearch=new Map(tableList.map(t=>[t.id,`${t.title} ${t.english} ${searchAliases[t.id]??''} ${t.rows.map(r=>`${r.text} ${r.detail??''} ${r.sourceText??''}`).join(' ')}`.toLocaleLowerCase()]));
+const tableSearch=new Map(tableList.map(t=>[t.id,`${t.title} ${t.english} ${searchAliases[t.id]??''} ${t.rows.map(r=>`${r.text} ${r.detail??''} ${r.sourceText??''}`).join(' ')}`.normalize('NFC').toLowerCase().replace(/\s+/g,'')]));
 export function libraryView(query='',category='all'){
-  const q=query.toLocaleLowerCase(),list=tableList.filter(t=>(category==='all'||t.category===category)&&(!q||tableSearch.get(t.id).includes(q)));
+  const words=query.normalize('NFC').toLowerCase().trim().split(/\s+/).filter(Boolean);
+  const list=tableList.filter(t=>(category==='all'||t.category===category)&&words.every(word=>tableSearch.get(t.id).includes(word)));
   return `<div class="library-results">${list.length?list.map(t=>`<button class="library-row" data-action="table" data-id="${t.id}"><span><strong>${esc(t.title)}</strong><small>${esc(t.english)}</small></span><span>${t.dice}<small>${pageLabel(t.page)}</small></span></button>`).join(''):'<p class="no-results">일치하는 표가 없습니다. 한글이나 영문 제목으로 찾아보세요.</p>'}</div>`;
 }
 export function tableView(id,{parentId=''}={}){const t=tables[id];return `<div class="table-description"><span>${esc(t.english)}</span><b>${t.dice} / ${pageLabel(t.page)}</b></div>${MODIFIED_TABLES.has(id)?`<label class="option-select">표 보정<input type="number" id="table-modifier" min="-20" max="20" value="0"></label><p class="field-help">${esc(modifierNote(id))}</p>`:''}<button class="primary table-roll" data-action="roll-table" data-id="${id}" data-parent="${esc(parentId)}" ${t.rollable===false?'disabled':''}>${icon('dice',18)} 이 표만 굴리기</button>${RELATED_PROCEDURES[id]?`<button type="button" class="secondary" data-action="related-procedure" data-table="${id}">관련 상황 열기 · 후속 표 포함</button>`:''}${id==='known-threat'?threatReference():''}${t.rollable===false?manualChoices(id,parentId):''}${t.sourceNote?`<p class="source-note">${esc(t.sourceNote)}</p>`:''}<table class="rule-table"><thead><tr><th scope="col">굴림</th><th scope="col">결과</th></tr></thead><tbody>${t.rows.map(r=>`<tr><td>${r.min===r.max?r.min:`${r.min}–${r.max}`}</td><td>${esc(r.text)}${r.image?`<img class="source-diagram table-diagram" ${imageSize(r.image)} src="${esc(assetPath(r.image))}" alt="${esc(t.title)} ${r.min}번 원문 도해" loading="lazy">`:''}${r.en?`<small>${esc(r.en)}</small>`:''}${r.detail?`<p>${esc(r.detail)}</p>`:''}${sourceOriginal(r)}</td></tr>`).join('')}</tbody></table><p class="field-help">사용자가 제공한 2024 Core Rulebook 기반. 결과 설명은 한국어로 번역했습니다. 인명·지명·기업명은 원문을 유지하며 생물명은 병기합니다. 시나리오 전용 표는 제외했습니다.</p>`;}

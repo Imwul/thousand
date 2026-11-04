@@ -3,7 +3,7 @@ import {compoundTables} from './compound-tables.js';
 import {completeTables} from './completions.js';
 import {applyKorean} from './localization.js';
 // Korean summaries and original-language tables from the user's 2024 rulebook.
-export const RULES_VERSION = 'atdw-core-2024-logbook-ko-5';
+export const RULES_VERSION = 'atdw-core-2024-logbook-ko-6';
 export const tables = {};
 function define(id, title, english, dice, page, rows) {
   tables[id] = { id, title, english, dice, page, rows: rows.map((r, i) => ({ id: `${id}.${i + 1}`, ...r })) };
@@ -54,15 +54,15 @@ list('purpose','시설의 원래 용도','Site Original Purpose',20,133,'감옥|
 list('site-story','장소의 과거','Site Story',10,136,'생물에게 점령됨|불안정해짐|오염의 근원|경이로운 기술과 연관됨|합성체에게 점령됨|강력한 물건을 보관했거나 보관 중|큰 수수께끼의 답이 있거나 있었음|끔찍한 비극이 일어난 곳|무시무시한 힘과 연관됨|우주적 사건으로 크게 손상됨');
 list('site-descriptor','장소의 첫인상','Overall Site Descriptor',12,137,'습하고 차갑다|건조하고 따뜻하다|낯선 이끼 같은 물질이 덮였다|크고 널찍하다|비좁고 답답하다|식물이 무성하다|기묘한 소음이 끊이지 않는다|인공 중력이 없다|일부가 아직 가동된다|연기나 안개가 자욱하다|약탈되거나 부분 파괴된 흔적|Àrsaidh 양식과 뚜렷이 다른 건축');
 list('planet-descriptor','지상 시설의 주변','Planetary Site Descriptor',10,137,'거의 알아볼 수 없는 고대 유적 근처|붕괴하기 쉬운 지반|흐르는 용암 근처|수역 근처|밀림 같은 환경|황량한 곳|산 내부|활동 중인 동물의 서식지|일부가 땅에 묻힘|침수됨');
-list('hazard','주된 위험','Site Hazard',8,139,[
-  {text:'정신적 교란',detail:'이 장소에서 Resolve 판정은 Demanding(-5).'},
-  {text:'독성 대기',detail:'B등급 이상의 방호복이 없으면 매 라운드 D20 피해.'},
-  {text:'붕괴',detail:'시간트랙 초기화마다 임의 인물이 DEX 판정. 실패하면 낙하 잔해로 3D10 피해.'},
-  {text:'괴물에게 점령됨',detail:'모든 조우가 Aberration이며 즉시 전투가 시작된다.'},
-  {text:'봉쇄',detail:'모든 구역의 접근점이 잠겨 있다. 열려면 기계공학(Technology) 판정이 필요하다.'},
-  {text:'극한 온도',detail:'진공복 없이는 이 장소를 탐사할 수 없다.'},
-  {text:'공간·시간 왜곡',detail:'시간트랙을 진행시킬 때마다 50% 확률로 전진하는 대신 한 칸 후퇴한다.'},
-  {text:'수직 구조',detail:'구역 사이 이동에 D20피트 등반이 필요하다.'}
+list('hazard','주된 위험','Site Hazard',8,[139,140,141],[
+  {text:'정신적 교란',detail:'이 장소에서 Resolve 판정은 Demanding(-5).',page:140},
+  {text:'독성 대기',detail:'B등급 이상의 방호복이 없으면 매 라운드 D20 피해.',page:140},
+  {text:'붕괴',detail:'시간트랙 초기화마다 임의 인물이 DEX 판정. 실패하면 낙하 잔해로 3D10 피해.',page:140},
+  {text:'괴물에게 점령됨',detail:'모든 조우가 Aberration이며 즉시 전투가 시작된다.',page:140},
+  {text:'봉쇄',detail:'모든 구역의 접근점이 잠겨 있다. 열려면 기계공학(Technology) 판정이 필요하다.',page:141},
+  {text:'극한 온도',detail:'진공복 없이는 이 장소를 탐사할 수 없다.',page:141},
+  {text:'공간·시간 왜곡',detail:'시간트랙을 진행시킬 때마다 50% 확률로 전진하는 대신 한 칸 후퇴한다.',page:141},
+  {text:'수직 구조',detail:'구역 사이 이동에 D20피트 등반이 필요하다.',page:141}
 ]);
 list('size','장소의 규모','Site Size',4,142,'소형|중형|대형|초대형');
 list('activity','장소 활동도','Site Activity',6,138,'죽은 듯 고요함 · 최대 1회 매복|고요함 · 최대 2회 매복|다소 고요함 · 최대 3회 매복|활발함 · 최대 4회 매복|분주함 · 최대 5회 매복|극도로 활발함 · 최대 6회 매복');
@@ -121,18 +121,20 @@ list('taint','오염','Taints',10,[162,163],[
   {text:'중독',detail:'각 탐사지 탐사를 중독 I(Poisoned I) 상태로 시작. 전투 외 CON 판정에 advantage.'},
   {text:'실명',detail:'Blinded 상태가 되지만 방사선과 독에 면역.'}
 ]);
-list('security','자동 보안 장치','Automatic Security Measure',10,164,[
-  {text:'경보',detail:'Technology 판정으로 끄지 못하면 조우.'},
-  {text:'가연성 가스',detail:'작동 중인 대기 센서(Atmospheric Sensor)로 탐지할 수 있다. 탐지하지 못하면 잠시 뒤 가스가 타오르며 이 구역 안의 모든 인물에게 D20 피해를 준다.'},
-  {text:'전기장',detail:'구역 안의 모든 인물에게 D10+10 피해를 준다. 전기장은 1라운드 동안 지속되며, 누구든 구역에 들어올 때마다 다시 발동한다.'},
-  {text:'중력 역전',detail:'DEX 판정 실패 시 천장으로 추락해 Wound 1. 이 구역에서는 영구적이며 20% 확률로 장소 전체에도 적용.'},
-  {text:'봉쇄',detail:'현재 구역을 포함해 아직 발견하지 못한 구역의 접근점이 잠긴다.'},
-  {text:'나노머신',detail:'임의 인물을 둘러싸 매 라운드 Wound 1. 불 등으로 처리하기 전까지 대상을 바꿔 가며 공격.'},
-  {text:'음파 공격',detail:'탐사가 끝날 때까지 모두 Perception -2.'},
-  {text:'정지장',detail:'무작위 대원 두 명이 구조될 때까지 무기한 정지장에 갇힌다. 과학(Science) 판정으로 구조 방법을 알아낼 수 있다.'},
-  {text:'순간이동',detail:'각 인물이 무작위 장소로 이동한다. 순간이동 표 참조.'},
-  {text:'자동 포탑',detail:'Ranged Weapon 12, 피해 D20. 매 라운드 임의 인물을 사격한다.'}
+// The D10 roll order is on p.164. The numbered explanations are in a different order.
+list('security','자동 보안 장치','Automatic Security Measure',10,[164,165],[
+  {text:'경보',detail:'Technology 판정으로 끄지 못하면 조우한다.',page:164},
+  {text:'가연성 가스',detail:'작동 중인 대기 센서(Atmospheric Sensor)로만 탐지할 수 있다. 감지하면 대원이 구역을 벗어날 시간이 있다. 탐지하지 못하면 잠시 뒤 가스가 타오르며 구역 안의 모든 인물에게 D20 피해를 준다.',page:165},
+  {text:'전기장',detail:'구역 안의 모든 인물에게 D10+10 피해를 준다. 전기장은 1라운드 동안 지속되며, 누구든 구역에 들어올 때마다 다시 발동한다.',page:165},
+  {text:'중력 역전',detail:'구역에 들어서는 모든 인물은 DEX 판정을 한다. 실패하면 천장으로 추락해 Wound 1. 이 구역에서는 영구적이며 20% 확률로 탐사지 전체에도 적용된다.',page:165},
+  {text:'봉쇄',detail:'현재 구역과 아직 발견하지 못한 모든 구역의 접근점이 잠긴다.',page:165},
+  {text:'나노머신',detail:'임의 인물을 둘러싸 매 라운드 Wound 1. 불이 가장 효과적이며 냉각이나 감전으로도 처리할 수 있다. 제거하지 않으면 다음 인물에게 옮겨 간다.',page:165},
+  {text:'음파 공격',detail:'탐사가 끝날 때까지 모두 Perception 판정에 -2.',page:165},
+  {text:'정지장',detail:'무작위 대원 두 명이 움직이거나 행동할 수 없는 정지장에 무기한 갇힌다. 과학(Science) 판정으로 구조 방법을 알아낼 수 있다.',page:164},
+  {text:'순간이동',detail:'각 인물이 무작위 장소로 이동한다. 순간이동 표 참조.',page:164},
+  {text:'자동 포탑',detail:'원거리 무기 기술 12, 피해 D20. 비활성화하거나 파괴할 때까지 매 라운드 임의 인물을 사격한다.',page:165}
 ]);
+tables.security.sourceNote='신중함(Cautious, p.82) 상태에서만 이 보안 장치를 작동 전에 탐지할 수 있다. 발동한 뒤에는 결과에 따라 대응한다.';
 ranges('teleport','순간이동 목적지','Random Teleportation','d10',164,[[1,3,'미탐사 구역'],[4,6,'탐사지 입구'],[7,9,'잠긴 방 내부'],[10,10,'장소 밖 · 행성 표면 또는 진공']]);
 list('fixed-event','고정 사건','Fixed Event',20,[166,167,168,169],[
   {text:'벽에서 기어나오는 환영',detail:'임의 인물에게 D10 Stress. WIL 실패 시 무작정 발포하며 다른 대원은 DEX로 피한다.'},
@@ -145,7 +147,7 @@ list('fixed-event','고정 사건','Fixed Event',20,[166,167,168,169],[
   {text:'따뜻한 진흙 방의 알',detail:'벽에서 점액이 흐른다. 구석의 큰 알들 속에서 무언가 움직인다.'},
   {text:'전자 장비의 침묵',detail:'이 구역 안에서는 전자 기기와 광원이 모두 작동하지 않는다.'},
   {text:'보이지 않는 무언가의 이빨',detail:'임의 대원의 손에 실제 물린 자국이 남는다. 위험성은 불명.'},
-  {text:'포자를 터뜨리는 균류',detail:'피부가 노출된 인물은 Poison II의 영향을 받는다.'},
+  {text:'포자를 터뜨리는 균류',detail:'가까이 가면 포자가 터진다. 피부가 노출된 인물은 독 II(Poison II)의 영향을 받는다.'},
   {text:'얼어붙은 바닥',detail:'통과에 시간트랙 +1.'},
   {text:'괴물의 벌집',detail:'각 인물 Stealth 실패 시 Hard Swarm과 조우. 벌집 밖으로는 추격하지 않는다.'},
   {text:'몸 밖에서 본 자신',detail:'혼자라면 감각 과부하로 시간트랙 +1. 여럿이면 왼쪽 플레이어와 시트를 바꾸며 트랙 초기화까지 지속.'},
@@ -161,13 +163,20 @@ list('danger','무작위 위험','Danger',6,171,'보안 장치|전투 조우|폭
 list('discovery','발견','Discovery',20,170,'붕괴하거나 노출된 구획|뼈 또는 유해|유물|죽은 생물|잠긴 접근점|합금 큐브|독특한 예술품|이상한 대기 측정값|데이터 크리스털|예상 밖의 식물·균류|잡동사니·잔해|이질적인 건축 양식|청각·시각 환영|전투 흔적|기이한 중력·자기장·양자 현상|발자국·자국|이곳과 어울리지 않는 물건|탐사지 출구|구덩이·수직 통로|Àrsaidh 우주선');
 list('random-event','무작위 사건','Event',10,171,'설명할 수 없는 현상|깨어나는 고대의 위험|기묘한 소리|시설의 원래 용도와 관련된 사건|구역마다 진행되는 감압|인간에게 완벽한 대기·압력·중력|통제되지 않는 화재|눈을 뜨기 힘들 만큼 밝은 빛|인물 한 명에게 장소의 과거를 보여 주는 환영|대원들을 두 시간트랙 전 상태로 되돌리는 시간장 · 잃었던 자원을 되찾고 상처가 치료되거나 다시 열리는 등 당시 상태를 복원한다');
 list('travel-type','항해 사건 유형','Random Travel Event Type',4,119,'사회적 사건|선체·장비 고장|우주 이상 현상|정신·신체 문제');
-ranges('travel-social','사회적 항해 사건','Social Travel Event','d10',119,[[1,5,'두 대원의 대화','대화 주제와 각자의 반응을 정한다.'],[6,6,'두 대원 사이의 사건','유대가 있었다면 깨진다. 대화 주제나 행동·주제로 구체화.'],[7,7,'마음을 닫는 대원','임의 대원은 다음 주 동안 모든 행동에 -2.'],[8,8,'새로 생긴 유대','두 대원이 서로와 관련된 행동에 +1.'],[9,9,'작은 축하','모든 대원 Stress -5.'],[10,10,'비상 훈련','모든 대원의 다음 Skill 판정에 +1.']]);
+ranges('travel-social','사회적 항해 사건','Social Travel Event','d10',119,[
+  [1,5,'두 대원의 대화','대화 주제와 각자의 반응을 정한다.'],
+  [6,6,'두 대원 사이의 사건','유대가 있었다면 깨진다. 대화 주제나 행동·주제를 굴리거나 둘 사이의 과거에서 맥락을 정한다.'],
+  [7,7,'마음을 닫는 대원','임의 대원은 다음 주 동안 모든 행동에 −2.'],
+  [8,8,'새로 생긴 유대','두 대원이 서로와 관련된 행동에 +1.'],
+  [9,9,'작은 축하','한 대원이 생일이나 종교 행사 등을 기념한다. 사기가 올라 모든 대원의 스트레스가 5 감소한다.'],
+  [10,10,'비상 훈련','대원들이 감압·화재·부상에 대비한 정기 훈련을 한다. 모든 대원의 다음 기술 판정에 +1.']
+]);
 list('travel-malfunction','항해 중 고장','Ship Malfunction',10,120,[
-  '객실 감압. 각 대원 Hard Technology로 수리 시도. 모두 실패하면 진공복 착용 또는 CON으로 실신 방지. 진공복 없이 1시간이면 사망.',
+  '객실의 기압이 떨어지기 시작한다. 누군가 고의로 망가뜨렸을 수도 있다. 각 대원은 어려움(Hard) 기계공학(Technology) 판정으로 한 번씩 수리를 시도할 수 있다. 모두 실패하면 진공복을 입거나 CON 판정에 성공해야 의식을 잃지 않는다. 1시간 뒤에도 진공복이 없는 캐릭터는 사망한다.',
   '중력 보정 고장으로 화물이 쏟아진다. Normal STR로 정리해야 한다.',
   '센서가 워프 공간 이탈을 보고한다. 센서의 오류인가, 실제인가?',
   '화물 폭발과 화학 화재로 D6 Supplies 손실.',
-  '전원 고장. Technology 수리 시도마다 대원별 Oxygen Pellet 1개를 소모한다.',
+  '전원이 모두 나가 대원들은 탐사용 호흡 장비를 써야 한다. 기계공학(Technology)으로 수리를 시도할 때마다 대원별 산소 펠릿(Oxygen Pellet) 1개를 소모한다.',
   '공기 재활용 장치 문제로 Oxygen Tank D4개 손실.',
   '배터리에서 방사선 누출. 모두 D100 rads 노출.',
   '주방 고장으로 D4 Supplies 손실.',
@@ -182,21 +191,21 @@ list('travel-anomaly','항해 중 우주 이상','Space Anomaly',10,121,[
   '가스 성운 속 워프 이탈. 선체가 부식되는 소리, 모두 D10 Stress.',
   '측량 장비가 전자기 교란으로 손상. Hard Technology로 수리.',
   '외부 힘으로 워프 이탈 후 잘못된 도약이 발생한다.',
-  'D6시간의 재보정 중 거대한 우주선이 탐사선을 스캔하고 떠난다.',
+  '항로 재보정에 평소보다 긴 D6시간이 걸린다. 외부 관측창을 열어 보면 거대한 우주선의 그림자에 들어와 있다. 그 우주선은 탐사선을 천천히 스캔하고 어둠 속으로 사라진다. 잠시 뒤 탐사선은 워프 공간에 재진입한다.',
   '워프 중 심한 진동. DEX 실패 시 Wound 1.',
-  '워프 이탈 후 있을 수 없는 Karum Station과 Àrsaidh 함선들이 보인다. 잠시 뒤 항해를 재개한다.'
+  '우주선이 끌려 나온 것처럼 워프 공간을 벗어나며 조명이 깜박인다. 외부 관측창 너머로 있을 리 없는 Karum Station이 보인다. Àrsaidh 함선들이 그 소행성을 드나들고, 잠시 뒤 탐사선은 워프 항해를 재개한다.'
 ]);
 list('travel-issue','항해 중 정신·신체 문제','Mental or Physical Issue',10,122,[
   '떨어진 공구에 임의 대원이 Wound 1.',
-  '우주선이 임의 대원과 접속을 시도한다. D6일 동안 목적지 환영과 낯선 목소리로 매일 D10 Stress.',
-  '우주선과 대원의 접속 시도로 잘못된 도약이 발생한다.',
-  '매일 다른 대원에게 사랑하는 사람의 환영이 나타난다.',
+  '우주선이 임의 대원과 접속을 시도한다. D6일 동안 목적지 환영, 인간의 정신이 받아들일 수 없는 생각, 들어본 적 없는 언어의 목소리가 밀려온다. 매일 D10 스트레스를 받는다.',
+  '우주선이 임의 대원과 접속을 시도하다 잘못된 도약이 발생한다.',
+  '이번 주 매일 다른 대원에게 사랑하는 사람의 환영이 나타난다. 모습은 매우 생생하지만 대원과 상호작용하지 않으며, 다른 사람이 보고 있을 때는 나타나지 않는다.',
   '임의 대원에게 고열·호흡곤란. D10일 동안 매일 Medical Aid, 실패마다 기간 +1일. 미완치 상태로 도착 시 이번 탐사 모든 굴림 -5.',
   '임의 대원의 갑작스러운 불안 발작. Stress Reaction 표 참조.',
-  '누군가 술을 숨겼다는 확신. 사실은 망상으로 보인다.',
-  '임의 대원이 Resolve에 실패하면 일주일치 식량을 한 번에 먹으려 한다.',
-  '예지몽. 다음 전투에서 상대를 기습할 수 있다.',
-  '임의 대원이 하루 동안 반응을 잃었다가 회복. Stress와 Trauma를 모두 잃는다.'
+  '임의 대원은 다른 대원이 선내에 술을 숨기는 것을 봤다고 확신한다. 실제로는 그 대원의 망상처럼 보인다.',
+  '임의 대원이 정신 저항(Resolve)에 실패하면 일주일치 식량을 한 번에 먹어 치우려 한다. 다른 대원이 말릴 수 있다.',
+  '임의 대원이 아주 생생한 예지몽을 꾼다. 다음에 전투에 들어가면 그 꿈을 떠올려 상대를 기습할 수 있다.',
+  '임의 대원이 갑자기 반응을 잃었다가 하루 뒤 아무 일 없었다는 듯 깨어난다. 그 대원의 스트레스와 트라우마가 모두 사라진다.'
 ]);
 list('attitude','NPC 첫 태도','NPC Starting Attitude',6,236,'적대적|적대적|중립적|중립적|우호적|우호적');
 ranges('npc-hostile','적대적 행동','Hostile NPC','d10',238,[[1,2,'경고 없이 공격한다'],[3,4,'위협하거나 괴롭힌다'],[5,6,'무언가를 요구한다'],[7,8,'접근을 막는다'],[9,10,'속이려 한다']]);
@@ -261,7 +270,9 @@ for(const table of [...sourceTables,...compoundTables]){
 completeTables({list,ranges,define,tables});
 applyKorean(tables);
 // The ability index and its effect descriptions occupy different printed pages.
+tables['enemy-ability'].page=[280,281,282,283];
 for(const row of tables['enemy-ability'].rows)row.page=row.min<=7?281:row.min<=13?282:283;
+tables['psychic-ability'].page=[284,285];
 for(const row of tables['psychic-ability'].rows)row.page=row.min<=4?284:285;
 for(const t of Object.values(tables)){
   const p=[t.page].flat()[0];

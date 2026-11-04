@@ -3,7 +3,7 @@ import {creatureLabel,creatureName} from '../data/glossary.js';
 import {GUARDIANS,guardianItems} from '../data/guardians.js';
 import {BIOME_EFFECTS} from '../data/biomes.js';
 import {ROLE_RULES} from '../data/enemies.js';
-import {DICE_PRESETS,dicePresetOutcome} from '../domain/model.js';
+import {DICE_PRESETS,dicePresetOutcome,npcCrewCombatStats} from '../domain/model.js';
 
 const roles=['Brute','Lurker','Ranged','Swarm','Psychic'];
 const tierNames={easy:'쉬움',standard:'보통',elite:'정예',overwhelming:'압도적'};
@@ -104,7 +104,10 @@ function hex(r,run,hooks){
   else r.item('수역 생물군계','지형 난도 굴림 생략',194,{group:'지형',detail:'수중 탐사에는 full vacc suit 이상의 장비가 필요합니다.'});
   if(terrain!==null)run.terrain=terrain;
   if(terrain===3){const effects=['분화구로 통과 시간트랙 +1.','용융 금속·메탄 등의 강을 우회하면 +3.','빙하 통과에 시간트랙 +1. 틈 추락 확률 10%.','피난처를 찾지 못하면 모두 200 rads.','각자 Oxygen Pellet 1개 추가 소모, 시간트랙 +1.','활화산 우회에 +3.','달려서 통과하며 각자 Oxygen Pellet 1개 추가 소모.','추가 효과 없음.','용암호 우회에 +3.','지형 난도 사용 안 함.'];r.item('생물군계별 지형 효과',effects[c.biome-1],193,{group:'지형'});
-    if(c.biome===3&&r.check('glacier-fall','빙하 틈 추락',10,193,'지형'))r.item('추락 피해','무작위 대원 한 명이 상처 1과 장비 1개 손실.',193,{group:'지형'});
+    if(c.biome===3&&r.check('glacier-fall','빙하 틈 추락',10,193,'지형')){
+      r.pickCrew(1,{id:'glacier-target',title:'빙하 틈 추락 대상',page:193,group:'지형'});
+      r.item('추락 피해','추락한 대원은 상처 1과 장비 1개 손실.',193,{group:'지형'});
+    }
   }
   if(c.biome===10||terrain!==4){
     if(c.knownThreats){
@@ -117,11 +120,23 @@ function hex(r,run,hooks){
   if(e.value<=2){const find=r.table('planet-findings','발견');if(find.value===10)r.table('artifact','발견한 유물');}
   else if(e.value>=6&&e.value<=9){
     const hazard=r.table(`biome-hazards-${c.biome}`,'위험·장애물');
-    if((c.biome===8&&hazard.value===3)||(c.biome===9&&[3,4].includes(hazard.value))){
-      const page=c.biome===8?213:215,face=r.raw('falling-rubble','낙하물 확인',6,page);
-      r.item('낙하물',face===1?'낙하물 발생':'낙하물 없음',page,{group:'위험·장애물',roll:face,dice:'d6',values:[face],detail:face===1?'각 대원은 DEX 판정. 실패하면 상처 D4.':'D6 1에서만 발생. 낙하물의 DEX 판정과 상처는 적용하지 않습니다.'});
+    if((c.biome===6&&hazard.value===5)||(c.biome===8&&hazard.value===3)||(c.biome===9&&[3,4].includes(hazard.value))){
+      const page={6:209,8:213,9:215}[c.biome],face=r.raw('falling-rubble','낙하물 확인',6,page);
+      r.item('낙하물',face===1?'낙하물 발생':'낙하물 없음',page,{group:'위험·장애물',roll:face,dice:'d6',values:[face],effectDice:face===1,detail:face===1?'각 대원은 DEX 판정. 실패하면 상처 D4.':'D6 1에서만 발생. 낙하물의 DEX 판정과 상처는 적용하지 않습니다.'});
+      if(face!==1)run.items.find(item=>item.tableId===`biome-hazards-${c.biome}`).effectDice=false;
     }
-    if(c.biome===7&&hazard.value===6)r.table('poison','무작위 독 강도');
+    if(c.biome===3&&hazard.value===5){
+      const face=r.raw('ice-suit-check','얼음 조각의 보호복 손상 확인',6,203);
+      r.item('보호복 손상 확인',face===1?'대상의 보호복 확인':'손상 없음',203,{
+        group:'위험·장애물',roll:face,dice:'d6',values:[face],effectDice:false,
+        detail:face===1?'대상의 장갑 처리된 보호복은 손상되지 않습니다. 장갑 처리되지 않은 진공복이나 방호복은 찢어집니다.':'D6 1에서만 손상 여부를 확인합니다.'
+      });
+      if(face===1)r.pickCrew(1,{id:'ice-suit-target',title:'보호복 손상 대상',page:203,group:'위험·장애물'});
+    }
+    if(c.biome===7&&hazard.value===6){
+      r.pickCrew(1,{id:'poison-target',title:'중독된 대원',page:211,group:'위험·장애물'});
+      r.table('poison','무작위 독 강도');
+    }
     if(/^Encounter\./.test(hazard.row.key)){
       const blocked=()=>r.item('전투 제한','순탄한 길이므로 전투 조우를 적용하지 않음',193,{group:'조우'});
       if(c.biome===1){if(terrain===4)blocked();else hooks.encounter(r,run,{forcedType:'Guardian',ignoreHazard:true,location:'planet'});}
@@ -167,14 +182,33 @@ export function runExtended(id,r,run,hooks){
   else if(id==='npc-profile'){
     const name=`${r.table('given-name','이름').row.text} ${r.table('surname','이름').row.text}`;
     for(const t of ['age','gender','npc-nature','npc-descriptor','npc-quirk','character-motivation'])r.table(t,'인물');
-    r.table('npc-attributes','동료 능력치');r.table('npc-talents','동료 재능');
+    r.table('npc-attributes','동료 능력치');
+    const talent=r.table('npc-talents','동료 재능').value;
+    const {title,text,page,...stats}=npcCrewCombatStats(talent);
+    r.item(title,text,page,stats);
+    r.item('행동과 이동','자기 턴마다 행동 1회와 이동 1회.',359,{group:'동료 능력치'});
+    r.item('동료 스트레스','PC가 스트레스를 얻을 때마다 +1. 10점마다 모든 굴림에 누적 −1.',359,{
+      group:'동료 능력치',
+      detail:'직전 시간트랙에서 스트레스를 얻지 않았다면 트랙 초기화 때 −1.',
+    });
     run.headline=name;run.subline='이름·성향·동기와 간소화한 NPC 대원 능력치';
     run.notes.push('NPC 대원은 기본 Wounds 3, Defense 2. Skills 대신 해당 Attribute를 사용하며 Stamina·Luck·Emotional State는 사용하지 않습니다(p.359).');
   }
   else if(id==='emotion'){
-    const mood=r.table('mood','감정');run.headline=mood.row.text;run.subline='전반적 감정';
-    if(mood.value>1&&o.moodDepth>=2){const detail=r.table(`mood-${mood.value}`,'세부 감정');run.subline=detail.row.text;
-      if(o.moodDepth>=3){const key=`mood-${mood.value}-${detail.value}`;if(tables[key].rollable===false){run.manualTableId=key;run.notes.push(tables[key].sourceNote);}else run.headline=r.table(key,'감정의 뿌리').row.text;}
+    const mood=o.moodStart||r.table('mood','감정').value;
+    run.headline=tables.mood.rows[mood-1].text;
+    run.subline='전반적 감정';
+    if(o.moodStart)r.item('전반적 감정',run.headline,246,{group:'감정',detail:'이미 아는 감정을 직접 선택했습니다.'});
+    if(mood>1&&o.moodDepth>=2){
+      const detail=r.table(`mood-${mood}`,'세부 감정');
+      run.subline=detail.row.text;
+      if(o.moodDepth>=3){
+        const key=`mood-${mood}-${detail.value}`;
+        if(tables[key].rollable===false){
+          run.manualTableId=key;
+          run.notes.push(tables[key].sourceNote);
+        }else run.headline=r.table(key,'감정의 뿌리').row.text;
+      }
     }
   }
   else if(id==='information'){const type=r.table('information-type','정보'),topic=r.table('information-topic','정보');run.headline=`${topic.row.text} · ${type.row.text}`;run.subline=o.details?hooks.inspiration(r):'현재 사건과 연결해 해석하세요.';}
@@ -187,7 +221,14 @@ export function runExtended(id,r,run,hooks){
     r.table('placement','PC 배치');r.table('placement','상대 배치');
     let surprise=1;if(o.combatAmbush){surprise=3;r.item('기습','이미 확정된 적의 매복 · 적 우선권 +2',138,{group:'전투 시작'});}else if(o.cautious)r.item('기습','대원들이 Cautious이므로 기습 굴림 생략',52,{group:'전투 시작'});else surprise=r.table('combat-surprise','전투 시작').value;
     if(surprise>=5){run.items=run.items.filter(item=>!(item.tableId==='placement'&&item.group==='PC 배치'));run.trace.find(t=>t.id==='placement').discarded=true;r.item('PC 배치','상대를 먼저 배치한 뒤 PC들의 위치를 직접 선택.',53,{group:'PC 배치',detail:'PC가 기습했으므로 먼저 굴린 PC 방향은 적용하지 않습니다.'});}
-    if(!o.combatAmbush&&(surprise<=2||surprise>=5))r.table('encounter-activity','상대가 하던 행동');
+    if(!o.combatAmbush&&(surprise<=2||surprise>=5)){
+      const activity=r.table('encounter-activity','상대가 하던 행동');
+      if(activity.value===3){
+        const typeTable=c.location==='planet'?'creature-planet':'creature-space';
+        r.table(typeTable,'다투고 있던 다른 생물');
+        r.table('creature-size','다투고 있던 다른 생물');
+      }
+    }
     if(o.generateCover)r.table('cover','엄폐 배치');run.headline='전투 구역이 준비되었습니다';run.subline=surprise>=3&&surprise<=4?'PC들이 기습당함':surprise>=5?'상대가 기습당함':'기습 없이 조우';run.ambush=o.combatAmbush;run.notes.push('기습한 쪽은 Initiative +2. 같은 방향에 배치되면 가능한 한 멀리 떨어집니다.');
   }
   else if(id==='behavior'){
@@ -233,10 +274,14 @@ export function runExtended(id,r,run,hooks){
   else if(id==='alternate'){const a=r.table('alternate-access','우회 경로');run.headline=a.row.text;if(a.value<=5)hooks.encounter(r,run);else hooks.security(r,run);run.subline='우회 경로 탐색 · 시간트랙 +1';}
   else if(id==='activity'){
     run.headline='한 시간이 지났습니다';run.subline='소모품과 지속 효과를 종이 시트에서 갱신하세요.';
-    if(c.mode==='site'&&c.hazard===3)r.item('붕괴하는 시설','무작위 대원 한 명이 DEX 판정. 실패하면 낙하 잔해로 3D10 피해.',140,{group:'시간 초기화 위험'});
+    if(c.mode==='site'&&c.hazard===3){
+      r.pickCrew(1,{id:'collapse-target',title:'시설 붕괴 대상',page:140,group:'시간 초기화 위험'});
+      r.item('붕괴하는 시설','지정된 대원은 DEX 판정. 실패하면 낙하 잔해로 3D10 피해.',140,{group:'시간 초기화 위험'});
+    }
     if(c.mode!=='surface'&&c.knownThreats){const v=r.raw('site-activity-check','장소 활동 확인',10,138);r.item('활동 확인',v<=2?'추적 위협의 매복':'매복 없음',138,{roll:v,dice:'d10'});if(v<=2)hooks.knownThreat(r,run);}
     else r.item('추적 위협',c.mode==='surface'?'야외에서는 새 헥스 진입 때 확인하므로 추가 매복 굴림 없음':'남은 위협이 없어 활동 굴림 생략',c.mode==='surface'?189:138);
     run.notes.push('각 인물 Battery 1개와 Oxygen Pellet 1개 소비. 직전 트랙에서 사격했다면 Ammo 1개 소비. 반전 확률은 1/6로 직접 되돌리고, 남은 매복 횟수·지속 효과를 갱신하세요(p.129, 227).');
+    if(c.mode==='site')run.notes.push('시설 안에서는 한 시간마다 휴식이 필요합니다. 쉬면 시간트랙 +1, 쉴 수 없으면 공포 사건 표를 굴리세요(p.176).');
   }
   else if(id==='artifact-activate'){const a=r.table('artifact-activation','활성화');run.headline=a.row.text;run.subline='Technology 판정에 성공한 뒤 사용하는 표';if(a.value===7)r.table('talents','장소를 떠날 때까지 얻는 재능');}
   else if(id==='appraisal'){

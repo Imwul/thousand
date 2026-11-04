@@ -30,7 +30,19 @@ function enqueue(task,onFailure){
   state.queue=promise.then(()=>true).catch(error=>{onFailure?.(error);message(error.message||'저장하지 못했습니다. 백업을 내려받아 기록을 보관하세요.',true);status();return false;});
   return state.queue;
 }
-function saveCampaign(){rememberLocation(campaign());const snapshot=structuredClone(campaign());return enqueue(async()=>{if(!state.db)throw new Error('브라우저 저장 공간에 연결하지 못했습니다. 현재 기록은 백업으로 보관하세요.');await state.db.saveCampaign(snapshot);});}
+function saveCampaign(){
+  const c=campaign();
+  c.workbench={
+    procedure:state.procedure,
+    recordId:state.currentId,
+    parentId:state.followParentId,
+    encounterIndex:state.followParentId?state.followEncounterIndex:0,
+    actor:state.followParentId?state.nextActor:null
+  };
+  rememberLocation(c);
+  const snapshot=structuredClone(c);
+  return enqueue(async()=>{if(!state.db)throw new Error('브라우저 저장 공간에 연결하지 못했습니다. 현재 기록은 백업으로 보관하세요.');await state.db.saveCampaign(snapshot);});
+}
 function recentIds(){
   const stored=campaign()?.recentProcedures;
   if(Array.isArray(stored)&&stored.length)return stored.filter(id=>PROCEDURES.some(p=>p.id===id)).slice(0,5);
@@ -48,7 +60,22 @@ function touchRecent(id){
 }
 
 function restoreCampaignWorkbench(){
-  state.currentId=ownRecords().find(r=>r.id===campaign().currentRecordId)?.id??ownRecords().sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
+  const records=ownRecords();
+  const saved=campaign().workbench;
+  state.followParentId=null;
+  state.followEncounterIndex=0;
+  state.nextActor=null;
+  if(PROCEDURES.some(p=>p.id===saved?.procedure)){
+    state.procedure=saved.procedure;
+    state.currentId=records.find(r=>r.id===saved.recordId)?.id??null;
+    if(!state.currentId&&records.some(r=>r.id===saved.parentId)){
+      state.followParentId=saved.parentId;
+      state.followEncounterIndex=saved.encounterIndex??0;
+      if(records.some(r=>r.id===saved.actor?.recordId))state.nextActor=saved.actor;
+    }
+    return;
+  }
+  state.currentId=records.find(r=>r.id===campaign().currentRecordId)?.id??records.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
   const r=current();state.procedure=r?.procedureId==='encounter-roster'?'creature':PROCEDURES.some(p=>p.id===r?.procedureId)?r.procedureId:'question';
 }
 function renderHome(){
@@ -93,13 +120,13 @@ async function openFresh(id,overrides={}){
 }
 async function followProcedure(id,parent=current(),index=0,encounterIndex=0){
   if(parent?.encounters)parent={...parent,encounter:parent.encounters[encounterIndex]??parent.encounter};
-  state.followEncounterIndex=encounterIndex;
   if(!parent){await openFresh(id);return;}
   await flushMemo();await flushOptions();
-  if(id==='npc-profile'&&parent.subject?.recordId){const profile=ownRecords().find(r=>r.id===parent.subject.recordId);if(profile){state.procedure=id;state.currentId=profile.id;state.followParentId=null;renderControls();renderReport();renderHistory();$('#report-host').scrollIntoView({behavior:'instant'});return;}}
+  state.followEncounterIndex=encounterIndex;
+  if(id==='npc-profile'&&parent.subject?.recordId){const profile=ownRecords().find(r=>r.id===parent.subject.recordId);if(profile){state.procedure=id;state.currentId=profile.id;state.followParentId=null;renderControls();renderReport();renderHistory();$('#report-host').scrollIntoView({behavior:'instant'});await saveCampaign();return;}}
   if(id==='creature'&&parent.encounter){
     const child=ownRecords().find(r=>r.parentId===parent.id&&r.procedureId==='encounter-roster'&&(r.encounterIndex??0)===encounterIndex);
-    if(child){state.currentId=child.id;state.procedure='creature';state.followParentId=null;activateEnemy(child);renderControls();renderReport();renderHistory();$('#report-host').scrollIntoView({behavior:'instant'});return;}
+    if(child){state.currentId=child.id;state.procedure='creature';state.followParentId=null;activateEnemy(child);renderControls();renderReport();renderHistory();$('#report-host').scrollIntoView({behavior:'instant'});await saveCampaign();return;}
   }
   prepareContinuation(campaign(),parent,id);
   const card=enemyCards(parent)[index]??activeCard();
@@ -166,7 +193,7 @@ function collectOptions(){
   for(const input of form.querySelectorAll('input,textarea,select')){
     if(input.type==='radio'){if(input.checked)next[input.name]=input.value;}
     else if(input.type==='checkbox')next[input.name]=input.checked;
-    else if(input.type==='number'||['moodDepth'].includes(input.name))next[input.name]=Number(input.value);
+    else if(input.type==='number'||['moodStart','moodDepth','surpriseDescriptor'].includes(input.name))next[input.name]=Number(input.value);
     else next[input.name]=input.value;
   }
   c.options=normalizeOptions(next);return c.options;
@@ -205,12 +232,15 @@ async function roll({keyboard=false,tableId,tableModifier=0,parent=null,lockGues
   const button=$('#roll-button');button.disabled=true;
   try{
     collectOptions();if(!tableId&&!foundSite)touchRecent(parent?.procedureId??state.procedure);await saveCampaign();
-    let run;const source=ownRecords().find(r=>r.id===state.followParentId),origin=parent??source;
-    const encounterSpec=origin?.encounters?.[state.followEncounterIndex]??origin?.encounter;
+    let run;
+    const source=tableId||parent?null:ownRecords().find(r=>r.id===state.followParentId);
+    const origin=parent??source;
+    const encounterIndex=parent?.encounterIndex??(source?state.followEncounterIndex:0);
+    const encounterSpec=origin?.encounters?.[encounterIndex]??origin?.encounter;
     if(tableId)run=runProcedure('table',{tableId,tableModifier,context:origin?.context??campaign().context,options:campaign().options,campaignId:state.selectedId,parentId:origin?.id});
     else if(parent?.procedureId==='encounter-roster'||(!parent&&source?.encounter&&state.procedure==='creature')){
-      const base=encounterSpec.ref?state.records.find(r=>r.id===encounterSpec.ref)?.blueprint:origin.blueprint;
-      run=runEncounterRoster(origin,{campaignId:state.selectedId,blueprint:base,context:parent?.context??campaign().context,encounterIndex:parent?.encounterIndex??state.followEncounterIndex,options:parent?parent.options:campaign().options});
+      const base=parent?.blueprint??(encounterSpec.ref?state.records.find(r=>r.id===encounterSpec.ref)?.blueprint:origin.blueprint);
+      run=runEncounterRoster(origin,{campaignId:state.selectedId,blueprint:base,context:parent?.context??campaign().context,encounterIndex,options:parent?parent.options:campaign().options});
     }
     else if(Number.isInteger(hackIndex))run=runHackReroll(parent,hackIndex);
     else if(parent?.followupKey)run=runFollowup(parent,parent.followupKey);
@@ -218,7 +248,7 @@ async function roll({keyboard=false,tableId,tableModifier=0,parent=null,lockGues
     else if(parent?.lockAttempt)run=runLockAttempt({...parent,pending:parent.lockAttempt.pending},parent.lockAttempt.guess,{campaignId:state.selectedId});
     else if(foundSite||parent?.siteFromHex===true)run=runFoundSite(parent,{campaignId:state.selectedId});
     else run=runProcedure(tableId?'table':parent?.procedureId??state.procedure,{context:parent?.context??campaign().context,options:parent?.options??campaign().options,campaignId:state.selectedId,parentId:origin?.id,tableId:tableId??parent?.tableId,tableModifier:parent?.tableModifier??0});
-    if(state.nextActor)run.actor=structuredClone(state.nextActor);
+    if(source&&state.nextActor)run.actor=structuredClone(state.nextActor);
     else if(origin?.actor)run.actor=structuredClone(origin.actor);
     if(run.procedureId==='npc-profile')run.subject={name:run.headline,recordId:run.id};
     else if(origin?.subject&&['npc','emotion','information','conversation'].includes(run.procedureId))run.subject=structuredClone(origin.subject);
@@ -281,19 +311,22 @@ document.addEventListener('click',async event=>{
       await openFresh('dice',{dicePreset:preset.id,diceExpression:preset.expression});$('#procedure-title').focus({preventScroll:true});
     }
     else if(action==='procedure'){
-      state.followParentId=null;state.nextActor=null;await flushMemo();touchRecent(button.dataset.id);await flushOptions();state.procedure=button.dataset.id;
+      await flushMemo();await flushOptions();
+      state.followParentId=null;state.nextActor=null;touchRecent(button.dataset.id);state.procedure=button.dataset.id;
       state.currentId=ownRecords().filter(r=>r.procedureId===state.procedure).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0]?.id??null;
       showView('workbench');renderControls();renderReport();renderHistory();if(!desktopLayout.matches)$('#procedure-picker').open=false;
       const panel=$('.control-panel'),top=panel.getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight-160)panel.scrollIntoView({behavior:'instant',block:'start'});
+      await saveCampaign();
     }
     else if(action==='workbench'){await flushMemo();closeDialog();showView('workbench');$('#workbench').scrollIntoView({behavior:'instant'});$('#procedure-title').focus({preventScroll:true});}
     else if(action==='record'){
-      await flushMemo();const record=ownRecords().find(r=>r.id===button.dataset.id);if(!record)return;
-      state.followParentId=null;state.nextActor=null;state.currentId=record.id;campaign().currentRecordId=record.id;activateEnemy(record);await saveCampaign();if(record.procedureId==='encounter-roster')state.procedure='creature';else if(PROCEDURES.some(p=>p.id===record.procedureId))state.procedure=record.procedureId;
+      await flushMemo();await flushOptions();const record=ownRecords().find(r=>r.id===button.dataset.id);if(!record)return;
+      state.followParentId=null;state.nextActor=null;state.currentId=record.id;campaign().currentRecordId=record.id;activateEnemy(record);if(record.procedureId==='encounter-roster')state.procedure='creature';else if(PROCEDURES.some(p=>p.id===record.procedureId))state.procedure=record.procedureId;
       if($('#dialog').open)closeDialog();showView('workbench');renderControls();renderReport();renderHistory();$('#result-headline')?.focus({preventScroll:true});
       const top=$('#report-host').getBoundingClientRect().top;
       if(innerWidth<801||top<0||top>innerHeight*.6)$('#report-host').scrollIntoView({behavior:'instant'});
+      await saveCampaign();
     }
     else if(action==='dice-preset'){
       const preset=DICE_PRESETS.find(p=>p.id===button.dataset.id);if(!preset)return;

@@ -49,11 +49,39 @@ function runner(run,rng) {
       const value=this.raw(id,title,100,page),success=value<=percent;
       this.item(title,success?'발생':'발생하지 않음',page,{roll:value,dice:'d100',values:[value],detail:`${percent}% · ${percent} 이하`,group});
       return success;
+    },
+    pickCrew(count,{id,title,page,group}) {
+      const pool=Array.from({length:run.context.presentCrew},(_,i)=>i+1);
+      const picked=[];
+      for(let i=0;i<Math.min(count,run.context.presentCrew);i++){
+        const index=pool.length===1?0:this.raw(id,`${title} ${i+1}`,pool.length,page)-1;
+        picked.push(pool.splice(index,1)[0]);
+      }
+      this.item(title,picked.map(n=>`대원 ${n}`).join(' / '),page,{
+        group,detail:'현재 동행 중인 대원의 종이 시트 순서 기준. 서로 다른 대상만 선택합니다.'
+      });
+      if(count>run.context.presentCrew)run.notes.push('이 결과에는 두 대원이 필요하지만 현재 한 명만 있습니다. 현재 인원에 맞게 적용 방법을 정하세요.');
     }
   };
 }
 function inspiration(r,group='해석 단서') {const a=r.table('action',group),t=r.table('theme',group);return `${a.row.text} / ${t.row.text}`;}
-function surprise(r,o) {const s=r.table('surprise','돌발사건');if(o.details)inspiration(r);return s.row.text;}
+function surprise(r,o) {
+  let row;
+  if(o.surpriseDescriptor){
+    const face=r.raw('surprise-detail','돌발사건 세부 굴림',8,232);
+    const value=o.surpriseDescriptor*10+face;
+    const table=tables.surprise;
+    row=lookup(table,value);
+    r.item(table.title,row.text,table.page,{
+      group:'돌발사건',tableId:table.id,roll:value,dice:'표 위치',values:[face],
+      detail:`선택한 분류 ${o.surpriseDescriptor}번 · D8 ${face}`,effectDice:false,
+    });
+  }else{
+    row=r.table('surprise','돌발사건').row;
+  }
+  if(o.details)inspiration(r);
+  return row.text;
+}
 function encounter(r,run,{forcedTier,forcedType,ignoreHazard=false,location,ambush=false,sourcePage=193}={}) {
   const c=run.context;
   const slot=r.raw('encounter-slot','기존 조우 슬롯',SLOT_COUNTS[c.size-1],143);
@@ -113,10 +141,22 @@ export function runEncounterRoster(previous,{blueprint,encounterIndex=0,context=
   return run;
 }
 
-function dread(r,run) {const d=r.table('dread','공포');if(d.value===1)r.table('taint','공포');if(d.value===9){encounter(r,run,{ambush:true});run.ambush=true;}run.notes.push('지속 효과, 피해와 Stress는 종이 시트에 기록하세요. 조건이 충족된 경우에만 효과 주사위를 굴립니다.');return d.row.text;}
+function dread(r,run) {
+  const d=r.table('dread','공포');
+  if(d.value===1)r.table('taint','공포');
+  if([5,7,12].includes(d.value))r.pickCrew(1,{
+    id:'dread-target',title:'공포 효과 대상',page:d.value===5?160:161,group:'공포'
+  });
+  if(d.value===9){encounter(r,run,{ambush:true});run.ambush=true;}
+  run.notes.push('지속 효과, 피해와 스트레스는 종이 시트에 기록하세요. 조건이 충족된 경우에만 효과 주사위를 굴립니다.');
+  return d.row.text;
+}
 function trauma(r,run){const t=r.table('trauma','트라우마');run.headline=t.row.text;if(t.value<=2)r.table('negative-trait','부정적 특성');return t;}
 function security(r,run) {
   const s=r.table('security','보안');
+  if(s.value===6||s.value===8)r.pickCrew(s.value===8?2:1,{
+    id:'security-target',title:s.value===8?'정지장 대상':'나노머신 첫 대상',page:s.value===8?164:165,group:'보안'
+  });
   if(s.value===9)for(let i=0;i<run.context.presentCrew;i++) {r.table('teleport',`대원 ${i+1}의 이동`);}
   if(s.value===4)r.check('gravity-site','탐사지 전체의 중력 역전',20,165,'보안');
   return s.row.text;
@@ -159,12 +199,14 @@ function misjump(r,run) {
   const m=r.table('misjump','잘못된 도약');
   if(m.value>=3&&m.value<=4) {
     const unit=r.table('time-dilation','시간 차이').row.text;
+    run.items.at(-1).effectDice=false;
     const amount=r.raw('time-difference','시간 차이 크기',10,123);
     const sign=r.raw('time-direction','시간 차이 방향',6,123);
     r.item('시간 차이',`${amount}${unit} · ${sign<=3?'선내에서만 시간이 흐름':'외부에서만 시간이 흐름'}`,123,{group:'시간 차이',detail:'방향은 원문의 무작위 선택을 D6의 1–3 / 4–6으로 나누었습니다.'});
   }
   if(m.value>=5) {
     const t=r.table('transit-dilation','항해 변동');
+    run.items.at(-1).effectDice=false;
     if(t.value<=2)run.instantArrival=true;
     if(t.value>=3) {const n=r.raw('transit-weeks','변동 주 수',4,123);run.travelWeeksDelta=t.value<=4?-n:n;r.item('기간 변동',`${n}주 ${t.value<=4?'단축':'연장'}`,123,{group:'항해 변동'});if(run.options.destination==='unknown'&&run.options.voyage!=='return')run.notes.push('미지 목적지의 확률식에 기간 변동을 적용하는 방법은 원문에 없습니다. 위 단축·연장을 종이에 기록하고 도착 시점을 직접 조정하세요.');}
   }
@@ -173,15 +215,7 @@ function misjump(r,run) {
 }
 function travel(r,run) {
   const o=run.options,c=run.context;
-  const pickCrew=(count,title='사건 대상 대원')=>{
-    const pool=Array.from({length:c.presentCrew},(_,i)=>i+1),picked=[];
-    for(let i=0;i<Math.min(count,c.presentCrew);i++){
-      const index=pool.length===1?0:r.raw('travel-target',`${title} ${i+1}`,pool.length,118)-1;
-      picked.push(pool.splice(index,1)[0]);
-    }
-    r.item(title,picked.map(n=>`대원 ${n}`).join(' / '),118,{group:'사건 대상',detail:'현재 동행 중인 대원의 종이 시트 순서 기준. 서로 다른 대상만 선택합니다.'});
-    if(count>c.presentCrew)run.notes.push('이 사건에는 두 대원이 필요하지만 현재 한 명만 남아 있습니다. 사건을 현재 인원에 맞게 해석하거나 다른 사건을 직접 선택하세요.');
-  };
+  const pickCrew=(count,page,title='사건 대상 대원',id='travel-target')=>r.pickCrew(count,{id,title,page,group:'사건 대상'});
   const chance=Math.min(100,o.week*20),arrival=Math.min(100,40+(o.week-1)*10);
   const event=r.check('travel-check',`${o.week}주차 사건 확인`,chance,118,'항해');
   if(event) {
@@ -190,12 +224,12 @@ function travel(r,run) {
     if(type.value===1&&c.crew===1)r.item('1인선 예외','사회적 사건을 정신·신체 문제로 처리',118,{group:'항해 사건'});
     const ids={1:'travel-social',2:'travel-malfunction',3:'travel-anomaly',4:'travel-issue'};
     const detail=r.table(ids[v],'항해 사건');
-    if(v===1&&detail.value!==10)pickCrew(detail.value<=6||detail.value===8?2:1);
-    if(v===4&&[1,2,5,7,8,9,10].includes(detail.value))pickCrew(1);
-    if(v===1&&detail.value<=5){r.table('conversation','대화');r.table('reaction','첫 번째 대원의 반응');r.table('reaction','두 번째 대원의 반응');run.notes.push('항해 중 대화의 긍정 반응(+)은 PC Stress -1, 부정 반응(-)은 +1입니다.');}
-    if(v===1&&detail.value===6&&o.details)inspiration(r);
+    if(v===1&&detail.value!==10)pickCrew(detail.value<=6||detail.value===8?2:1,119);
+    if(v===4&&[1,2,3,5,7,8,9,10].includes(detail.value))pickCrew(1,122);
+    if(v===1&&detail.value<=5&&c.presentCrew>=2){r.table('conversation','대화');r.table('reaction','첫 번째 대원의 반응');r.table('reaction','두 번째 대원의 반응');run.notes.push('항해 중 대화의 긍정 반응(+)은 PC 스트레스 −1, 부정 반응(−)은 +1입니다.');}
+    if(v===1&&detail.value===6&&c.presentCrew>=2&&o.details)inspiration(r);
     if((v===3&&detail.value===7)||(v===4&&detail.value===3))misjump(r,run);
-    if(v===4&&detail.value===6){const who=c.presentCrew===1?1:r.raw('anxiety-target','불안 발작 대상 대원',c.presentCrew,122);r.item('불안 발작 대상',`대원 ${who}`,122,{group:'스트레스 반응',detail:'종이 시트에서 정한 대원 순서 기준.'});r.table(c.presentCrew>1?'stress-group':'stress-alone','스트레스 반응');}
+    if(v===4&&detail.value===6){pickCrew(1,122,'불안 발작 대상','anxiety-target');r.table(c.presentCrew>1?'stress-group':'stress-alone','스트레스 반응');}
   }
   let arrived;
   if(run.instantArrival){arrived=true;r.item('도착 여부','항해 변동으로 즉시 도착',123,{group:'도착 여부'});}
@@ -203,7 +237,8 @@ function travel(r,run) {
   else {const weeks=Math.max(1,o.knownWeeks+(run.travelWeeksDelta??0));arrived=o.week>=weeks;r.item('알려진 항해 일정',arrived?'목적지에 도착':'항해 계속',118,{detail:`예정 ${weeks}주${run.travelWeeksDelta?` (변동 전 ${o.knownWeeks}주)`:''} / 현재 ${o.week}주. 귀환은 최초 기간, 다른 팀의 장소는 최초 D6+1주로 정한 값을 사용하세요.`,group:'도착 여부'});}
   run.arrived=arrived;run.headline=arrived?(o.voyage==='return'?'Karum Station 귀환':'목적지 도착'):'항해 계속';
   run.subline=`${o.week}주차 · ${event?'항해 사건 발생':'항해 사건 없음'}${run.instantArrival?' · 즉시 도착':o.destination==='unknown'&&o.voyage!=='return'?` · 도착 확률 ${arrival}%`:''}`;
-  run.notes.push('이번 주 대원마다 Oxygen Tank 1개와 Supplies 1개를 종이 시트에서 소비하세요. 사건 확률은 사건 발생으로 초기화되지 않으며 목적지 도착 시 초기화됩니다.');
+  run.notes.push('이번 주 대원마다 산소 탱크 1개와 보급품 1개를 종이 시트에서 소비하세요. 사건 확률은 목적지 도착 시 20%로 돌아갑니다.');
+  run.notes.push('보급품을 절반만 소비한 주가 끝날 때마다 최대 상처 −1. 한 주 동안 정상 식사를 하면 회복합니다. 최대 상처가 0이면 사망합니다. 산소 소비량은 줄일 수 없습니다(p.127).');
 }
 function fillSite(r,run,location){
   const purpose=r.table('purpose','시설의 정체');
@@ -219,7 +254,8 @@ function fillSite(r,run,location){
   r.item('Site Report 준비',`자원 ${resourcesTotal} / 유물 ${artifactsTotal} / 조우 유형 ${SLOT_COUNTS[size.value-1]}칸 / 매복 최대 ${activity.value}회`,143,{group:'종이에 기록',detail:`활동도에 따른 최대 매복 ${activity.value}회. 자원·유물 한도는 실제 아이템 개수가 아닙니다.`});
   run.subline=`${purpose.row.text} · ${size.row.text} · ${hazard.row.text} · ${descriptor.row.text}`;
   run.adopt={location,mode:'site',knownThreats:true,slotRefs:Array(SLOT_COUNTS[size.value-1]).fill(null),purpose:purpose.value,hazard:hazard.value,size:size.value,resources:true,artifacts:true,slots:Array(SLOT_COUNTS[size.value-1]).fill('')};
-  run.notes.push('기본 대기는 산소가 부족하므로 호흡 장비가 필요합니다. 인공 중력은 별도 결과가 없으면 1.5g. 맥락에 채택하면 이 장소용 조우 슬롯을 새로 준비합니다.');
+  run.notes.push('Àrsaidh 시설의 기본 대기는 독성이 없지만 산소가 부족합니다. LCR 3000을 갖추지 않았다면 산소 마스크를 쓰세요(p.130).');
+  run.notes.push(descriptor.value===8?'이 시설에는 인공 중력이 없습니다(p.137).':'인공 중력은 별도 결과가 없으면 1.5g입니다(p.130).');
 }
 function site(r,run) {
   let arrival;
@@ -273,7 +309,13 @@ function area(r,run) {
   else if(event.value===6)run.subline=door(r,run);
   else if(event.value===7)run.subline=dread(r,run);
   else if(event.value===8)run.subline=security(r,run);
-  else if(event.value===9)run.subline=r.table('fixed-event','사건').row.text;
+  else if(event.value===9){
+    const fixed=r.table('fixed-event','사건');
+    run.subline=fixed.row.text;
+    if([1,5,6,10].includes(fixed.value))r.pickCrew(fixed.value===6?2:1,{
+      id:'fixed-event-target',title:'고정 사건 대상',page:fixed.value<=5?166:167,group:'사건'
+    });
+  }
   else if(event.value===10)run.subline=occurrence(r,run);
   run.notes.push('새 구역 진입은 시간트랙 +1. 앱은 수기 시간트랙을 자동 변경하지 않습니다.');
 }
